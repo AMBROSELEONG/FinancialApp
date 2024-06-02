@@ -1,0 +1,104 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\React Native\\Financial\\FinancialApi\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{C5FAF769-A2B6-47E0-910F-C1616C1E9C27}|FinancialApi\\FinancialApi.csproj|d:\\react native\\financial\\financialapi\\financialapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{C5FAF769-A2B6-47E0-910F-C1616C1E9C27}|FinancialApi\\FinancialApi.csproj|solutionrelative:financialapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5FAF769-A2B6-47E0-910F-C1616C1E9C27}|FinancialApi\\FinancialApi.csproj|d:\\react native\\financial\\financialapi\\financialapi\\financialapi.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
+      "RelativeMoniker": "D:0:0:{C5FAF769-A2B6-47E0-910F-C1616C1E9C27}|FinancialApi\\FinancialApi.csproj|solutionrelative:financialapi\\financialapi.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5FAF769-A2B6-47E0-910F-C1616C1E9C27}|FinancialApi\\FinancialApi.csproj|d:\\react native\\financial\\financialapi\\financialapi\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C5FAF769-A2B6-47E0-910F-C1616C1E9C27}|FinancialApi\\FinancialApi.csproj|solutionrelative:financialapi\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5FAF769-A2B6-47E0-910F-C1616C1E9C27}|FinancialApi\\FinancialApi.csproj|d:\\react native\\financial\\financialapi\\financialapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C5FAF769-A2B6-47E0-910F-C1616C1E9C27}|FinancialApi\\FinancialApi.csproj|solutionrelative:financialapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5FAF769-A2B6-47E0-910F-C1616C1E9C27}|FinancialApi\\FinancialApi.csproj|d:\\react native\\financial\\financialapi\\financialapi\\weatherforecast.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C5FAF769-A2B6-47E0-910F-C1616C1E9C27}|FinancialApi\\FinancialApi.csproj|solutionrelative:financialapi\\weatherforecast.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 1,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedHeight": 256,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "FinancialApi.http",
+              "DocumentMoniker": "D:\\React Native\\Financial\\FinancialApi\\FinancialApi\\FinancialApi.http",
+              "RelativeDocumentMoniker": "FinancialApi\\FinancialApi.http",
+              "ToolTip": "D:\\React Native\\Financial\\FinancialApi\\FinancialApi\\FinancialApi.http",
+              "RelativeToolTip": "FinancialApi\\FinancialApi.http",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
+              "WhenOpened": "2024-05-30T05:05:26.12Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\React Native\\Financial\\FinancialApi\\FinancialApi\\appsettings.json",
+              "RelativeDocumentMoniker": "FinancialApi\\appsettings.json",
+              "ToolTip": "D:\\React Native\\Financial\\FinancialApi\\FinancialApi\\appsettings.json",
+              "RelativeToolTip": "FinancialApi\\appsettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-05-30T06:23:47.675Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "WeatherForecastController.cs",
+              "DocumentMoniker": "D:\\React Native\\Financial\\FinancialApi\\FinancialApi\\Controllers\\WeatherForecastController.cs",
+              "RelativeDocumentMoniker": "FinancialApi\\Controllers\\WeatherForecastController.cs",
+              "ToolTip": "D:\\React Native\\Financial\\FinancialApi\\FinancialApi\\Controllers\\WeatherForecastController.cs",
+              "RelativeToolTip": "FinancialApi\\Controllers\\WeatherForecastController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAbAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-30T05:07:06.919Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\React Native\\Financial\\FinancialApi\\FinancialApi\\Program.cs",
+              "RelativeDocumentMoniker": "FinancialApi\\Program.cs",
+              "ToolTip": "D:\\React Native\\Financial\\FinancialApi\\FinancialApi\\Program.cs",
+              "RelativeToolTip": "FinancialApi\\Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-30T05:05:22.512Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "WeatherForecast.cs",
+              "DocumentMoniker": "D:\\React Native\\Financial\\FinancialApi\\FinancialApi\\WeatherForecast.cs",
+              "RelativeDocumentMoniker": "FinancialApi\\WeatherForecast.cs",
+              "ToolTip": "D:\\React Native\\Financial\\FinancialApi\\FinancialApi\\WeatherForecast.cs",
+              "RelativeToolTip": "FinancialApi\\WeatherForecast.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-30T05:05:19.143Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
