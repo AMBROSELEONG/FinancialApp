@@ -19,6 +19,7 @@ import SignIn from './SignIn';
 import Verify from './Verify';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
+import {UrlAccess} from '../objects/url';
 
 const SignUp = () => {
   const navigation = useNavigation();
@@ -89,7 +90,8 @@ const SignUp = () => {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [hidePass, setHidePass] = useState(true);
-
+  const [UserNameDuplication, setUserNameDuplication] = useState(false);
+  const [EmailDuplication, setEmailDuplication] = useState(false);
   const checkEmailFormat = (Email: any) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(Email);
@@ -101,7 +103,62 @@ const SignUp = () => {
     return passwordRegex.test(Password);
   };
 
-  // 输入数据验证
+  const checkUserNameDuplication = (Username: any) => {
+    try {
+      RNFetchBlob.config({trusty: true})
+        .fetch(
+          'POST',
+          UrlAccess.Url + 'User/CheckUserName',
+          {'Content-Type': 'application/json'},
+          JSON.stringify({
+            userName: Username,
+          }),
+        )
+        .then(response => response.json())
+        .then(json => {
+          if (json && json.success) {
+            setUserNameDuplication(true);
+          } else {
+            setUserNameDuplication(false);
+          }
+        });
+    } catch (error) {
+      return error;
+    }
+  };
+
+  const checkEmailDuplication = (Email: any) => {
+    try {
+      RNFetchBlob.config({trusty: true})
+        .fetch(
+          'POST',
+          UrlAccess.Url + 'User/CheckEmail',
+          {'Content-Type': 'application/json'},
+          JSON.stringify({
+            email: Email,
+          }),
+        )
+        .then(response => response.json())
+        .then(json => {
+          if (json && json.success) {
+            setEmailDuplication(true);
+          } else {
+            setEmailDuplication(false);
+          }
+        });
+    } catch (error) {
+      return error;
+    }
+  };
+  useEffect(() => {
+    if (Username.trim() !== '') {
+      checkUserNameDuplication(Username);
+    }
+    if (Email.trim() !== '') {
+      checkEmailDuplication(Email);
+    }
+  }, [Username, Email]);
+
   const Verify = async () => {
     let valid = true;
 
@@ -109,7 +166,12 @@ const SignUp = () => {
       setUsernameError('Username cannot be empty');
       valid = false;
     } else {
-      setUsernameError('');
+      if (UserNameDuplication === false) {
+        setUsernameError('Username is already taken');
+        valid = false;
+      } else {
+        setUsernameError('');
+      }
     }
 
     if (Email.trim() === '') {
@@ -119,7 +181,12 @@ const SignUp = () => {
       setEmailError('Invalid email format');
       valid = false;
     } else {
-      setEmailError('');
+      if (EmailDuplication === false) {
+        setEmailError('Email is already taken');
+        valid = false;
+      } else {
+        setEmailError('');
+      }
     }
 
     if (Password.trim() === '') {
@@ -143,7 +210,7 @@ const SignUp = () => {
       try {
         RNFetchBlob.config({trusty: true}).fetch(
           'POST',
-          'https://172.16.36.117:5072/api/OTP/SendOTP',
+          UrlAccess.Url + 'OTP/SendOTP',
           {'Content-Type': 'application/json'},
           JSON.stringify({
             email: Email,

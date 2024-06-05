@@ -18,6 +18,7 @@ import {StackParamList} from './StackPatamList';
 import SignIn from './SignIn';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
+import {UrlAccess} from '../objects/url';
 
 type OTPInputProps = {
   length: number;
@@ -82,7 +83,7 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
         RNFetchBlob.config({trusty: true})
           .fetch(
             'POST',
-            'https://172.16.36.117:5072/api/OTP/VerifyOTP',
+            UrlAccess.Url + 'OTP/VerifyOTP',
             {'Content-Type': 'application/json'},
             JSON.stringify({
               email: Email,
@@ -94,11 +95,11 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
             if (json && json.success) {
               setModalVisible(true);
             } else {
-              Alert.alert('Operation failed');
+              Alert.alert('Your Verify Code is not correct');
             }
           });
       } catch (error) {
-        Alert.prompt('Verify Unsuccessful');
+        Alert.alert('Verify Unsuccessful');
       }
     } else {
       Alert.prompt(
@@ -110,16 +111,24 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
   const [Username, setUsername] = useState('');
   const [Email, setEmail] = useState('');
   const [Password, setPassword] = useState('');
+  const [Token, setToken] = useState('');
   useEffect(() => {
     const getData = async () => {
       try {
         const storedEmail = await AsyncStorage.getItem('Email');
         const storedUsername = await AsyncStorage.getItem('UserName');
         const storedPassword = await AsyncStorage.getItem('Password');
-        if (storedEmail !== null && storedUsername !== null && storedPassword !== null) {
+        const storedToken = await AsyncStorage.getItem('Token');
+        if (
+          storedEmail !== null &&
+          storedUsername !== null &&
+          storedPassword !== null &&
+          storedToken !== null
+        ) {
           setEmail(storedEmail);
           setUsername(storedUsername);
           setPassword(storedPassword);
+          setToken(storedToken);
         }
       } catch (error) {
         console.error('Failed to load email from AsyncStorage', error);
@@ -128,6 +137,31 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
 
     getData();
   }, []);
+
+  const Register = () => {
+    try {
+      RNFetchBlob.config({trusty: true}).fetch(
+        'POST',
+        UrlAccess.Url + 'User/getUser',
+        {'Content-Type': 'application/json'},
+        JSON.stringify({
+          userName: Username,
+          email: Email,
+          password: Password,
+          token: Token
+        }),
+      )
+      .then(response => response.json())
+      .then(json => {
+        if(json && json.success){
+          navigation.navigate(SignIn as never)
+          console.log('Data insert successful')
+        } else{
+          Alert.alert('Data insert error')
+        }
+      })
+    } catch (error) {}
+  };
 
   return (
     <MainContainer>
@@ -191,7 +225,7 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
             <TouchableOpacity
               style={VerifyCss.ButtonModal}
               onPress={() => {
-                navigation.navigate(SignIn as never);
+                Register()
               }}>
               <Text style={VerifyCss.ButtonText}>SIGN IN</Text>
             </TouchableOpacity>
