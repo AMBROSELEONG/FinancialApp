@@ -14,12 +14,27 @@ import {
   GetFCMToken,
 } from './components/pushNotification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ForgotPassword from './screen/ForgotPassword';
+import ResetPassword from './screen/ResetPassword';
+import CustomDrawer from './screen/CustomDrawer';
+import Home from './screen/Home';
+import {createDrawerNavigator} from '@react-navigation/drawer';
+import Setting from './screen/Setting';
+import CustomBottomTabNavigator from './screen/BottomNavigation';
+import Wallet from './screen/Wallet';
+import Bank from './screen/Bank';
+import Ewallet from './screen/Ewallet';
+import Expenses from './screen/Expenses';
+import ResetVerify from './screen/ResetVerify';
+
 const Stack = createNativeStackNavigator<StackParamList>();
+const Drawer = createDrawerNavigator();
 
 function App(): JSX.Element {
-  LogBox.ignoreAllLogs();
   const [otpValue, setOtpValue] = useState<string[]>(Array(6).fill(''));
+
   useEffect(() => {
+    LogBox.ignoreAllLogs();
     requestUserPermission();
     GetFCMToken();
     AsyncStorage.getItem('Token')
@@ -29,18 +44,20 @@ function App(): JSX.Element {
       .catch(error => {
         console.error('Error:', error);
       });
-  });
+  }, []);
 
   return (
     <PaperProvider theme={whiteTheme}>
       <SafeAreaView style={{flex: 1}}>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="Welcome"
+            initialRouteName="CustomDrawer"
             screenOptions={{headerShown: false}}>
             <Stack.Screen name="Welcome" component={Welcome} />
             <Stack.Screen name="SignIn" component={SignIn} />
             <Stack.Screen name="SignUp" component={SignUp} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+            <Stack.Screen name="ResetPassword" component={ResetPassword} />
             <Stack.Screen name="Verify">
               {props => (
                 <Verify
@@ -52,6 +69,30 @@ function App(): JSX.Element {
                 />
               )}
             </Stack.Screen>
+            <Stack.Screen name="ResetVerify">
+              {props => (
+                <ResetVerify
+                  {...props}
+                  length={6}
+                  value={otpValue}
+                  disabled={false}
+                  onChange={setOtpValue}
+                />
+              )}
+            </Stack.Screen>
+            <Stack.Group screenOptions={{navigationBarColor: 'white'}}>
+              <Stack.Screen name="CustomDrawer" component={CustomDrawer} />
+              <Stack.Screen
+                name="CustomBottomTabNavigator"
+                component={CustomBottomTabNavigator}
+              />
+              <Stack.Screen name="Home" component={Home} />
+              <Stack.Screen name="Setting" component={Setting} />
+              <Stack.Screen name="Wallet" component={Wallet} />
+              <Stack.Screen name="Bank" component={Bank} />
+              <Stack.Screen name="Ewallet" component={Ewallet} />
+              <Stack.Screen name="Expenses" component={Expenses} />
+            </Stack.Group>
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>

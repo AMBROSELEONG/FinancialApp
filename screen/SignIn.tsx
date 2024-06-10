@@ -6,16 +6,22 @@ import {
   TouchableOpacity,
   Animated,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Dimensions,
+  ActivityIndicator
 } from 'react-native';
 import MainContainer from '../components/MainContainer';
 import {SignInCss} from '../objects/commonCss';
 import {TextInput, HelperText} from 'react-native-paper';
-import {useNavigation} from '@react-navigation/native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
 import Welcome from './Welcome';
 import React, {useRef, useEffect, useState} from 'react';
 import SignUp from './SignUp';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
+import ForgotPassword from './ForgotPassword';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignIn = () => {
   const navigation = useNavigation();
@@ -78,8 +84,15 @@ const SignIn = () => {
   const [Email, setEmail] = useState('');
   const [Password, setPassword] = useState('');
   const [Invalid, setInvalid] = useState(false);
+  const [hidePass, setHidePass] = useState(true);
+  const [UserID, setUserID] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [Username, setUsername] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const SignIn = async () => {
+    setLoading(true);
     try {
       RNFetchBlob.config({trusty: true})
         .fetch(
@@ -94,97 +107,166 @@ const SignIn = () => {
         .then(response => response.json())
         .then(json => {
           if (json.success) {
-            Alert.alert('Sign In Success', `User ID: ${json.userID}`);
+            const {userID, userName} = json;
+            setUserID(userID);
+            setUsername(userName);
+            AsyncStorage.setItem('UserID', userID.toString());
+            AsyncStorage.setItem('UserName', userName);
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{name: 'CustomDrawer'}],
+              }),
+            );
           } else {
             setInvalid(true);
           }
         });
-    } catch (error) {}
+    } catch (error) {
+      Alert.alert('Error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const Verify = () => {
+    let valid = true;
+
+    if (Email.trim() === '') {
+      setEmailError('Email cannot be empty');
+      valid = false;
+    } else {
+      setEmailError('');
+    }
+
+    if (Password.trim() === '') {
+      setPasswordError('Password cannot be empty');
+      valid = false;
+    } else {
+      setPasswordError('');
+    }
+
+    if (valid) {
+      AsyncStorage.setItem('Email', Email);
+      SignIn();
+    }
   };
   return (
     <MainContainer>
-      <StatusBar backgroundColor="#FFFFFF" />
-      <View style={SignInCss.container}>
-        <Animated.View style={{transform: [{translateY: Anim}]}}>
-          <Image
-            style={SignInCss.Logo}
-            source={require('../assets/Logo.png')}
-          />
-        </Animated.View>
-
-        <Animated.View style={{transform: [{translateY: Anim1}]}}>
-          <Text style={SignInCss.Title}>Sign In</Text>
-          <Text style={SignInCss.Content}>
-            Enter your credentials to sign in
-          </Text>
-        </Animated.View>
-
-        <Animated.View style={{transform: [{translateY: Anim2}]}}>
-          <TextInput
-            label="Email"
-            mode="outlined"
-            style={SignInCss.Input}
-            placeholder="Please Enter Your Email"
-            theme={theme}
-            onChangeText={text => setEmail(text)}
-          />
-        </Animated.View>
-
-        <Animated.View style={{transform: [{translateY: Anim3}]}}>
-          <TextInput
-            label="Password"
-            mode="outlined"
-            style={SignInCss.Input}
-            placeholder="Please Enter Your Password"
-            theme={theme}
-            onChangeText={text => setPassword(text)}
-          />
-          {Invalid == true && (
-            <HelperText type="error" style={SignInCss.InputError}>
-              Username or Password is invalid
-            </HelperText>
-          )}
-
-          <Text
-            style={SignInCss.Forgot}
-            onPress={() => navigation.navigate(Welcome as never)}>
-            Forgot Password?
-          </Text>
-        </Animated.View>
-        <Animated.View style={{transform: [{translateY: Anim4}]}}>
-          <TouchableOpacity
-            style={SignInCss.LoginButton}
-            onPress={() => SignIn()}>
-            <Text style={SignInCss.BtnText}>SIGN IN</Text>
-          </TouchableOpacity>
-        </Animated.View>
-
-        <Animated.View style={{transform: [{translateY: Anim5}]}}>
-          <View style={SignInCss.Other}>
-            <View style={SignInCss.Line}></View>
-            <Text style={SignInCss.Or}>Or Sign In with</Text>
-            <View style={SignInCss.Line}></View>
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <StatusBar backgroundColor="#FFFFFF" />
+        {loading ? (
+          <View
+            style={{
+              flex: 1,
+              marginVertical: (Dimensions.get('screen').height / 100) * 50,
+            }}>
+            <ActivityIndicator size={80} color="#000000" />
           </View>
-        </Animated.View>
+        ) : (
+          <View style={SignInCss.container}>
+            <Animated.View style={{transform: [{translateY: Anim}]}}>
+              <Image
+                style={SignInCss.Logo}
+                source={require('../assets/Logo.png')}
+              />
+            </Animated.View>
 
-        <Animated.View style={{transform: [{translateY: Anim6}]}}>
-          <TouchableOpacity style={SignInCss.Finger}>
-            <Image
-              style={SignInCss.Finger}
-              source={require('../assets/fingerprint.png')}
-            />
-          </TouchableOpacity>
-        </Animated.View>
+            <Animated.View style={{transform: [{translateY: Anim1}]}}>
+              <Text style={SignInCss.Title}>Sign In</Text>
+              <Text style={SignInCss.Content}>
+                Enter your credentials to sign in
+              </Text>
+            </Animated.View>
 
-        <Text style={SignInCss.SignUp}>
-          Don't Have an Account?
-          <Text
-            style={{color: '#3490DE'}}
-            onPress={() => navigation.navigate(SignUp as never)}>
-            Sign Up
-          </Text>
-        </Text>
-      </View>
+            <Animated.View style={{transform: [{translateY: Anim2}]}}>
+              <TextInput
+                label="Email"
+                mode="outlined"
+                style={SignInCss.Input}
+                placeholder="Please Enter Your Email"
+                theme={theme}
+                onChangeText={text => setEmail(text)}
+              />
+              {emailError !== '' && (
+                <HelperText type="error" style={SignInCss.InputError}>
+                  {emailError}
+                </HelperText>
+              )}
+            </Animated.View>
+
+            <Animated.View style={{transform: [{translateY: Anim3}]}}>
+              <TextInput
+                label="Password"
+                mode="outlined"
+                style={SignInCss.Input}
+                placeholder="Please Enter Your Password"
+                theme={theme}
+                onChangeText={text => setPassword(text)}
+                autoCapitalize="none"
+                secureTextEntry={hidePass ? true : false}
+                right={
+                  <TextInput.Icon
+                    icon={hidePass ? 'eye-off' : 'eye'}
+                    onPress={() => setHidePass(!hidePass)}
+                  />
+                }
+              />
+              {passwordError !== '' && (
+                <HelperText type="error" style={SignInCss.InputError}>
+                  {passwordError}
+                </HelperText>
+              )}
+              {Invalid == true && (
+                <HelperText type="error" style={SignInCss.InputError}>
+                  Username or Password is invalid
+                </HelperText>
+              )}
+
+              <Text
+                style={SignInCss.Forgot}
+                onPress={() => navigation.navigate(ForgotPassword as never)}>
+                Forgot Password?
+              </Text>
+            </Animated.View>
+            <Animated.View style={{transform: [{translateY: Anim4}]}}>
+              <TouchableOpacity
+                style={SignInCss.LoginButton}
+                onPress={() => Verify()}>
+                <Text style={SignInCss.BtnText}>SIGN IN</Text>
+              </TouchableOpacity>
+            </Animated.View>
+
+            <Animated.View style={{transform: [{translateY: Anim5}]}}>
+              <View style={SignInCss.Other}>
+                <View style={SignInCss.Line}></View>
+                <Text style={SignInCss.Or}>Or Sign In with</Text>
+                <View style={SignInCss.Line}></View>
+              </View>
+            </Animated.View>
+
+            <Animated.View style={{transform: [{translateY: Anim6}]}}>
+              <TouchableOpacity style={SignInCss.Finger}>
+                <Image
+                  style={SignInCss.Finger}
+                  source={require('../assets/fingerprint.png')}
+                />
+              </TouchableOpacity>
+            </Animated.View>
+
+            <Text style={SignInCss.SignUp}>
+              Don't Have an Account?
+              <Text
+                style={{color: '#3490DE'}}
+                onPress={() => navigation.navigate(SignUp as never)}>
+                Sign Up
+              </Text>
+            </Text>
+          </View>
+        )}
+      </KeyboardAvoidingView>
     </MainContainer>
   );
 };

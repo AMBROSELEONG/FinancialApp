@@ -19,6 +19,7 @@ import SignIn from './SignIn';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
+import ResetPassword from './ResetPassword';
 
 type OTPInputProps = {
   length: number;
@@ -27,9 +28,9 @@ type OTPInputProps = {
   onChange(value: Array<string>): void;
 };
 
-type VerifyScreenProps = NativeStackScreenProps<StackParamList, 'Verify'>;
+type VerifyScreenProps = NativeStackScreenProps<StackParamList, 'ResetVerify'>;
 
-const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
+const ResetVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
   length,
   value,
   disabled,
@@ -72,7 +73,6 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
     }
   };
 
-  const [modalVisible, setModalVisible] = useState(false);
   const handleVerify = () => {
     const isValid = value.every(char => /^[0-9]$/.test(char));
 
@@ -93,10 +93,8 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
           .then(response => response.json())
           .then(json => {
             if (json && json.success) {
-              setModalVisible(true);
-              AsyncStorage.removeItem('Email');
-              AsyncStorage.removeItem('UserName');
-              AsyncStorage.removeItem('Password');
+              AsyncStorage.setItem('Email', Email);
+              navigation.navigate(ResetPassword as never);
             } else {
               Alert.alert('Your Verify Code is not correct');
             }
@@ -119,19 +117,8 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
     const getData = async () => {
       try {
         const storedEmail = await AsyncStorage.getItem('Email');
-        const storedUsername = await AsyncStorage.getItem('UserName');
-        const storedPassword = await AsyncStorage.getItem('Password');
-        const storedToken = await AsyncStorage.getItem('Token');
-        if (
-          storedEmail !== null &&
-          storedUsername !== null &&
-          storedPassword !== null &&
-          storedToken !== null
-        ) {
+        if (storedEmail !== null) {
           setEmail(storedEmail);
-          setUsername(storedUsername);
-          setPassword(storedPassword);
-          setToken(storedToken);
         }
       } catch (error) {
         console.error('Failed to load email from AsyncStorage', error);
@@ -140,32 +127,6 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
 
     getData();
   }, []);
-
-  const Register = () => {
-    try {
-      RNFetchBlob.config({trusty: true})
-        .fetch(
-          'POST',
-          UrlAccess.Url + 'User/getUser',
-          {'Content-Type': 'application/json'},
-          JSON.stringify({
-            userName: Username,
-            email: Email,
-            password: Password,
-            token: Token,
-          }),
-        )
-        .then(response => response.json())
-        .then(json => {
-          if (json && json.success) {
-            navigation.navigate(SignIn as never);
-            console.log('Data insert successful');
-          } else {
-            Alert.alert('Data insert error');
-          }
-        });
-    } catch (error) {}
-  };
 
   const resend = () => {
     try {
@@ -178,7 +139,8 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
         }),
       );
       Alert.prompt('Send OTP Successful');
-      navigation.navigate(Verify as never);
+      AsyncStorage.setItem('Email', Email);
+      navigation.navigate(ResetVerify as never);
     } catch (error) {
       Alert.prompt('Send OTP Unsuccessful');
     }
@@ -262,26 +224,8 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
           <Text style={VerifyCss.font}>VERIFY</Text>
         </TouchableOpacity>
       </View>
-      <Modal visible={modalVisible} animationType="slide" transparent={true}>
-        <View style={VerifyCss.ModalView}>
-          <View style={VerifyCss.ModalContainer}>
-            <Image
-              source={require('../assets/successful.png')}
-              style={{alignSelf: 'center', marginTop: 30}}
-            />
-            <Text style={VerifyCss.TextModal}>Sign Up Successful</Text>
-            <TouchableOpacity
-              style={VerifyCss.ButtonModal}
-              onPress={() => {
-                Register();
-              }}>
-              <Text style={VerifyCss.ButtonText}>SIGN IN</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </MainContainer>
   );
 };
 
-export default Verify;
+export default ResetVerify;

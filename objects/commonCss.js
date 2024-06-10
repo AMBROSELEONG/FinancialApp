@@ -1,5 +1,5 @@
-import { DefaultTheme, Title } from 'react-native-paper';
-import { Dimensions, StyleSheet } from "react-native";
+import {DefaultTheme, Title} from 'react-native-paper';
+import {Dimensions, StyleSheet} from 'react-native';
 
 const whiteTheme = {
   ...DefaultTheme,
@@ -20,12 +20,12 @@ export const WelcomeCss = StyleSheet.create({
   Logo: {
     alignSelf: 'center',
     marginTop: '30%',
-    marginBottom: Dimensions.get('screen').height / 100 * 30,
-    width: '70%'
+    marginBottom: (Dimensions.get('screen').height / 100) * 30,
+    width: '70%',
   },
   Login: {
     width: '70%',
-    backgroundColor: "#3490DE",
+    backgroundColor: '#3490DE',
     paddingVertical: 10,
     borderRadius: 10,
     alignSelf: 'center',
@@ -37,11 +37,11 @@ export const WelcomeCss = StyleSheet.create({
   },
   SignUp: {
     width: '70%',
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
     paddingVertical: 10,
     borderRadius: 10,
     alignSelf: 'center',
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -49,28 +49,28 @@ export const WelcomeCss = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    marginTop: 30
-  }
-})
+    marginTop: 30,
+  },
+});
 
 export const SignInCss = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFF',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   Logo: {
     alignSelf: 'center',
     marginTop: '5%',
     width: 220,
-    height: 150
+    height: 150,
   },
   Title: {
     fontSize: 25,
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#000',
-    marginTop: '10%'
+    marginTop: '10%',
   },
   Content: {
     fontSize: 16,
@@ -82,23 +82,23 @@ export const SignInCss = StyleSheet.create({
     marginTop: '5%',
     width: '80%',
     alignSelf: 'center',
-    borderRadius: 20
+    borderRadius: 20,
   },
   InputError: {
     width: '80%',
     alignSelf: 'center',
-    marginBottom: -20
+    marginBottom: -20,
   },
   Forgot: {
     fontSize: 12,
     color: '#8B8B8B',
     alignSelf: 'flex-end',
     marginRight: '10%',
-    marginBottom: '5%'
+    marginBottom: '5%',
   },
   LoginButton: {
     width: '80%',
-    backgroundColor: "#3490DE",
+    backgroundColor: '#3490DE',
     paddingVertical: 10,
     borderRadius: 10,
     alignSelf: 'center',
@@ -113,13 +113,13 @@ export const SignInCss = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     marginTop: '10%',
-    marginBottom: '10%'
+    marginBottom: '10%',
   },
   Line: {
     flex: 1,
     height: 1,
     backgroundColor: '#AAAAAA',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   Or: {
     fontSize: 12,
@@ -127,8 +127,8 @@ export const SignInCss = StyleSheet.create({
     marginHorizontal: 10,
   },
   Finger: {
-    width: Dimensions.get('screen').width / 100 * 12,
-    height: Dimensions.get('screen').width / 100 * 12,
+    width: (Dimensions.get('screen').width / 100) * 12,
+    height: (Dimensions.get('screen').width / 100) * 12,
     alignSelf: 'center',
   },
   SignUp: {
@@ -137,14 +137,30 @@ export const SignInCss = StyleSheet.create({
     textAlign: 'center',
     position: 'absolute',
     width: '100%',
-    bottom: 10
+    bottom: 10,
   },
-})
+  Send: {
+    width: '80%',
+    backgroundColor: '#3490DE',
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignSelf: 'center',
+    marginTop: (Dimensions.get('screen').height / 100) * 40,
+  },
+  Reset: {
+    width: '80%',
+    backgroundColor: '#3490DE',
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignSelf: 'center',
+    marginTop: (Dimensions.get('screen').height / 100) * 10,
+  },
+});
 
 export const VerifyCss = StyleSheet.create({
   Container: {
     flex: 1,
-    backgroundColor: '#FFF'
+    backgroundColor: '#FFF',
   },
   Back: {
     width: 30,
@@ -155,30 +171,30 @@ export const VerifyCss = StyleSheet.create({
     fontWeight: 'bold',
     color: '#000',
     marginHorizontal: 20,
-    marginBottom: 10
+    marginBottom: 10,
   },
   SubTitle: {
     fontSize: 16,
     color: '#A4A4A4',
-    marginHorizontal: 20
+    marginHorizontal: 20,
   },
   img: {
     alignSelf: 'center',
-    marginVertical: "10%"
+    marginVertical: '10%',
   },
   Input: {
     fontSize: 24,
-    color: "#000",
+    color: '#000',
     textAlign: 'center',
     width: 50,
     height: 50,
     backgroundColor: '#F2F2F2',
     borderRadius: 10,
-    margin: 2
+    margin: 2,
   },
   Pin: {
     flexDirection: 'row',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   Btn: {
     width: '70%',
@@ -186,7 +202,7 @@ export const VerifyCss = StyleSheet.create({
     backgroundColor: '#3490DE',
     borderRadius: 10,
     alignSelf: 'center',
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -194,42 +210,42 @@ export const VerifyCss = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    marginTop: '20%'
+    marginTop: '20%',
   },
   font: {
     fontSize: 16,
     color: 'white',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   resend: {
     fontSize: 14,
     color: '#0006FF',
     marginLeft: '10%',
-    marginTop: '5%'
+    marginTop: '5%',
   },
   time: {
     fontSize: 14,
     color: '#000',
     marginLeft: '10%',
-    marginTop: '5%'
+    marginTop: '5%',
   },
   SignIn: {
     fontSize: 14,
     color: '#0006FF',
     marginLeft: '10%',
-    marginTop: '5%'
+    marginTop: '5%',
   },
-  ModalView:{
+  ModalView: {
     width: '100%',
     alignSelf: 'center',
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
-    backgroundColor: '#F5F5F599'
+    backgroundColor: '#F5F5F599',
   },
   ModalContainer: {
     width: '60%',
-    height: Dimensions.get('screen').width /1.4,
+    height: Dimensions.get('screen').width / 1.4,
     backgroundColor: '#ffffff',
     alignSelf: 'center',
     borderRadius: 20,
@@ -242,26 +258,140 @@ export const VerifyCss = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  TextModal:{
+  TextModal: {
     fontSize: 20,
     color: '#000000',
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 15
+    marginTop: 15,
   },
-  ButtonModal:{
+  ButtonModal: {
     width: '80%',
     height: 45,
     backgroundColor: '#F15249',
     borderRadius: 20,
     alignSelf: 'center',
-    marginTop: 20
+    marginTop: 20,
   },
-  ButtonText:{
-    color: '#ffffff', 
-    textAlign: 'center', 
-    fontSize: 16, 
-    lineHeight: 45, 
-    fontWeight: 'bold'
+  ButtonText: {
+    color: '#ffffff',
+    textAlign: 'center',
+    fontSize: 16,
+    lineHeight: 45,
+    fontWeight: 'bold',
+  },
+});
+
+export const css = StyleSheet.create({
+  container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  mainView: {
+    width: '100%',
+    height: (Dimensions.get('screen').height / 100) * 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+  },
+  HeaderView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: '12%',
+  },
+  PageName: {
+    color: '#000',
+    fontSize: 25,
+    fontWeight: 'bold',
+  },
+});
+
+export const customCss = StyleSheet.create({
+  header: {
+    color: 'black',
+    fontSize: 30,
+    fontWeight: 'bold',
+    lineHeight: (Dimensions.get('screen').height / 100) * 8,
+    marginRight: 20,
+  },
+});
+
+export const homeCss = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: '#fff',
+  },
+  welcome: {
+    color: '#000',
+    fontWeight: 'bold',
+    fontSize: 20,
+    marginLeft: (Dimensions.get('screen').width / 100) * 6,
+  },
+  user: {
+    color: '#3490DE',
+    fontWeight: 'bold',
+    fontSize: 26,
+    marginLeft: (Dimensions.get('screen').width / 100) * 6,
+  },
+  dateContainer: {
+    width: (Dimensions.get('screen').width / 100) * 60,
+    height: (Dimensions.get('screen').width / 100) * 10,
+    borderRadius: 30,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    elevation: 5,
+    backgroundColor: '#fff',
+    alignSelf: 'center',
+    marginTop: 20,
+  },
+  date: {
+    color: '#8D8D8D',
+    fontSize: 18,
+    textAlign: 'center',
+    lineHeight: (Dimensions.get('screen').width / 100) * 10,
+    fontWeight: 'bold',
+  },
+  spendContainer: {
+    width: (Dimensions.get('screen').width / 100) * 95,
+    height: (Dimensions.get('screen').width / 100) * 90,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    elevation: 5,
+    alignSelf: 'center',
+    marginTop: 20,
+    padding: 5,
+  },
+  spend: {
+    color: '#000',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
+  chartContainer: {
+    width: '100%',
+    marginTop: 10,
+  },
+  xAxisLabel: {
+    color: '#000',
+  },
+  totalText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 10
+  },
+  total:{
+    color: '#3490DE',
+    textAlign: 'center',
+    fontSize: 25,
+    fontWeight: 'bold',
+    marginTop: 10
   }
-})
+});
