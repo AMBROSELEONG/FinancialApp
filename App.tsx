@@ -26,9 +26,9 @@ import Bank from './screen/Bank';
 import Ewallet from './screen/Ewallet';
 import Expenses from './screen/Expenses';
 import ResetVerify from './screen/ResetVerify';
+import Language from './screen/Language';
 
 const Stack = createNativeStackNavigator<StackParamList>();
-const Drawer = createDrawerNavigator();
 
 function App(): JSX.Element {
   const [otpValue, setOtpValue] = useState<string[]>(Array(6).fill(''));
@@ -52,7 +52,10 @@ function App(): JSX.Element {
         <NavigationContainer>
           <Stack.Navigator
             initialRouteName="CustomDrawer"
-            screenOptions={{headerShown: false}}>
+            screenOptions={{
+              headerShown: false,
+              gestureDirection: 'horizontal'
+            }}>
             <Stack.Screen name="Welcome" component={Welcome} />
             <Stack.Screen name="SignIn" component={SignIn} />
             <Stack.Screen name="SignUp" component={SignUp} />
@@ -92,6 +95,7 @@ function App(): JSX.Element {
               <Stack.Screen name="Bank" component={Bank} />
               <Stack.Screen name="Ewallet" component={Ewallet} />
               <Stack.Screen name="Expenses" component={Expenses} />
+              <Stack.Screen name="Language" component={Language} />
             </Stack.Group>
           </Stack.Navigator>
         </NavigationContainer>

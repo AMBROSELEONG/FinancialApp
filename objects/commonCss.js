@@ -1,5 +1,6 @@
 import {DefaultTheme, Title} from 'react-native-paper';
 import {Dimensions, StyleSheet} from 'react-native';
+import {white} from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 
 const whiteTheme = {
   ...DefaultTheme,
@@ -385,13 +386,134 @@ export const homeCss = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 10
+    marginTop: 10,
   },
-  total:{
+  total: {
     color: '#3490DE',
     textAlign: 'center',
     fontSize: 25,
     fontWeight: 'bold',
-    marginTop: 10
-  }
+    marginTop: 10,
+  },
+});
+
+export const settingCss = StyleSheet.create({
+  container: {
+    flexDirection: 'column',
+    flex: 1,
+    backgroundColor: '#F9F9F9',
+  },
+  UserContainer: {
+    width: '100%',
+    height: (Dimensions.get('screen').width / 100) * 25,
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+  },
+  EditContainer: {
+    width: '100%',
+    height: (Dimensions.get('screen').width / 100) * 20,
+    backgroundColor: '#fff',
+    marginTop: 30,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  PrefenceContainer: {
+    width: '100%',
+    height: (Dimensions.get('screen').height / 100) * 50,
+    backgroundColor: '#fff',
+    marginTop: 30,
+  },
+  UserImage: {
+    width: (Dimensions.get('screen').width / 100) * 15,
+    height: (Dimensions.get('screen').width / 100) * 15,
+    borderWidth: 2,
+    borderRadius: (Dimensions.get('screen').width / 100) * 10,
+    marginLeft: 15,
+    alignSelf: 'center',
+  },
+  UserInfoContainer: {
+    flex: 1,
+    alignSelf: 'center',
+    paddingHorizontal: 20,
+  },
+  UserName: {
+    color: '#000',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  Email: {
+    color: '#6F6F6F',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  EditIcon: {
+    width: (Dimensions.get('screen').width / 100) * 7,
+    height: (Dimensions.get('screen').width / 100) * 7,
+    borderWidth: 2,
+    marginLeft: 15,
+    alignSelf: 'center',
+  },
+  text: {
+    color: '#000',
+    fontSize: 18,
+  },
+  TextContainer: {
+    alignSelf: 'center',
+    paddingHorizontal: 20,
+  },
+  EditButton: {
+    width: (Dimensions.get('screen').width / 100) * 20,
+    height: (Dimensions.get('screen').width / 100) * 10,
+    backgroundColor: '#7174F8',
+    alignSelf: 'center',
+    marginHorizontal: 20,
+    borderRadius: 10,
+  },
+  ButtonText: {
+    color: '#fff',
+    lineHeight: (Dimensions.get('screen').width / 100) * 10,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  PrefenceText: {
+    color: '#6E6E6E',
+    fontWeight: 'bold',
+    margin: 20,
+    fontSize: 16,
+  },
+  FunctionContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 30,
+  },
+  ClickIcon: {
+    marginRight: 30,
+  },
+});
+
+export const languageCss = StyleSheet.create({
+  container: {
+    flexDirection: 'column',
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  languageContainer: {
+    flexDirection: 'row',
+    width: '90%',
+    borderBottomWidth: 0.5,
+    borderColor: '#808080',
+    alignSelf: 'center',
+    height: (Dimensions.get('screen').width / 100) * 15,
+  },
+  text: {
+    color: '#000',
+    alignSelf: 'center',
+  },
+  tick: {
+    width: 20,
+    height: 20,
+    alignSelf: 'center',
+    marginLeft: 20
+  },
 });
