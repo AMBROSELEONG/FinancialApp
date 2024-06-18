@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import MainContainer from '../components/MainContainer';
 import {useNavigation, DrawerActions} from '@react-navigation/native';
 import {
@@ -16,11 +16,31 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {css, settingCss} from '../objects/commonCss';
 import Language from './Language';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import UserEdit from './UserEdit';
 
 const Setting = () => {
   const navigation = useNavigation();
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
+  const [UserName, setUsername] = useState('');
+  const [Email, setEmail] = useState('');
+  useEffect(() => {
+    const fetchUsername = async () => {
+      try {
+        const storedUsername = await AsyncStorage.getItem('UserName');
+        const storedEmail = await AsyncStorage.getItem('Email');
+        if (storedUsername !== null && storedEmail !== null) {
+          setUsername(storedUsername);
+          setEmail(storedEmail);
+        }
+      } catch (error) {
+        console.error('Failed to load username from AsyncStorage', error);
+      }
+    };
+    fetchUsername();
+  }, []);
 
   return (
     <MainContainer>
@@ -51,8 +71,8 @@ const Setting = () => {
               style={[settingCss.UserImage]}
             />
             <View style={settingCss.UserInfoContainer}>
-              <Text style={settingCss.UserName}>Anonymous</Text>
-              <Text style={settingCss.Email}>Email</Text>
+              <Text style={settingCss.UserName}>{UserName}</Text>
+              <Text style={settingCss.Email}>{Email}</Text>
             </View>
           </View>
           <View style={settingCss.EditContainer}>
@@ -65,13 +85,15 @@ const Setting = () => {
                 <Text style={settingCss.text}>Edit Profile</Text>
               </View>
             </View>
-            <TouchableOpacity style={settingCss.EditButton}>
+            <TouchableOpacity style={settingCss.EditButton} onPress={()=>{navigation.navigate(UserEdit as never)}}>
               <Text style={settingCss.ButtonText}>Edit</Text>
             </TouchableOpacity>
           </View>
           <View style={settingCss.PrefenceContainer}>
             <Text style={settingCss.PrefenceText}>Prefences</Text>
-            <TouchableOpacity style={settingCss.FunctionContainer} onPress={()=> navigation.navigate(Language as never)}>
+            <TouchableOpacity
+              style={settingCss.FunctionContainer}
+              onPress={() => navigation.navigate(Language as never)}>
               <View style={{flexDirection: 'row'}}>
                 <Ionicons
                   name="language"

@@ -37,6 +37,7 @@ const Home = () => {
     };
     fetchUsername();
   }, []);
+  
   useEffect(() => {
     const updateDate = () => {
       const date = new Date();

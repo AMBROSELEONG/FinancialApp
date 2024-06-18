@@ -112,6 +112,7 @@ const SignIn = () => {
             setUsername(userName);
             AsyncStorage.setItem('UserID', userID.toString());
             AsyncStorage.setItem('UserName', userName);
+            AsyncStorage.setItem('Email', Email);
             navigation.dispatch(
               CommonActions.reset({
                 index: 0,

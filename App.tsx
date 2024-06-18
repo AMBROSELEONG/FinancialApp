@@ -27,6 +27,11 @@ import Ewallet from './screen/Ewallet';
 import Expenses from './screen/Expenses';
 import ResetVerify from './screen/ResetVerify';
 import Language from './screen/Language';
+import UserEdit from './screen/UserEdit';
+import WalletIncome from './screen/WalletIncome';
+import WalletSpend from './screen/WalletSpend';
+import EWalletIncome from './screen/EWalletIncome';
+import EWalletSpend from './screen/EWalletSpend';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
@@ -92,10 +97,15 @@ function App(): JSX.Element {
               <Stack.Screen name="Home" component={Home} />
               <Stack.Screen name="Setting" component={Setting} />
               <Stack.Screen name="Wallet" component={Wallet} />
+              <Stack.Screen name="WalletIncome" component={WalletIncome} />
+              <Stack.Screen name="WalletSpend" component={WalletSpend} />
               <Stack.Screen name="Bank" component={Bank} />
               <Stack.Screen name="Ewallet" component={Ewallet} />
+              <Stack.Screen name="EWalletIncome" component={EWalletIncome} />
+              <Stack.Screen name="EWalletSpend" component={EWalletSpend} />
               <Stack.Screen name="Expenses" component={Expenses} />
               <Stack.Screen name="Language" component={Language} />
+              <Stack.Screen name="UserEdit" component={UserEdit} />
             </Stack.Group>
           </Stack.Navigator>
         </NavigationContainer>

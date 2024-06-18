@@ -464,7 +464,7 @@ export const settingCss = StyleSheet.create({
   EditButton: {
     width: (Dimensions.get('screen').width / 100) * 20,
     height: (Dimensions.get('screen').width / 100) * 10,
-    backgroundColor: '#7174F8',
+    backgroundColor: '#3490DE',
     alignSelf: 'center',
     marginHorizontal: 20,
     borderRadius: 10,
@@ -514,6 +514,199 @@ export const languageCss = StyleSheet.create({
     width: 20,
     height: 20,
     alignSelf: 'center',
-    marginLeft: 20
+    marginLeft: 20,
   },
+});
+
+export const userEditCss = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: '#fff',
+    position: 'relative',
+  },
+  header: {
+    backgroundColor: '#3490DE',
+    height: (Dimensions.get('screen').height / 100) * 13,
+  },
+  imageContainer: {
+    width: (Dimensions.get('screen').width / 100) * 28,
+    height: (Dimensions.get('screen').width / 100) * 28,
+    backgroundColor: '#ffffff',
+    borderRadius: Dimensions.get('screen').width * 100,
+    position: 'absolute',
+    alignSelf: 'center',
+    top: (Dimensions.get('screen').height / 100) * 6,
+  },
+  image: {
+    width: (Dimensions.get('screen').width / 100) * 24,
+    height: (Dimensions.get('screen').width / 100) * 24,
+    borderWidth: 1,
+    borderRadius: Dimensions.get('screen').width * 100,
+    alignSelf: 'center',
+    marginVertical: (Dimensions.get('screen').width / 100) * 2,
+  },
+  Title: {
+    color: '#000',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: (Dimensions.get('screen').height / 100) * 5,
+    marginLeft: (Dimensions.get('screen').width / 100) * 5,
+  },
+  Input: {
+    width: '90%',
+    alignSelf: 'center',
+    marginTop: (Dimensions.get('screen').height / 100) * 1,
+  },
+  Button: {
+    width: (Dimensions.get('screen').width / 100) * 80,
+    height: (Dimensions.get('screen').width / 100) * 15,
+    alignSelf: 'center',
+    backgroundColor: '#3490DE',
+    borderRadius: 20,
+    position: 'absolute',
+    bottom: '-80%',
+  },
+  ButtonText: {
+    color: '#fff',
+    alignSelf: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+    lineHeight: (Dimensions.get('screen').width / 100) * 15,
+  },
+});
+
+export const walletCss = StyleSheet.create({
+  container: {
+    width: '100%',
+    flex: 1,
+    flexDirection: 'column',
+  },
+  header: {
+    backgroundColor: '#3490DE',
+    flex: 1,
+    width: '100%',
+  },
+  body: {
+    flex: 3,
+    backgroundColor: '#fff',
+    paddingHorizontal: 10,
+    paddingTop: (Dimensions.get('screen').height / 100) * 6,
+    zIndex: -1,
+  },
+  balanceText: {
+    color: '#E5E5E5',
+    fontSize: 20,
+    marginHorizontal: '6%',
+  },
+  balance: {
+    color: '#fff',
+    fontSize: 36,
+    marginHorizontal: '6%',
+    fontWeight: 'bold',
+  },
+  positionContainer: {
+    width: '80%',
+    height: (Dimensions.get('screen').height / 100) * 10,
+    backgroundColor: '#fff',
+    position: 'absolute',
+    alignSelf: 'center',
+    top: '75%',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    elevation: 5,
+    borderRadius: 5,
+    flex: 1,
+    flexDirection: 'row',
+  },
+  button: {
+    flex: 1,
+    paddingVertical: (Dimensions.get('screen').width / 100) * 4,
+  },
+  icon: {
+    alignSelf: 'center',
+    width: (Dimensions.get('screen').width / 100) * 8,
+    height: (Dimensions.get('screen').width / 100) * 8,
+  },
+  text: {
+    color: '#3490DE',
+    textAlign: 'center',
+    fontSize: 18,
+  },
+  TabBackground: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  TableHeader: {
+    textAlign: 'center',
+  },
+  cell: {
+    justifyContent: 'center',
+  },
+  evenRowIncome: {
+    backgroundColor: '#3490DE50',
+  },
+  evenRowSpend: {
+    backgroundColor: '#DE343450',
+  },
+  oddRow: {
+    backgroundColor: '#ffffff',
+  },
+});
+
+export const walletIncomeCss = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: '#fff',
+  },
+  title: {
+    color: '#000',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginLeft: '7%',
+  },
+  subtitle: {
+    color: '#999999',
+    marginLeft: '7%',
+    fontSize: 16,
+  },
+  balance: {
+    color: '#000',
+    marginLeft: '7%',
+    fontSize: 32,
+    fontWeight: 'bold',
+  },
+  Input: {
+    width: '90%',
+    alignSelf: 'center',
+    backgroundColor: '#EEEEEE',
+  },
+  InputError: {
+    width: '80%',
+    alignSelf: 'center',
+    marginBottom: -20,
+  },
+  label: {
+    color: '#3490DE',
+    marginLeft: '7%',
+    marginTop: (Dimensions.get('screen').height / 100) * 3,
+    marginBottom: 5
+  },
+  Button:{
+    width: '80%',
+    height: Dimensions.get('screen').width / 100 * 13,
+    backgroundColor: '#3490DE',
+    alignSelf: 'center',
+    borderRadius: 10,
+    position: 'absolute',
+    bottom: 30
+  },
+  ButtonText:{
+    color: '#fff',
+    fontSize: 20,
+    textAlign: 'center',
+    lineHeight: Dimensions.get('screen').width / 100 * 13
+  }
 });

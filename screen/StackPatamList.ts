@@ -13,6 +13,11 @@ export type StackParamList = {
     Ewallet: undefined;
     Expenses: undefined;
     Language: undefined;
+    UserEdit: undefined;
+    WalletIncome: undefined;
+    WalletSpend: undefined;
+    EWalletIncome: undefined;
+    EWalletSpend: undefined;
     Verify: { length: number; value: string[]; disabled: boolean; onChange: (value: string[]) => void };
     ResetVerify: { length: number; value: string[]; disabled: boolean; onChange: (value: string[]) => void };
 };
