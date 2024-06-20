@@ -1,5 +1,5 @@
 import MainContainer from '../components/MainContainer';
-import {useNavigation, DrawerActions} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {
   KeyboardAvoidingView,
   StatusBar,
@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Platform,
   Image,
+  Alert,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {css, userEditCss} from '../objects/commonCss';
@@ -16,15 +17,24 @@ import {useEffect, useState} from 'react';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import UserEditVerify from './UserEditVerify';
+import CustomDrawer from './CustomDrawer';
 
 const UserEdit = () => {
   const navigation = useNavigation();
   const [Username, setUsername] = useState('');
+  const [OriUsername, setOriUsername] = useState('');
   const [userId, setUserId] = useState('');
   const [Email, setEmail] = useState('');
+  const [OriEmail, setOriEmail] = useState('');
   const [password, setPassword] = useState('');
   const [comfirmPassword, setConfirmPassword] = useState('');
   const [hidePass, setHidePass] = useState(true);
+  const [UserNameDuplication, setUserNameDuplication] = useState(false);
+  const [EmailDuplication, setEmailDuplication] = useState(false);
+  const [usernameError, setUsernameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   useEffect(() => {
     const fetchUsername = async () => {
@@ -54,9 +64,10 @@ const UserEdit = () => {
 
           if (json.success) {
             setEmail(json.userData.email);
+            setOriEmail(json.userData.email);
             setPassword(json.userData.password);
-            setConfirmPassword(json.userData.password); // Assuming you want to set confirmPassword same as password initially
             setUsername(json.userData.userName);
+            setOriUsername(json.userData.userName);
           } else {
             console.log('Failed to fetch user data');
           }
@@ -68,6 +79,145 @@ const UserEdit = () => {
       fetchData();
     }
   }, [userId]);
+
+  const checkEmailFormat = (Email: any) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(Email);
+  };
+
+  const checkPasswordFormat = (Password: any) => {
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
+    return passwordRegex.test(Password);
+  };
+
+  const checkUserNameDuplication = (Username: any) => {
+    try {
+      RNFetchBlob.config({trusty: true})
+        .fetch(
+          'POST',
+          UrlAccess.Url + 'User/CheckUserName',
+          {'Content-Type': 'application/json'},
+          JSON.stringify({
+            userName: Username,
+          }),
+        )
+        .then(response => response.json())
+        .then(json => {
+          if (json && json.success) {
+            setUserNameDuplication(true);
+          } else {
+            setUserNameDuplication(false);
+          }
+        });
+    } catch (error) {
+      return error;
+    }
+  };
+
+  const checkEmailDuplication = (Email: any) => {
+    try {
+      RNFetchBlob.config({trusty: true})
+        .fetch(
+          'POST',
+          UrlAccess.Url + 'User/CheckEmail',
+          {'Content-Type': 'application/json'},
+          JSON.stringify({
+            email: Email,
+          }),
+        )
+        .then(response => response.json())
+        .then(json => {
+          if (json && json.success) {
+            setEmailDuplication(true);
+          } else {
+            setEmailDuplication(false);
+          }
+        });
+    } catch (error) {
+      return error;
+    }
+  };
+
+  useEffect(() => {
+    if (Username.trim() !== '' && Username !== OriUsername) {
+      checkUserNameDuplication(Username);
+    }
+    if (Email.trim() !== '' && Email !== OriEmail) {
+      checkEmailDuplication(Email);
+    }
+  }, [Username, Email]);
+
+  const Verify = async () => {
+    let valid = true;
+
+    if (Username.trim() === '') {
+      setUsernameError('Username cannot be empty');
+      valid = false;
+    } else {
+      if (UserNameDuplication === false && Username !== OriUsername) {
+        setUsernameError('Username is already taken');
+        valid = false;
+      } else {
+        setUsernameError('');
+      }
+    }
+
+    if (Email.trim() === '') {
+      setEmailError('Email cannot be empty');
+      valid = false;
+    } else if (!checkEmailFormat(Email)) {
+      setEmailError('Invalid email format');
+      valid = false;
+    } else {
+      if (Email !== OriEmail) {
+        if (EmailDuplication === false) {
+          setEmailError('Email is already taken');
+          valid = false;
+        } else {
+          setEmailError('');
+        }
+      } else {
+        setEmailError('');
+      }
+    }
+
+    if (password.trim() === '' && comfirmPassword.trim() === '') {
+      setPasswordError('Password cannot be empty');
+      valid = false;
+    } else if (!checkPasswordFormat(password)) {
+      setPasswordError(
+        'Password must contain upper and lower case letters, numbers, and symbols',
+      );
+      valid = false;
+    } else if (password !== comfirmPassword) {
+      setPasswordError('No match with confirm password');
+      valid = false;
+    } else {
+      setPasswordError('');
+    }
+
+    if (valid) {
+      AsyncStorage.setItem('Email', Email);
+      AsyncStorage.setItem('UserName', Username);
+      AsyncStorage.setItem('Password', password);
+      console.log(Username, Email, password, comfirmPassword);
+      try {
+        RNFetchBlob.config({trusty: true}).fetch(
+          'POST',
+          UrlAccess.Url + 'OTP/SendOTP',
+          {'Content-Type': 'application/json'},
+          JSON.stringify({
+            email: Email,
+          }),
+        );
+        Alert.prompt('Send OTP Successful');
+        navigation.navigate(UserEditVerify as never);
+      } catch (error) {
+        Alert.prompt('Send OTP Unsuccessful');
+      }
+    }
+  };
 
   return (
     <MainContainer>
@@ -111,6 +261,12 @@ const UserEdit = () => {
               value={Username}
               onChangeText={text => setUsername(text)}
             />
+            {usernameError !== '' && (
+              <HelperText type="error" style={userEditCss.InputError}>
+                {usernameError}
+              </HelperText>
+            )}
+
             <TextInput
               label="Email"
               mode="outlined"
@@ -120,6 +276,12 @@ const UserEdit = () => {
               value={Email}
               onChangeText={text => setEmail(text)}
             />
+            {emailError !== '' && (
+              <HelperText type="error" style={userEditCss.InputError}>
+                {emailError}
+              </HelperText>
+            )}
+
             <TextInput
               label="Password"
               mode="outlined"
@@ -137,6 +299,12 @@ const UserEdit = () => {
                 />
               }
             />
+            {passwordError !== '' && (
+              <HelperText type="error" style={userEditCss.InputError}>
+                {passwordError}
+              </HelperText>
+            )}
+
             <TextInput
               label="Confirm Password"
               mode="outlined"
@@ -153,11 +321,10 @@ const UserEdit = () => {
                 />
               }
             />
-
-            <TouchableOpacity style={userEditCss.Button}>
-              <Text style={userEditCss.ButtonText}>Save Change</Text>
-            </TouchableOpacity>
           </View>
+          <TouchableOpacity style={userEditCss.Button} onPress={() => Verify()}>
+            <Text style={userEditCss.ButtonText}>Save Change</Text>
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </MainContainer>

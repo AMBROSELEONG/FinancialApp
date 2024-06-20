@@ -564,8 +564,7 @@ export const userEditCss = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: '#3490DE',
     borderRadius: 20,
-    position: 'absolute',
-    bottom: '-80%',
+    marginTop: (Dimensions.get('screen').height / 100) * 20,
   },
   ButtonText: {
     color: '#fff',
@@ -573,6 +572,12 @@ export const userEditCss = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     lineHeight: (Dimensions.get('screen').width / 100) * 15,
+  },
+  InputError: {
+    width: '80%',
+    alignSelf: 'left',
+    marginLeft: 10,
+    marginBottom: -10,
   },
 });
 
@@ -724,7 +729,7 @@ export const bankCss = StyleSheet.create({
     position: 'absolute',
     bottom: 15,
     right: 15,
-    zIndex: 1
+    zIndex: 1,
   },
   addIcon: {
     alignSelf: 'center',
@@ -807,7 +812,7 @@ export const bankCss = StyleSheet.create({
     elevation: 10,
     marginVertical: 10,
     flexDirection: 'row',
-    paddingHorizontal: 30
+    paddingHorizontal: 30,
   },
   bank: {
     color: '#000',

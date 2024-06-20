@@ -1,6 +1,11 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import MainContainer from '../components/MainContainer';
-import {useNavigation, DrawerActions} from '@react-navigation/native';
+import {
+  useNavigation,
+  DrawerActions,
+  useFocusEffect,
+  useIsFocused,
+} from '@react-navigation/native';
 import {
   KeyboardAvoidingView,
   StatusBar,
@@ -15,21 +20,24 @@ import {css, homeCss} from '../objects/commonCss';
 import {ScrollView} from 'react-native-gesture-handler';
 import {LineChart} from 'react-native-gifted-charts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import RNFetchBlob from 'rn-fetch-blob';
+import {UrlAccess} from '../objects/url';
 
 const Home = () => {
   const navigation = useNavigation();
   const [currentDate, setCurrentDate] = useState('');
   const [UserName, setUsername] = useState('');
-  const [UserId, setUserId] = useState('');
+  const [userId, setUserId] = useState('');
+  const [loading, setLoading] = useState(false);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
+    setLoading(true);
     const fetchUsername = async () => {
       try {
-        const storedUsername = await AsyncStorage.getItem('UserName');
         const storedUserID = await AsyncStorage.getItem('UserID');
-        if (storedUsername !== null && storedUserID !== null) {
-          setUsername(storedUsername);
-          setUserId(storedUserID)
+        if (storedUserID !== null) {
+          setUserId(storedUserID);
         }
       } catch (error) {
         console.error('Failed to load username from AsyncStorage', error);
@@ -37,7 +45,64 @@ const Home = () => {
     };
     fetchUsername();
   }, []);
-  
+
+  useEffect(() => {
+    setLoading(true);
+    if (userId) {
+      const fetchData = async () => {
+        try {
+          const response = await RNFetchBlob.config({trusty: true}).fetch(
+            'GET',
+            `${UrlAccess.Url}User/GetUserData?userId=${userId}`,
+            {'Content-Type': 'application/json'},
+          );
+
+          const json = await response.json();
+
+          if (json.success) {
+            setUsername(json.userData.userName);
+            setLoading(false);
+          } else {
+            console.log('Failed to fetch user data');
+          }
+        } catch (error) {
+          console.error('Error fetching user data', error);
+        }
+      };
+      fetchData();
+    }
+  }, [userId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (isFocused && userId) {
+        setLoading(true);
+        const fetchData = async () => {
+          try {
+            const response = await RNFetchBlob.config({trusty: true}).fetch(
+              'GET',
+              `${UrlAccess.Url}User/GetUserData?userId=${userId}`,
+              {'Content-Type': 'application/json'},
+            );
+
+            const json = await response.json();
+
+            if (json.success) {
+              setUsername(json.userData.userName);
+            } else {
+              console.log('Failed to fetch user data');
+            }
+          } catch (error) {
+            console.error('Error fetching user data', error);
+          } finally {
+            setLoading(false);
+          }
+        };
+        fetchData();
+      }
+    }, [isFocused, userId]),
+  );
+
   useEffect(() => {
     const updateDate = () => {
       const date = new Date();

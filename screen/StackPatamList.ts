@@ -23,4 +23,5 @@ export type StackParamList = {
     BankSpend: undefined;
     Verify: { length: number; value: string[]; disabled: boolean; onChange: (value: string[]) => void };
     ResetVerify: { length: number; value: string[]; disabled: boolean; onChange: (value: string[]) => void };
+    UserEditVerify: { length: number; value: string[]; disabled: boolean; onChange: (value: string[]) => void };
 };

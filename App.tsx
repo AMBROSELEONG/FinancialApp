@@ -35,6 +35,7 @@ import EWalletSpend from './screen/EWalletSpend';
 import BankDetail from './screen/BankDetail';
 import BankIncome from './screen/BankIncome';
 import BankSpend from './screen/BankSpend';
+import UserEditVerify from './screen/UserEditVerify';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
@@ -59,10 +60,10 @@ function App(): JSX.Element {
       <SafeAreaView style={{flex: 1}}>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="CustomDrawer"
+            initialRouteName="Welcome"
             screenOptions={{
               headerShown: false,
-              gestureDirection: 'horizontal'
+              gestureDirection: 'horizontal',
             }}>
             <Stack.Screen name="Welcome" component={Welcome} />
             <Stack.Screen name="SignIn" component={SignIn} />
@@ -112,6 +113,17 @@ function App(): JSX.Element {
               <Stack.Screen name="Expenses" component={Expenses} />
               <Stack.Screen name="Language" component={Language} />
               <Stack.Screen name="UserEdit" component={UserEdit} />
+              <Stack.Screen name="UserEditVerify">
+                {props => (
+                  <UserEditVerify
+                    {...props}
+                    length={6}
+                    value={otpValue}
+                    disabled={false}
+                    onChange={setOtpValue}
+                  />
+                )}
+              </Stack.Screen>
             </Stack.Group>
           </Stack.Navigator>
         </NavigationContainer>

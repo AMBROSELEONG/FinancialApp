@@ -92,6 +92,7 @@ const SignUp = () => {
   const [hidePass, setHidePass] = useState(true);
   const [UserNameDuplication, setUserNameDuplication] = useState(false);
   const [EmailDuplication, setEmailDuplication] = useState(false);
+
   const checkEmailFormat = (Email: any) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(Email);
@@ -150,6 +151,7 @@ const SignUp = () => {
       return error;
     }
   };
+
   useEffect(() => {
     if (Username.trim() !== '') {
       checkUserNameDuplication(Username);
@@ -199,6 +201,7 @@ const SignUp = () => {
       valid = false;
     } else if (Password !== ConfirmPassword) {
       setPasswordError('No match with confirm password');
+      valid = false;
     } else {
       setPasswordError('');
     }
