@@ -1,5 +1,5 @@
 import MainContainer from '../components/MainContainer';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {
   KeyboardAvoidingView,
   StatusBar,
@@ -9,16 +9,18 @@ import {
   Platform,
   Image,
   Alert,
+  ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {css, userEditCss} from '../objects/commonCss';
 import {TextInput, HelperText} from 'react-native-paper';
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserEditVerify from './UserEditVerify';
-import CustomDrawer from './CustomDrawer';
+import i18n from '../language/language';
 
 const UserEdit = () => {
   const navigation = useNavigation();
@@ -35,8 +37,17 @@ const UserEdit = () => {
   const [usernameError, setUsernameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [locale, setLocale] = React.useState(i18n.locale);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
+  );
 
   useEffect(() => {
+    setLoading(true);
     const fetchUsername = async () => {
       try {
         const storedUserID = await AsyncStorage.getItem('UserID');
@@ -75,7 +86,7 @@ const UserEdit = () => {
           console.error('Error fetching user data', error);
         }
       };
-
+      setLoading(false);
       fetchData();
     }
   }, [userId]);
@@ -152,11 +163,11 @@ const UserEdit = () => {
     let valid = true;
 
     if (Username.trim() === '') {
-      setUsernameError('Username cannot be empty');
+      setUsernameError(i18n.t('EditPage.Username-Empty'));
       valid = false;
     } else {
       if (UserNameDuplication === false && Username !== OriUsername) {
-        setUsernameError('Username is already taken');
+        setUsernameError(i18n.t('EditPage.Username-Duplication'));
         valid = false;
       } else {
         setUsernameError('');
@@ -164,15 +175,15 @@ const UserEdit = () => {
     }
 
     if (Email.trim() === '') {
-      setEmailError('Email cannot be empty');
+      setEmailError(i18n.t('EditPage.Email-Empty'));
       valid = false;
     } else if (!checkEmailFormat(Email)) {
-      setEmailError('Invalid email format');
+      setEmailError(i18n.t('EditPage.Email-Format'));
       valid = false;
     } else {
       if (Email !== OriEmail) {
         if (EmailDuplication === false) {
-          setEmailError('Email is already taken');
+          setEmailError(i18n.t('EditPage.Email-Duplication'));
           valid = false;
         } else {
           setEmailError('');
@@ -183,15 +194,13 @@ const UserEdit = () => {
     }
 
     if (password.trim() === '' && comfirmPassword.trim() === '') {
-      setPasswordError('Password cannot be empty');
+      setPasswordError(i18n.t('EditPage.Password-Empty'));
       valid = false;
     } else if (!checkPasswordFormat(password)) {
-      setPasswordError(
-        'Password must contain upper and lower case letters, numbers, and symbols',
-      );
+      setPasswordError(i18n.t('EditPage.Password-Format'));
       valid = false;
     } else if (password !== comfirmPassword) {
-      setPasswordError('No match with confirm password');
+      setPasswordError(i18n.t('EditPage.Password-Match'));
       valid = false;
     } else {
       setPasswordError('');
@@ -211,10 +220,9 @@ const UserEdit = () => {
             email: Email,
           }),
         );
-        Alert.prompt('Send OTP Successful');
         navigation.navigate(UserEditVerify as never);
       } catch (error) {
-        Alert.prompt('Send OTP Unsuccessful');
+        Alert.alert('Send OTP Unsuccessful');
       }
     }
   };
@@ -229,103 +237,120 @@ const UserEdit = () => {
           backgroundColor="#3490DE"
           barStyle={'dark-content'}
         />
-        <View style={[css.mainView, {backgroundColor: '#3490DE'}]}>
-          <TouchableOpacity
-            style={{paddingLeft: 20}}
-            onPress={() => {
-              navigation.goBack();
+        {loading ? (
+          <View
+            style={{
+              flex: 1,
+              marginVertical: (Dimensions.get('screen').height / 100) * 50,
             }}>
-            <Ionicons name="arrow-back" size={30} color={'#fff'} />
-          </TouchableOpacity>
-          <View style={css.HeaderView}>
-            <Text style={[css.PageName, {color: '#fff'}]}>Edit Profile</Text>
+            <ActivityIndicator size={80} color="#000000" />
           </View>
-        </View>
-        <View style={userEditCss.container}>
-          <View style={userEditCss.header}>
-            <View style={userEditCss.imageContainer}>
-              <Image
-                source={require('../assets/User.png')}
-                style={userEditCss.image}
-              />
+        ) : (
+          <View style={{flex: 1}}>
+            <View style={[css.mainView, {backgroundColor: '#3490DE'}]}>
+              <TouchableOpacity
+                style={{paddingLeft: 20}}
+                onPress={() => {
+                  navigation.goBack();
+                }}>
+                <Ionicons name="arrow-back" size={30} color={'#fff'} />
+              </TouchableOpacity>
+              <View style={css.HeaderView}>
+                <Text style={[css.PageName, {color: '#fff'}]}>
+                  {i18n.t('EditPage.Edit-Profile')}
+                </Text>
+              </View>
+            </View>
+
+            <View style={userEditCss.container}>
+              <View style={userEditCss.header}>
+                <View style={userEditCss.imageContainer}>
+                  <Image
+                    source={require('../assets/User.png')}
+                    style={userEditCss.image}
+                  />
+                </View>
+              </View>
+              <View>
+                <Text style={userEditCss.Title}>{i18n.t('EditPage.User-Info')}</Text>
+                <TextInput
+                  label={i18n.t('EditPage.Username')}
+                  mode="outlined"
+                  style={userEditCss.Input}
+                  placeholder={i18n.t('EditPage.Username-Placeholder')}
+                  //   theme={theme}
+                  value={Username}
+                  onChangeText={text => setUsername(text)}
+                />
+                {usernameError !== '' && (
+                  <HelperText type="error" style={userEditCss.InputError}>
+                    {usernameError}
+                  </HelperText>
+                )}
+
+                <TextInput
+                  label={i18n.t('EditPage.Email')}
+                  mode="outlined"
+                  style={userEditCss.Input}
+                  placeholder={i18n.t('EditPage.Email-Placeholder')}
+                  //   theme={theme}
+                  value={Email}
+                  onChangeText={text => setEmail(text)}
+                />
+                {emailError !== '' && (
+                  <HelperText type="error" style={userEditCss.InputError}>
+                    {emailError}
+                  </HelperText>
+                )}
+
+                <TextInput
+                  label={i18n.t('EditPage.Password')}
+                  mode="outlined"
+                  style={userEditCss.Input}
+                  placeholder={i18n.t('EditPage.Password-Placeholder')}
+                  //   theme={theme}
+                  value={password}
+                  onChangeText={text => setPassword(text)}
+                  autoCapitalize="none"
+                  secureTextEntry={hidePass ? true : false}
+                  right={
+                    <TextInput.Icon
+                      icon={hidePass ? 'eye-off' : 'eye'}
+                      onPress={() => setHidePass(!hidePass)}
+                    />
+                  }
+                />
+                {passwordError !== '' && (
+                  <HelperText type="error" style={userEditCss.InputError}>
+                    {passwordError}
+                  </HelperText>
+                )}
+
+                <TextInput
+                  label={i18n.t('EditPage.Confirm-Password')}
+                  mode="outlined"
+                  style={userEditCss.Input}
+                  placeholder={i18n.t('EditPage.Confirm-Password-Placeholder')}
+                  //   theme={theme}
+                  onChangeText={text => setConfirmPassword(text)}
+                  autoCapitalize="none"
+                  secureTextEntry={hidePass ? true : false}
+                  right={
+                    <TextInput.Icon
+                      icon={hidePass ? 'eye-off' : 'eye'}
+                      onPress={() => setHidePass(!hidePass)}
+                    />
+                  }
+                />
+              </View>
+              <TouchableOpacity
+                style={userEditCss.Button}
+                onPress={() => Verify()}>
+                <Text style={userEditCss.ButtonText}>{i18n.t('EditPage.Save-Change')}</Text>
+              </TouchableOpacity>
             </View>
           </View>
-          <View>
-            <Text style={userEditCss.Title}>User Information</Text>
-            <TextInput
-              label="Username"
-              mode="outlined"
-              style={userEditCss.Input}
-              placeholder="Please Enter Your User Name"
-              //   theme={theme}
-              value={Username}
-              onChangeText={text => setUsername(text)}
-            />
-            {usernameError !== '' && (
-              <HelperText type="error" style={userEditCss.InputError}>
-                {usernameError}
-              </HelperText>
-            )}
-
-            <TextInput
-              label="Email"
-              mode="outlined"
-              style={userEditCss.Input}
-              placeholder="Please Enter Your Email"
-              //   theme={theme}
-              value={Email}
-              onChangeText={text => setEmail(text)}
-            />
-            {emailError !== '' && (
-              <HelperText type="error" style={userEditCss.InputError}>
-                {emailError}
-              </HelperText>
-            )}
-
-            <TextInput
-              label="Password"
-              mode="outlined"
-              style={userEditCss.Input}
-              placeholder="Please Enter Your Password"
-              //   theme={theme}
-              value={password}
-              onChangeText={text => setPassword(text)}
-              autoCapitalize="none"
-              secureTextEntry={hidePass ? true : false}
-              right={
-                <TextInput.Icon
-                  icon={hidePass ? 'eye-off' : 'eye'}
-                  onPress={() => setHidePass(!hidePass)}
-                />
-              }
-            />
-            {passwordError !== '' && (
-              <HelperText type="error" style={userEditCss.InputError}>
-                {passwordError}
-              </HelperText>
-            )}
-
-            <TextInput
-              label="Confirm Password"
-              mode="outlined"
-              style={userEditCss.Input}
-              placeholder="Please Enter Your Confirm Password"
-              //   theme={theme}
-              onChangeText={text => setConfirmPassword(text)}
-              autoCapitalize="none"
-              secureTextEntry={hidePass ? true : false}
-              right={
-                <TextInput.Icon
-                  icon={hidePass ? 'eye-off' : 'eye'}
-                  onPress={() => setHidePass(!hidePass)}
-                />
-              }
-            />
-          </View>
-          <TouchableOpacity style={userEditCss.Button} onPress={() => Verify()}>
-            <Text style={userEditCss.ButtonText}>Save Change</Text>
-          </TouchableOpacity>
-        </View>
+        )}
       </KeyboardAvoidingView>
     </MainContainer>
   );

@@ -1,0 +1,57 @@
+{
+  "LanguagePage": {
+    "Change-Language": "Change Language",
+    "Language-Update": "Language Update",
+    "Update": "Language Update to English"
+  },
+  "SettingPage": {
+    "Setting": "Setting",
+    "Edit-Profile": "Edit Profile",
+    "Edit": "Edit",
+    "Preferences": "Prefences",
+    "Language": "Language",
+    "Dark-Mode": "Dark Mode",
+    "Failed-Load-Username": "Failed to load username",
+    "Failed-Fetch-Data": "Failed to Fetch User Data",
+    "Error-Fetch": "Error fetching user data"
+  },
+  "EditPage": {
+    "Username-Empty": "Username cannot be emtpy",
+    "Username-Duplication": "Username is already taken",
+    "Email-Empty": "Email cannot be empty",
+    "Email-Format": "Invalid email format",
+    "Emial-Duplication": "Email is already taken",
+    "Password-Empty": "Password cannot be empty",
+    "Password-Format": "Password must contain upper and lower case letters, numbers, and symbols",
+    "Password-Match": "No match with confirm password",
+    "Edit-Profile": "Edit Profile",
+    "User-Info": "User Information",
+    "Username": "Username",
+    "Username-Placeholder": "Please Enter Your User Name",
+    "Email": "Email",
+    "Email-Placeholder": "Please Enter Your Email",
+    "Password": "Password",
+    "Password-Placeholder": "Please Enter Your Password",
+    "Confirm-Password": "Confirm Password",
+    "Confirm-Password-Placeholder": "Please Enter Password Again",
+    "Save-Change": "Save Change"
+  },
+  "UserEditVerify":{
+    "Not-Correct": "Your Verify Code is not correct",
+    "Verify-Unsuccessful": "Verify Unsuccessful",
+    "Invalid-Input": "Invalid Input",
+    "Failed-Load-Email": "Failed to load Email",
+    "Data-Insert-Successful": "Data insert successful",
+    "Data-Insert-Unsuccessful": "Data insert unsuccessful",
+    "Send-OTP-Successful": "Send OTP Successful",
+    "Send-OTP-Unsuccessful": "Send OTP Unsuccessful",
+    "Verification": "Verification",
+    "Send-To": "Code sent to",
+    "Please-Enter": "Please Enter the Verification Code",
+    "Seconds-Remaining": "seconds remaining",
+    "Resend": "Resend code",
+    "Verify": "VERIFY",
+    "Edit-Data-Successful": "Edit Data Successful",
+    "Save-Data": "Save Data"
+  }
+}

@@ -19,6 +19,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
 import UserEdit from './UserEdit';
+import Toast from 'react-native-toast-message';
+import i18n from '../language/language';
+import {useFocusEffect} from '@react-navigation/native';
 
 type OTPInputProps = {
   length: number;
@@ -39,6 +42,21 @@ const UserEditVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
   onChange,
   navigation,
 }) => {
+  const showToast = (message: any) => {
+    Toast.show({
+      type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
+
+  const [locale, setLocale] = React.useState(i18n.locale);
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
+  );
+
   const inputRefs = useRef<(TextInput | null)[]>([]);
 
   const onChangeValue = (text: string, index: number) => {
@@ -101,16 +119,14 @@ const UserEditVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
               AsyncStorage.removeItem('UserName');
               AsyncStorage.removeItem('Password');
             } else {
-              Alert.alert('Your Verify Code is not correct');
+              showToast(i18n.t('UserEditVerify.Not-Correct'));
             }
           });
       } catch (error) {
-        Alert.alert('Verify Unsuccessful');
+        showToast(i18n.t('UserEditVerify.Verify-Unsuccessful'));
       }
     } else {
-      Alert.prompt(
-        'Invalid input: OTP should contain only numeric characters without spaces or symbols.',
-      );
+      showToast(i18n.t('UserEditVerify.Invalid-Input'));
     }
   };
 
@@ -138,7 +154,7 @@ const UserEditVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
           setUserId(parseInt(storedUserID));
         }
       } catch (error) {
-        console.error('Failed to load email from AsyncStorage', error);
+        showToast(i18n.t('UserEditVerify.Failed-Load-Email'));
       }
     };
 
@@ -163,9 +179,9 @@ const UserEditVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
         .then(json => {
           if (json && json.success) {
             navigation.navigate(UserEdit as never);
-            console.log('Data insert successful');
+            showToast(i18n.t('UserEditVerify.Data-Insert-Successful'));
           } else {
-            Alert.alert('Data insert error');
+            showToast(i18n.t('UserEditVerify.Data-Insert-Unsuccessful'));
           }
         });
     } catch (error) {}
@@ -181,10 +197,10 @@ const UserEditVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
           email: Email,
         }),
       );
-      Alert.prompt('Send OTP Successful');
+      showToast(i18n.t('UserEditVerify.Send-OTP-Successful'));
       navigation.navigate(UserEditVerify as never);
     } catch (error) {
-      Alert.prompt('Send OTP Unsuccessful');
+      showToast(i18n.t('UserEditVerify.Send-OTP-Unsuccessful'));
     }
   };
 
@@ -223,10 +239,14 @@ const UserEditVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
           />
         </TouchableOpacity>
 
-        <Text style={VerifyCss.Title}>Verification</Text>
-        <Text style={VerifyCss.SubTitle}>Code sent to {Email} </Text>
+        <Text style={VerifyCss.Title}>
+          {i18n.t('UserEditVerify.Verification')}
+        </Text>
         <Text style={VerifyCss.SubTitle}>
-          Please Enter the Verification Code{' '}
+          {i18n.t('UserEditVerify.Send-To')} {Email}{' '}
+        </Text>
+        <Text style={VerifyCss.SubTitle}>
+          {i18n.t('UserEditVerify.Please-Enter')}
         </Text>
 
         <Image source={require('../assets/Verify.png')} style={VerifyCss.img} />
@@ -249,16 +269,16 @@ const UserEditVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
         </View>
         {countdown > 0 && (
           <Text style={[VerifyCss.resend, {color: '#000'}]}>
-            {countdown} seconds remaining
+            {countdown} {i18n.t('UserEditVerify.Seconds-Remaining')}
           </Text>
         )}
         {showResend && (
           <Text style={VerifyCss.resend} onPress={handleResend}>
-            Resend code
+            {i18n.t('UserEditVerify.Resend')}
           </Text>
         )}
         <TouchableOpacity style={VerifyCss.Btn} onPress={handleVerify}>
-          <Text style={VerifyCss.font}>VERIFY</Text>
+          <Text style={VerifyCss.font}>{i18n.t('UserEditVerify.Verify')}</Text>
         </TouchableOpacity>
       </View>
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
@@ -268,13 +288,13 @@ const UserEditVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
               source={require('../assets/successful.png')}
               style={{alignSelf: 'center', marginTop: 30}}
             />
-            <Text style={VerifyCss.TextModal}>Edit Data Successful</Text>
+            <Text style={VerifyCss.TextModal}>{i18n.t('UserEditVerify.Edit-Data-Successful')}</Text>
             <TouchableOpacity
               style={VerifyCss.ButtonModal}
               onPress={() => {
                 EditData();
               }}>
-              <Text style={VerifyCss.ButtonText}>Save Data</Text>
+              <Text style={VerifyCss.ButtonText}>{i18n.t('UserEditVerify.Save-Data')}</Text>
             </TouchableOpacity>
           </View>
         </View>

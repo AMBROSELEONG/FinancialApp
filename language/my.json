@@ -1,0 +1,57 @@
+{
+  "LanguagePage": {
+    "Change-Language": "Tukar Bahasa",
+    "Language-Update": "Kemas Kini Bahasa",
+    "Update": "Bahasa dikemas kini kepada Bahasa Melayu"
+  },
+  "SettingPage": {
+    "Setting": "Tetapan",
+    "Edit-Profile": "Edit Profil",
+    "Edit": "Edit",
+    "Preferences": "Keutamaan",
+    "Language": "Bahasa",
+    "Dark-Mode": "Mod Gelap",
+    "Failed-Load-Username": "Gagal memuatkan nama pengguna",
+    "Failed-Fetch-Data": "Gagal mendapatkan data pengguna",
+    "Error-Fetch": "Ralat mendapatkan data pengguna"
+  },
+  "EditPage": {
+    "Username-Empty": "Nama pengguna tidak boleh kosong",
+    "Username-Duplication": "Nama pengguna sudah diambil",
+    "Email-Empty": "Emel tidak boleh kosong",
+    "Email-Format": "Format emel tidak sah",
+    "Email-Duplication": "Emel sudah diambil",
+    "Password-Empty": "Kata laluan tidak boleh kosong",
+    "Password-Format": "Kata laluan mesti mengandungi huruf besar dan kecil, nombor, dan simbol",
+    "Password-Match": "Kata laluan tidak sepadan dengan kata laluan pengesahan",
+    "Edit-Profile": "Edit Profil",
+    "User-Info": "Maklumat Pengguna",
+    "Username": "Nama Pengguna",
+    "Username-Placeholder": "Sila masukkan nama pengguna anda",
+    "Email": "Emel",
+    "Email-Placeholder": "Sila masukkan emel anda",
+    "Password": "Kata Laluan",
+    "Password-Placeholder": "Sila masukkan kata laluan anda",
+    "Confirm-Password": "Sahkan Kata Laluan",
+    "Confirm-Password-Placeholder": "Sila masukkan kata laluan sekali lagi",
+    "Save-Change": "Simpan Perubahan"
+  },
+  "UserEditVerify": {
+    "Not-Correct": "Kod pengesahan anda tidak betul",
+    "Verify-Unsuccessful": "Pengesahan gagal",
+    "Invalid-Input": "Input tidak sah",
+    "Failed-Load-Email": "Gagal memuatkan e-mel",
+    "Data-Insert-Successful": "Data berjaya dimasukkan",
+    "Data-Insert-Unsuccessful": "Data tidak berjaya dimasukkan",
+    "Send-OTP-Successful": "OTP berjaya dihantar",
+    "Send-OTP-Unsuccessful": "OTP tidak berjaya dihantar",
+    "Verification": "Pengesahan",
+    "Send-To": "Kod dihantar kepada",
+    "Please-Enter": "Sila masukkan kod pengesahan",
+    "Seconds-Remaining": "saat tinggal",
+    "Resend": "Hantar semula kod",
+    "Verify": "SAHKAN",
+    "Edit-Data-Successful": "Edit Data Berjaya",
+    "Save-Data": "Simpan Data"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "LanguagePage": {
+    "Change-Language": "更换语言",
+    "Language-Update": "语言更新",
+    "Update": "语言更新为中文"
+  },
+  "SettingPage": {
+    "Setting": "设置",
+    "Edit-Profile": "编辑个人资料",
+    "Edit": "编辑",
+    "Preferences": "偏好设置",
+    "Language": "语言",
+    "Dark-Mode": "深色模式",
+    "Failed-Load-Username": "加载用户名失败",
+    "Failed-Fetch-Data": "获取用户数据失败",
+    "Error-Fetch": "获取用户数据时出错"
+  },
+  "EditPage": {
+    "Username-Empty": "用户名不能为空",
+    "Username-Duplication": "用户名已被使用",
+    "Email-Empty": "电子邮件不能为空",
+    "Email-Format": "无效的电子邮件格式",
+    "Email-Duplication": "电子邮件已被使用",
+    "Password-Empty": "密码不能为空",
+    "Password-Format": "密码必须包含大小写字母、数字和符号",
+    "Password-Match": "密码与确认密码不匹配",
+    "Edit-Profile": "编辑个人资料",
+    "User-Info": "用户信息",
+    "Username": "用户名",
+    "Username-Placeholder": "请输入您的用户名",
+    "Email": "电子邮件",
+    "Email-Placeholder": "请输入您的电子邮件",
+    "Password": "密码",
+    "Password-Placeholder": "请输入您的密码",
+    "Confirm-Password": "确认密码",
+    "Confirm-Password-Placeholder": "请再次输入密码",
+    "Save-Change": "保存更改"
+  },
+  "UserEditVerify": {
+    "Not-Correct": "您的验证码不正确",
+    "Verify-Unsuccessful": "验证失败",
+    "Invalid-Input": "无效输入",
+    "Failed-Load-Email": "加载电子邮件失败",
+    "Data-Insert-Successful": "数据插入成功",
+    "Data-Insert-Unsuccessful": "数据插入失败",
+    "Send-OTP-Successful": "发送OTP成功",
+    "Send-OTP-Unsuccessful": "发送OTP失败",
+    "Verification": "验证",
+    "Send-To": "验证码发送到",
+    "Please-Enter": "请输入验证码",
+    "Seconds-Remaining": "秒剩余",
+    "Resend": "重新发送验证码",
+    "Verify": "验证",
+    "Edit-Data-Successful": "编辑数据成功",
+    "Save-Data": "保存数据"
+  }
+}

@@ -1,4 +1,4 @@
-import {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import MainContainer from '../components/MainContainer';
 import {
   useNavigation,
@@ -27,6 +27,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserEdit from './UserEdit';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
+import i18n from '../language/language';
+import Toast from 'react-native-toast-message';
 
 const Setting = () => {
   const navigation = useNavigation();
@@ -38,7 +40,16 @@ const Setting = () => {
   const [userId, setUserId] = useState('');
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
-  
+  const [locale, setLocale] = React.useState(i18n.locale);
+
+  const showToast = (message: any) => {
+    Toast.show({
+      type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
+
   useEffect(() => {
     setLoading(true);
     const fetchUsername = async () => {
@@ -48,7 +59,7 @@ const Setting = () => {
           setUserId(storedUserID);
         }
       } catch (error) {
-        console.error('Failed to load username from AsyncStorage', error);
+        showToast(i18n.t('SettingPage.Failed-Load-Username'));
       }
     };
     fetchUsername();
@@ -72,10 +83,10 @@ const Setting = () => {
             setUsername(json.userData.userName);
             setLoading(false);
           } else {
-            console.log('Failed to fetch user data');
+            showToast(i18n.t('SettingPage.Failed-Fetch-Data'));
           }
         } catch (error) {
-          console.error('Error fetching user data', error);
+          showToast(i18n.t('SettingPage.Error-Fetch'));
         }
       };
       fetchData();
@@ -100,10 +111,10 @@ const Setting = () => {
               setEmail(json.userData.email);
               setUsername(json.userData.userName);
             } else {
-              console.log('Failed to fetch user data');
+              showToast(i18n.t('SettingPage.Failed-Fetch-Data'));
             }
           } catch (error) {
-            console.error('Error fetching user data', error);
+            showToast(i18n.t('SettingPage.Error-Fetch'));
           } finally {
             setLoading(false);
           }
@@ -111,6 +122,12 @@ const Setting = () => {
         fetchData();
       }
     }, [isFocused, userId]),
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
   );
 
   return (
@@ -142,7 +159,9 @@ const Setting = () => {
                 <Ionicons name="menu" size={30} color={'#000'} />
               </TouchableOpacity>
               <View style={css.HeaderView}>
-                <Text style={css.PageName}>Setting</Text>
+                <Text style={css.PageName}>
+                  {i18n.t('SettingPage.Setting')}
+                </Text>
               </View>
             </View>
             <View style={settingCss.container}>
@@ -163,7 +182,9 @@ const Setting = () => {
                     style={[settingCss.EditIcon]}
                   />
                   <View style={settingCss.TextContainer}>
-                    <Text style={settingCss.text}>Edit Profile</Text>
+                    <Text style={settingCss.text}>
+                      {i18n.t('SettingPage.Edit-Profile')}
+                    </Text>
                   </View>
                 </View>
                 <TouchableOpacity
@@ -171,11 +192,15 @@ const Setting = () => {
                   onPress={() => {
                     navigation.navigate(UserEdit as never);
                   }}>
-                  <Text style={settingCss.ButtonText}>Edit</Text>
+                  <Text style={settingCss.ButtonText}>
+                    {i18n.t('SettingPage.Edit')}
+                  </Text>
                 </TouchableOpacity>
               </View>
               <View style={settingCss.PrefenceContainer}>
-                <Text style={settingCss.PrefenceText}>Prefences</Text>
+                <Text style={settingCss.PrefenceText}>
+                  {i18n.t('SettingPage.Preferences')}
+                </Text>
                 <TouchableOpacity
                   style={settingCss.FunctionContainer}
                   onPress={() => navigation.navigate(Language as never)}>
@@ -187,7 +212,9 @@ const Setting = () => {
                       style={[settingCss.EditIcon, {borderWidth: 0}]}
                     />
                     <View style={settingCss.TextContainer}>
-                      <Text style={settingCss.text}>Language</Text>
+                      <Text style={settingCss.text}>
+                        {i18n.t('SettingPage.Language')}
+                      </Text>
                     </View>
                   </View>
                   <View style={settingCss.ClickIcon}>
@@ -203,7 +230,9 @@ const Setting = () => {
                       style={[settingCss.EditIcon, {borderWidth: 0}]}
                     />
                     <View style={settingCss.TextContainer}>
-                      <Text style={settingCss.text}>Dark Mode</Text>
+                      <Text style={settingCss.text}>
+                        {i18n.t('SettingPage.Dark-Mode')}
+                      </Text>
                     </View>
                   </View>
                   <View style={settingCss.ClickIcon}>

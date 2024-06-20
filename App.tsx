@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {LogBox, SafeAreaView} from 'react-native';
@@ -36,12 +36,14 @@ import BankDetail from './screen/BankDetail';
 import BankIncome from './screen/BankIncome';
 import BankSpend from './screen/BankSpend';
 import UserEditVerify from './screen/UserEditVerify';
+import Toast from 'react-native-toast-message';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
 function App(): JSX.Element {
   const [otpValue, setOtpValue] = useState<string[]>(Array(6).fill(''));
-
+  const toastRef = useRef<any>(null);
+  
   useEffect(() => {
     LogBox.ignoreAllLogs();
     requestUserPermission();
@@ -127,6 +129,7 @@ function App(): JSX.Element {
             </Stack.Group>
           </Stack.Navigator>
         </NavigationContainer>
+        <Toast ref={toastRef} /> 
       </SafeAreaView>
     </PaperProvider>
   );
