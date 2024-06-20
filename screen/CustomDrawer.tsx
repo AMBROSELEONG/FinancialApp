@@ -5,30 +5,42 @@ import {
   createDrawerNavigator,
 } from '@react-navigation/drawer';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useNavigation, CommonActions } from '@react-navigation/native';
+import {
+  useNavigation,
+  CommonActions,
+  useFocusEffect,
+} from '@react-navigation/native';
 import React from 'react';
 import {Dimensions, Image, Text, View} from 'react-native';
 import {customCss} from '../objects/commonCss';
 import Setting from './Setting';
 import CustomBottomTabNavigator from './BottomNavigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Welcome from './Welcome';
+import i18n from '../language/language';
 
 const Drawer = createDrawerNavigator();
 
 function CustomDrawerContent(props: any) {
   const navigation = useNavigation();
   const [loggedOut, setLoggedOut] = React.useState(false);
+  const [locale, setLocale] = React.useState(i18n.locale);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
+  );
 
   const handleLogout = () => {
     setLoggedOut(true);
-    AsyncStorage.removeItem("UserName");
-    AsyncStorage.removeItem("UserID");
+    AsyncStorage.removeItem('UserName');
+    AsyncStorage.removeItem('Email');
+    AsyncStorage.removeItem('Password')
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
-        routes: [{ name: 'Welcome' }],
-      })
+        routes: [{name: 'Welcome'}],
+      }),
     );
   };
 
@@ -53,7 +65,7 @@ function CustomDrawerContent(props: any) {
       <DrawerContentScrollView contentContainerStyle={{flex: 1}} {...props}>
         <DrawerItemList {...props} />
         <DrawerItem
-          label={'Logout'}
+          label={i18n.t("CustomDrawer.Logout")}
           onPress={handleLogout}
           icon={() => (
             <Ionicons
@@ -88,10 +100,10 @@ export function CustomDrawer() {
       }}
       drawerContent={props => <CustomDrawerContent {...props} />}>
       <Drawer.Screen
-        name={'Home'}
+        name={i18n.t("CustomDrawer.Home")}
         component={CustomBottomTabNavigator}
         options={{
-          headerTitle: 'Home',
+          headerTitle: i18n.t("CustomDrawer.Home"),
           headerRight: () => (
             <View
               style={{
@@ -112,10 +124,10 @@ export function CustomDrawer() {
         }}
       />
       <Drawer.Screen
-        name={'Setting'}
+        name={i18n.t("CustomDrawer.Setting")}
         component={Setting}
         options={{
-          headerTitle: 'Setting',
+          headerTitle: i18n.t("CustomDrawer.Setting"),
           headerRight: () => (
             <View
               style={{

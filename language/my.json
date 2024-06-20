@@ -53,5 +53,99 @@
     "Verify": "SAHKAN",
     "Edit-Data-Successful": "Edit Data Berjaya",
     "Save-Data": "Simpan Data"
+  },
+  "CustomDrawer": {
+    "Home": "Laman Utama",
+    "Setting": "Tetapan",
+    "Logout": "Log keluar"
+  },
+  "BottomNavigation": {
+    "Home": "Laman Utama",
+    "Wallet": "Dompet",
+    "Bank": "Bank",
+    "E-Wallet": "Dompet Elektronik",
+    "Expenses": "Caj Tetap"
+  },
+  "Welcome": {
+    "Login": "LOG MASUK",
+    "Sign-Up": "DAFTAR"
+  },
+  "SignIn": {
+    "Sign-In-Error": "Ralat Log Masuk",
+    "Email-Empty": "E-mel tidak boleh kosong",
+    "Password-Empty": "Kata laluan tidak boleh kosong",
+    "Sign-In": "Log Masuk",
+    "Credentials": "Masukkan kelayakan anda untuk log masuk",
+    "Email": "E-mel",
+    "Email-Placeholder": "Sila Masukkan E-mel Anda",
+    "Password": "Kata laluan",
+    "Password-Placeholder": "Sila Masukkan Kata Laluan Anda",
+    "Invalid": "Nama pengguna atau kata laluan tidak sah",
+    "Forgot": "Lupa Kata Laluan",
+    "Sign": "LOG MASUK",
+    "Or": "Atau Log Masuk dengan",
+    "Dont-Have-Account": "Tidak Mempunyai Akaun?",
+    "Sign-Up": "Daftar"
+  },
+  "SignUp": {
+    "Username-Empty": "Nama pengguna tidak boleh kosong",
+    "Username-Duplication": "Nama pengguna sudah diambil",
+    "Email-Empty": "E-mel tidak boleh kosong",
+    "Email-Format": "Format e-mel tidak sah",
+    "Email-Duplication": "E-mel sudah diambil",
+    "Password-Empty": "Kata laluan tidak boleh kosong",
+    "Password-Format": "Kata laluan mesti mengandungi huruf besar dan kecil, nombor, dan simbol",
+    "Password-Match": "Kata laluan tidak sepadan dengan pengesahan kata laluan",
+    "Send-OTP-Successful": "OTP berjaya dihantar",
+    "Send-OTP-Unsuccessful": "OTP tidak berjaya dihantar",
+    "Sign-Up": "Daftar",
+    "Credentials": "Masukkan kelayakan anda untuk mendaftar",
+    "Username": "Nama pengguna",
+    "Username-Placeholder": "Sila Masukkan Nama Pengguna Anda",
+    "Email": "E-mel",
+    "Email-Placeholder": "Sila Masukkan E-mel Anda",
+    "Password": "Kata laluan",
+    "Password-Placeholder": "Sila Masukkan Kata Laluan Anda",
+    "Confirm-Password": "Sahkan Kata Laluan",
+    "Confirm-Password-Placeholder": "Sila Masukkan Kata Laluan Sekali Lagi",
+    "Register": "DAFTAR",
+    "Already-Have-Account": "Sudah Mempunyai Akaun?",
+    "Sign-In": "Log Masuk"
+  },
+  "Verify": {
+    "Already-Have-Account": "Sudah Mempunyai Akaun? Log Masuk",
+    "Sign-Up-Successful": "Pendaftaran Berjaya",
+    "SIGN-IN": "LOG MASUK"
+  },
+  "ForgotPassword": {
+    "Email-Empty": "E-mel tidak boleh kosong",
+    "Email-Find": "Tidak dapat mencari e-mel",
+    "Send-OTP-Successful": "OTP berjaya dihantar",
+    "Send-OTP-Unsuccessful": "OTP tidak berjaya dihantar",
+    "Forgot-Password": "Lupa Kata Laluan",
+    "Credentials": "Masukkan kelayakan anda untuk mengesahkan",
+    "Email": "E-mel",
+    "Email-Placeholder": "Sila Masukkan E-mel Anda",
+    "Send": "HANTAR",
+    "Remember-Password": "Ingat Kata Laluan?",
+    "Sign-In": "Log Masuk"
+  },
+  "ResetPassword": {
+    "Error": "Ralat Mendapatkan E-mel",
+    "Failed-Load-Email": "Gagal Memuatkan E-mel",
+    "Password-Empty": "Kata laluan tidak boleh kosong",
+    "Password-Format": "Kata laluan mesti mengandungi huruf besar, huruf kecil, nombor, dan simbol",
+    "Password-Match": "Tiada padanan dengan kata laluan pengesahan",
+    "Password-Successful": "Berjaya menetapkan semula kata laluan",
+    "Reset-Successful": "Kata laluan anda telah berjaya ditetapkan semula! Sila pergi ke log masuk untuk menguji kata laluan baru anda",
+    "Reset-Password": "Tetapkan Semula Kata Laluan",
+    "Enter-Password": "Masukkan kata laluan baru anda",
+    "Password": "Kata laluan",
+    "Password-Placeholder": "Sila masukkan kata laluan anda",
+    "Confirm-Password": "Sahkan Kata Laluan",
+    "Confirm-Password-Placeholder": "Sila masukkan kata laluan sekali lagi",
+    "Reset": "Tetapkan Semula",
+    "Remember": "Ingat Kata Laluan?",
+    "Sign-In": "Log Masuk"
   }
 }

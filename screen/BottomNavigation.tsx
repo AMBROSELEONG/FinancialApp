@@ -7,10 +7,19 @@ import {Image} from 'react-native';
 import Bank from './Bank';
 import Ewallet from './Ewallet';
 import Expenses from './Expenses';
+import i18n from '../language/language';
 
 const Tab = createMaterialBottomTabNavigator();
 
 function CustomBottomTabNavigator() {
+  const [locale, setLocale] = React.useState(i18n.locale);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
+  );
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -29,7 +38,7 @@ function CustomBottomTabNavigator() {
         name="Home"
         component={Home}
         options={{
-          title: 'Home',
+          title: i18n.t("BottomNavigation.Home"),
           tabBarIcon: 'home',
         }}
       />
@@ -37,7 +46,7 @@ function CustomBottomTabNavigator() {
         name="Wallet"
         component={Wallet}
         options={{
-          title: 'Wallet',
+          title: i18n.t("BottomNavigation.Wallet"),
           tabBarIcon: ({color, focused}) => (
             <Image 
             source={
@@ -54,7 +63,7 @@ function CustomBottomTabNavigator() {
         name="Bank"
         component={Bank}
         options={{
-          title: 'Bank',
+          title: i18n.t("BottomNavigation.Bank"),
           tabBarIcon: ({color, focused}) => (
             <Image 
             source={
@@ -71,7 +80,7 @@ function CustomBottomTabNavigator() {
         name="Ewallet"
         component={Ewallet}
         options={{
-          title: 'E-Wallet',
+          title: i18n.t("BottomNavigation.E-Wallet"),
           tabBarIcon: ({color, focused}) => (
             <Image 
             source={
@@ -88,7 +97,7 @@ function CustomBottomTabNavigator() {
         name="Expenses"
         component={Expenses}
         options={{
-          title: 'Expenses',
+          title: i18n.t("BottomNavigation.Expenses"),
           tabBarIcon: ({color, focused}) => (
             <Image 
             source={

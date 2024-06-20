@@ -65,7 +65,6 @@ const Language = () => {
       [
         {
           text: 'OK',
-          // Navigate to the settings screen
           onPress: () => navigation.goBack(),
           style: 'cancel',
         },
@@ -93,11 +92,17 @@ const Language = () => {
             <Ionicons name="arrow-back" size={30} color={'#000'} />
           </TouchableOpacity>
           <View style={css.HeaderView}>
-            <Text style={css.PageName}>{i18n.t('LanguagePage.Change-Language')}</Text>
+            <Text style={css.PageName}>
+              {i18n.t('LanguagePage.Change-Language')}
+            </Text>
           </View>
         </View>
         <View style={languageCss.container}>
-          <TouchableOpacity style={languageCss.languageContainer} onPress={()=>{changeLanguage('en')}}>
+          <TouchableOpacity
+            style={languageCss.languageContainer}
+            onPress={() => {
+              changeLanguage('en');
+            }}>
             <Text style={languageCss.text}>English</Text>
             {selectedLanguage === 'en' && (
               <Image
@@ -106,7 +111,11 @@ const Language = () => {
               />
             )}
           </TouchableOpacity>
-          <TouchableOpacity style={languageCss.languageContainer} onPress={()=>{changeLanguage('my')}}>
+          <TouchableOpacity
+            style={languageCss.languageContainer}
+            onPress={() => {
+              changeLanguage('my');
+            }}>
             <Text style={languageCss.text}>Bahasa Melayu</Text>
             {selectedLanguage === 'my' && (
               <Image
@@ -115,7 +124,11 @@ const Language = () => {
               />
             )}
           </TouchableOpacity>
-          <TouchableOpacity style={languageCss.languageContainer} onPress={()=>{changeLanguage('zh')}}>
+          <TouchableOpacity
+            style={languageCss.languageContainer}
+            onPress={() => {
+              changeLanguage('zh');
+            }}>
             <Text style={languageCss.text}>中文</Text>
             {selectedLanguage === 'zh' && (
               <Image

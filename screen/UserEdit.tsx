@@ -21,6 +21,7 @@ import {UrlAccess} from '../objects/url';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserEditVerify from './UserEditVerify';
 import i18n from '../language/language';
+import Toast from 'react-native-toast-message';
 
 const UserEdit = () => {
   const navigation = useNavigation();
@@ -40,6 +41,14 @@ const UserEdit = () => {
   const [loading, setLoading] = useState(false);
   const [locale, setLocale] = React.useState(i18n.locale);
 
+  const showToast = (message: any) => {
+    Toast.show({
+      type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       setLocale(i18n.locale);
@@ -55,7 +64,7 @@ const UserEdit = () => {
           setUserId(storedUserID);
         }
       } catch (error) {
-        console.error('Failed to load username from AsyncStorage', error);
+        showToast(i18n.t('SettingPage.Failed-Load-Username'));
       }
     };
     fetchUsername();
@@ -80,10 +89,10 @@ const UserEdit = () => {
             setUsername(json.userData.userName);
             setOriUsername(json.userData.userName);
           } else {
-            console.log('Failed to fetch user data');
+            showToast(i18n.t('SettingPage.Failed-Fetch-Data'));
           }
         } catch (error) {
-          console.error('Error fetching user data', error);
+          showToast(i18n.t('SettingPage.Error-Fetch'));
         }
       };
       setLoading(false);
@@ -272,7 +281,9 @@ const UserEdit = () => {
                 </View>
               </View>
               <View>
-                <Text style={userEditCss.Title}>{i18n.t('EditPage.User-Info')}</Text>
+                <Text style={userEditCss.Title}>
+                  {i18n.t('EditPage.User-Info')}
+                </Text>
                 <TextInput
                   label={i18n.t('EditPage.Username')}
                   mode="outlined"
@@ -346,7 +357,9 @@ const UserEdit = () => {
               <TouchableOpacity
                 style={userEditCss.Button}
                 onPress={() => Verify()}>
-                <Text style={userEditCss.ButtonText}>{i18n.t('EditPage.Save-Change')}</Text>
+                <Text style={userEditCss.ButtonText}>
+                  {i18n.t('EditPage.Save-Change')}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>

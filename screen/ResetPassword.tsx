@@ -12,15 +12,14 @@ import {
 import MainContainer from '../components/MainContainer';
 import {SignInCss} from '../objects/commonCss';
 import {TextInput, HelperText} from 'react-native-paper';
-import {useNavigation} from '@react-navigation/native';
-import Welcome from './Welcome';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import React, {useRef, useEffect, useState} from 'react';
-import SignUp from './SignUp';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
-import ForgotPassword from './ForgotPassword';
 import SignIn from './SignIn';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import i18n from '../language/language';
+import Toast from 'react-native-toast-message';
 
 const ResetPassword = () => {
   const navigation = useNavigation();
@@ -30,6 +29,22 @@ const ResetPassword = () => {
       primary: '#000', // Active outline color
       outline: '#808080', // Outline color
     },
+  };
+
+  const [locale, setLocale] = React.useState(i18n.locale);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
+  );
+
+  const showToast = (message: any) => {
+    Toast.show({
+      type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
   };
 
   const Anim = useRef(new Animated.Value(100)).current;
@@ -88,10 +103,10 @@ const ResetPassword = () => {
         if (storedEmail !== null) {
           setEmail(storedEmail);
         } else {
-          console.log('error');
+          showToast(i18n.t('ResetPassword.Error'));
         }
       } catch (error) {
-        console.error('Failed to load email from AsyncStorage', error);
+        showToast(i18n.t('ResetPassword.Failed-Load-Email'));
       }
     };
     getData();
@@ -101,15 +116,13 @@ const ResetPassword = () => {
     let valid = true;
 
     if (Password.trim() === '') {
-      setPasswordError('Password cannot be empty');
+      setPasswordError(i18n.t('ResetPassword.Password-Empty'));
       valid = false;
     } else if (!checkPasswordFormat(Password)) {
-      setPasswordError(
-        'Password must contain upper and lower case letters, numbers, and symbols',
-      );
+      setPasswordError(i18n.t('ResetPassword.Password-Format'));
       valid = false;
     } else if (Password !== ConfirmPassword) {
-      setPasswordError('No match with confirm password');
+      setPasswordError(i18n.t('ResetPassword.Password-Match'));
       valid = false;
     } else {
       setPasswordError('');
@@ -131,8 +144,8 @@ const ResetPassword = () => {
           .then(json => {
             if (json.success) {
               Alert.alert(
-                'Password Reset Successful',
-                'Your Password Reset Successful! Please go to login to test your new password ',
+                i18n.t('ResetPassword.Password-Successful'),
+                i18n.t('ResetPassword.Reset-Successful'),
                 [
                   {
                     text: 'OK',
@@ -145,7 +158,7 @@ const ResetPassword = () => {
             }
           });
       } catch (error) {
-        console.log(error);
+        showToast(error);
       }
     }
   };
@@ -165,16 +178,20 @@ const ResetPassword = () => {
           </Animated.View>
 
           <Animated.View style={{transform: [{translateY: Anim1}]}}>
-            <Text style={SignInCss.Title}>Reset Password</Text>
-            <Text style={SignInCss.Content}>Enter your new password</Text>
+            <Text style={SignInCss.Title}>
+              {i18n.t('ResetPassword.Reset-Password')}
+            </Text>
+            <Text style={SignInCss.Content}>
+              {i18n.t('ResetPassword.Enter-Password')}
+            </Text>
           </Animated.View>
 
           <Animated.View style={{transform: [{translateY: Anim2}]}}>
             <TextInput
-              label="Password"
+              label={i18n.t('ResetPassword.Password')}
               mode="outlined"
               style={SignInCss.Input}
-              placeholder="Please Enter Your Password"
+              placeholder={i18n.t('ResetPassword.Password-Placeholder')}
               theme={theme}
               onChangeText={text => setPassword(text)}
               autoCapitalize="none"
@@ -190,10 +207,10 @@ const ResetPassword = () => {
 
           <Animated.View style={{transform: [{translateY: Anim3}]}}>
             <TextInput
-              label="Confirm Password"
+              label={i18n.t('ResetPassword.Confirm-Password')}
               mode="outlined"
               style={SignInCss.Input}
-              placeholder="Please Enter Your Confirm Password"
+              placeholder={i18n.t('ResetPassword.Confirm-Password-Placeholder')}
               theme={theme}
               onChangeText={text => setConfirmPassword(text)}
               autoCapitalize="none"
@@ -213,16 +230,18 @@ const ResetPassword = () => {
           </Animated.View>
           <Animated.View style={{transform: [{translateY: Anim4}]}}>
             <TouchableOpacity style={SignInCss.Reset} onPress={() => Verify()}>
-              <Text style={SignInCss.BtnText}>Reset</Text>
+              <Text style={SignInCss.BtnText}>
+                {i18n.t('ResetPassword.Reset')}
+              </Text>
             </TouchableOpacity>
           </Animated.View>
 
           <Text style={SignInCss.SignUp}>
-            Remember Password?
+            {i18n.t('ResetPassword.Remember')}
             <Text
               style={{color: '#3490DE'}}
               onPress={() => navigation.navigate(SignIn as never)}>
-              Sign In
+              {i18n.t('ResetPassword.Sign-In')}
             </Text>
           </Text>
         </View>

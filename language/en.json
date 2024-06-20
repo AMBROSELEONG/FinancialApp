@@ -36,7 +36,7 @@
     "Confirm-Password-Placeholder": "Please Enter Password Again",
     "Save-Change": "Save Change"
   },
-  "UserEditVerify":{
+  "UserEditVerify": {
     "Not-Correct": "Your Verify Code is not correct",
     "Verify-Unsuccessful": "Verify Unsuccessful",
     "Invalid-Input": "Invalid Input",
@@ -53,5 +53,99 @@
     "Verify": "VERIFY",
     "Edit-Data-Successful": "Edit Data Successful",
     "Save-Data": "Save Data"
+  },
+  "CustomDrawer": {
+    "Home": "Home",
+    "Setting": "Setting",
+    "Logout": "Logout"
+  },
+  "BottomNavigation": {
+    "Home": "Home",
+    "Wallet": "Wallet",
+    "Bank": "Bank",
+    "E-Wallet": "E-Wallet",
+    "Expenses": "Expenses"
+  },
+  "Welcome": {
+    "Login": "LOGIN",
+    "Sign-Up": "SIGN UP"
+  },
+  "SignIn": {
+    "Sign-In-Error": "Sign In Error",
+    "Email-Empty": "Email cannot be empty",
+    "Password-Emtpy": "Password cannot be empty",
+    "Sign-In": "Sign In",
+    "Credentials": "Enter your credentials to sign in",
+    "Email": "Email",
+    "Email-Placeholder": "Please Enter Your Email",
+    "Password": "Password",
+    "Password-Placeholder": "Please Enter Your Password",
+    "Invalid": "Username or Password is invalid",
+    "Forgot": "Forgot Password",
+    "Sign": "SIGN IN",
+    "Or": "Or Sign In with",
+    "Dont-Have-Account": "Don't Have an Account?",
+    "Sign-Up": "Sign Up"
+  },
+  "SignUp": {
+    "Username-Empty": "Username cannot be emtpy",
+    "Username-Duplication": "Username is already taken",
+    "Email-Empty": "Email cannot be empty",
+    "Email-Format": "Invalid email format",
+    "Email-Duplication": "Email is already taken",
+    "Password-Empty": "Password cannot be empty",
+    "Password-Format": "Password must contain upper and lower case letters, numbers, and symbols",
+    "Password-Match": "No match with confirm password",
+    "Send-OTP-Successful": "Send OTP Successful",
+    "Send-OTP-Unsuccessful": "Send OTP Unsuccessful",
+    "Sign-Up": "Sign Up",
+    "Credentials": "Enter your credentials to sign up",
+    "Username": "Username",
+    "Username-Placeholder": "Please Enter Your User Name",
+    "Email": "Email",
+    "Email-Placeholder": "Please Enter Your Email",
+    "Password": "Password",
+    "Password-Placeholder": "Please Enter Your Password",
+    "Confirm-Password": "Confirm Password",
+    "Confirm-Password-Placeholder": "Please Enter Password Again",
+    "Register": "REGISTER",
+    "Already-Have-Account": "Already Have an Account?",
+    "Sign-In": "Sign In"
+  },
+  "Verify": {
+    "Already-Have-Account": "Already Have an Account? Sign In",
+    "Sign-Up-Successful": "Sign Up Successful",
+    "SIGN-IN": "SIGN IN"
+  },
+  "ForgotPassword": {
+    "Email-Empty": "Email cannot be empty",
+    "Email-Find": "Cannot find the email",
+    "Send-OTP-Successful": "Send OTP Successful",
+    "Send-OTP-Unsuccessful": "Send OTP Unsuccessful",
+    "Forgot-Password": "Forgot Password",
+    "Credentials": "Enter your credentials to verify",
+    "Email": "Email",
+    "Email-Placeholder": "Please Enter Your Email",
+    "Send": "SEND",
+    "Remember-Password": "Remember Password?",
+    "Sign-In": "Sign In"
+  },
+  "ResetPassword": {
+    "Error": "Fetch Email Error",
+    "Failed-Load-Email": "Failed to load email",
+    "Password-Empty": "Password cannot be empty",
+    "Password-Format": "Password must contain upper and lower case letters, numbers, and symbols",
+    "Password-Match": "No match with confirm password",
+    "Password-Successful": "Password Reset Successful",
+    "Reset-Successful": "Your Password Reset Successful! Please go to login to test your new password",
+    "Reset-Password": "Reset Password",
+    "Enter-Password": "Enter your new password",
+    "Password": "Password",
+    "Password-Placeholder": "Please Enter Your Password",
+    "Confirm-Password": "Confirm Password",
+    "Confirm-Password-Placeholder": "Please Enter Password Again",
+    "Reset": "Reset",
+    "Remember": "Remember Password?",
+    "Sign-In":"Sign In"
   }
 }

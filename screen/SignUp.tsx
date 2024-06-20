@@ -13,18 +13,26 @@ import {
 import MainContainer from '../components/MainContainer';
 import {SignInCss} from '../objects/commonCss';
 import {TextInput, HelperText} from 'react-native-paper';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import React, {useRef, useEffect, useState} from 'react';
 import SignIn from './SignIn';
-import Verify from './Verify';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
+import i18n from '../language/language';
+import Toast from 'react-native-toast-message';
 
 const SignUp = () => {
   const navigation = useNavigation();
 
-  // 输入框设计
+  const [locale, setLocale] = React.useState(i18n.locale);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
+  );
+
   const theme = {
     roundness: 20, // Set the border radius here
     colors: {
@@ -33,7 +41,6 @@ const SignUp = () => {
     },
   };
 
-  // 动画效果
   const Anim = useRef(new Animated.Value(100)).current;
   const Anim1 = useRef(new Animated.Value(110)).current;
   const Anim2 = useRef(new Animated.Value(120)).current;
@@ -165,11 +172,11 @@ const SignUp = () => {
     let valid = true;
 
     if (Username.trim() === '') {
-      setUsernameError('Username cannot be empty');
+      setUsernameError(i18n.t('SignUp.Username-Empty'));
       valid = false;
     } else {
       if (UserNameDuplication === false) {
-        setUsernameError('Username is already taken');
+        setUsernameError(i18n.t('SignUp.Username-Duplication'));
         valid = false;
       } else {
         setUsernameError('');
@@ -177,14 +184,14 @@ const SignUp = () => {
     }
 
     if (Email.trim() === '') {
-      setEmailError('Email cannot be empty');
+      setEmailError(i18n.t('SignUp.Email-Empty'));
       valid = false;
     } else if (!checkEmailFormat(Email)) {
-      setEmailError('Invalid email format');
+      setEmailError(i18n.t('SignUp.Email-Format'));
       valid = false;
     } else {
       if (EmailDuplication === false) {
-        setEmailError('Email is already taken');
+        setEmailError(i18n.t('SignUp.Email-Duplication'));
         valid = false;
       } else {
         setEmailError('');
@@ -192,15 +199,13 @@ const SignUp = () => {
     }
 
     if (Password.trim() === '') {
-      setPasswordError('Password cannot be empty');
+      setPasswordError(i18n.t('SignUp.Password-Empty'));
       valid = false;
     } else if (!checkPasswordFormat(Password)) {
-      setPasswordError(
-        'Password must contain upper and lower case letters, numbers, and symbols',
-      );
+      setPasswordError(i18n.t('SignUp.Password-Format'));
       valid = false;
     } else if (Password !== ConfirmPassword) {
-      setPasswordError('No match with confirm password');
+      setPasswordError(i18n.t('SignUp.Password-Match'));
       valid = false;
     } else {
       setPasswordError('');
@@ -219,10 +224,10 @@ const SignUp = () => {
             email: Email,
           }),
         );
-        Alert.prompt('Send OTP Successful');
+        Alert.prompt(i18n.t('SignUp.Send-OTP-Successful'));
         navigation.navigate(Verify as never);
       } catch (error) {
-        Alert.prompt('Send OTP Unsuccessful');
+        Alert.prompt(i18n.t('SignUp.Send-OTP-Unsuccessful'));
       }
     }
   };
@@ -242,18 +247,18 @@ const SignUp = () => {
           </Animated.View>
 
           <Animated.View style={{transform: [{translateY: Anim1}]}}>
-            <Text style={SignInCss.Title}>Sign Up</Text>
+            <Text style={SignInCss.Title}>{i18n.t('SignUp.Sign-Up')}</Text>
             <Text style={SignInCss.Content}>
-              Enter your credentials for sign up
+              {i18n.t('SignUp.Credentials')}
             </Text>
           </Animated.View>
 
           <Animated.View style={{transform: [{translateY: Anim2}]}}>
             <TextInput
-              label="User Name"
+              label={i18n.t('SignUp.Username')}
               mode="outlined"
               style={SignInCss.Input}
-              placeholder="Please Enter Your Username"
+              placeholder={i18n.t('SignUp.Username-Placeholder')}
               theme={theme}
               onChangeText={text => setUsername(text)}
             />
@@ -266,10 +271,10 @@ const SignUp = () => {
 
           <Animated.View style={{transform: [{translateY: Anim3}]}}>
             <TextInput
-              label="Email"
+              label={i18n.t('SignUp.Email')}
               mode="outlined"
               style={SignInCss.Input}
-              placeholder="Please Enter Your Email"
+              placeholder={i18n.t('SignUp.Email-Placeholder')}
               theme={theme}
               onChangeText={text => setEmail(text)}
             />
@@ -282,10 +287,10 @@ const SignUp = () => {
 
           <Animated.View style={{transform: [{translateY: Anim4}]}}>
             <TextInput
-              label="Password"
+              label={i18n.t('SignUp.Password')}
               mode="outlined"
               style={SignInCss.Input}
-              placeholder="Please Enter Your Password"
+              placeholder={i18n.t('SignUp.Password-Placeholder')}
               theme={theme}
               onChangeText={text => setPassword(text)}
               autoCapitalize="none"
@@ -306,13 +311,13 @@ const SignUp = () => {
 
           <Animated.View style={{transform: [{translateY: Anim5}]}}>
             <TextInput
-              label="Confirm Password"
+              label={i18n.t('SignUp.Confirm-Password')}
               mode="outlined"
               style={[
                 SignInCss.Input,
                 {marginBottom: (Dimensions.get('screen').height / 100) * 5},
               ]}
-              placeholder="Please Enter Your Password"
+              placeholder={i18n.t('SignUp.Confirm-Password-Placeholder')}
               theme={theme}
               autoCapitalize="none"
               secureTextEntry={hidePass ? true : false}
@@ -330,16 +335,16 @@ const SignUp = () => {
             <TouchableOpacity
               style={SignInCss.LoginButton}
               onPress={() => Verify()}>
-              <Text style={SignInCss.BtnText}>REGISTER</Text>
+              <Text style={SignInCss.BtnText}>{i18n.t('SignUp.Register')}</Text>
             </TouchableOpacity>
           </Animated.View>
 
           <Text style={SignInCss.SignUp}>
-            Already Have an Account?{' '}
+            {i18n.t('SignUp.Already-Have-Account')}
             <Text
               style={{color: '#3490DE'}}
               onPress={() => navigation.navigate(SignIn as never)}>
-              Sign In
+              {i18n.t('SignUp.Sign-In')}
             </Text>
           </Text>
         </View>

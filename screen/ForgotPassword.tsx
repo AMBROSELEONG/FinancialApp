@@ -12,15 +12,15 @@ import {
 import MainContainer from '../components/MainContainer';
 import {SignInCss} from '../objects/commonCss';
 import {TextInput, HelperText} from 'react-native-paper';
-import {useNavigation} from '@react-navigation/native';
-import Welcome from './Welcome';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import React, {useRef, useEffect, useState} from 'react';
-import SignUp from './SignUp';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
-import ResetPassword from './ResetPassword';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ResetVerify from './ResetVerify';
+import i18n from '../language/language';
+import SignIn from './SignIn';
+import Toast from 'react-native-toast-message';
 
 const ForgotPassword = () => {
   const navigation = useNavigation();
@@ -30,6 +30,22 @@ const ForgotPassword = () => {
       primary: '#000', // Active outline color
       outline: '#808080', // Outline color
     },
+  };
+
+  const [locale, setLocale] = React.useState(i18n.locale);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
+  );
+
+  const showToast = (message: any) => {
+    Toast.show({
+      type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
   };
 
   const Anim = useRef(new Animated.Value(100)).current;
@@ -64,30 +80,6 @@ const ForgotPassword = () => {
 
   const [Email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
-
-  const SignIn = async () => {
-    // try {
-    //   RNFetchBlob.config({trusty: true})
-    //     .fetch(
-    //       'POST',
-    //       UrlAccess.Url + 'User/SignIn',
-    //       {'Content-Type': 'application/json'},
-    //       JSON.stringify({
-    //         email: Email,
-    //         password: Password,
-    //       }),
-    //     )
-    //     .then(response => response.json())
-    //     .then(json => {
-    //       if (json.success) {
-    //         Alert.alert('Sign In Success', `User ID: ${json.userID}`);
-    //       } else {
-    //         setInvalid(true);
-    //       }
-    //     });
-    // } catch (error) {}
-    navigation.navigate(ResetPassword as never);
-  };
 
   const [CheckEmail, setCheckEmail] = useState(false);
 
@@ -125,11 +117,11 @@ const ForgotPassword = () => {
     let valid = true;
 
     if (Email.trim() === '') {
-      setEmailError('Email cannot be empty');
+      setEmailError(i18n.t('ForgotPassword.Email-Empty'));
       valid = false;
     } else {
       if (CheckEmail === true) {
-        setEmailError('Cannot find the email');
+        setEmailError(i18n.t('ForgotPassword.Email-Find'));
         valid = false;
       } else {
         setEmailError('');
@@ -147,10 +139,10 @@ const ForgotPassword = () => {
             email: Email,
           }),
         );
-        Alert.prompt('Send OTP Successful');
+        showToast(i18n.t('ForgotPassword.Send-OTP-Successful'));
         navigation.navigate(ResetVerify as never);
       } catch (error) {
-        Alert.prompt('Send OTP Unsuccessful');
+        showToast(i18n.t('ForgotPassword.Send-OTP-Unsuccessful'));
       }
     }
   };
@@ -169,18 +161,20 @@ const ForgotPassword = () => {
           </Animated.View>
 
           <Animated.View style={{transform: [{translateY: Anim1}]}}>
-            <Text style={SignInCss.Title}>Forgot Password</Text>
+            <Text style={SignInCss.Title}>
+              {i18n.t('ForgotPassword.Forgot-Password')}
+            </Text>
             <Text style={SignInCss.Content}>
-              Enter you credentials to verify
+              {i18n.t('ForgotPassword.Credentials')}
             </Text>
           </Animated.View>
 
           <Animated.View style={{transform: [{translateY: Anim2}]}}>
             <TextInput
-              label="Email"
+              label={i18n.t('ForgotPassword.Email')}
               mode="outlined"
               style={SignInCss.Input}
-              placeholder="Please Enter Your Email"
+              placeholder={i18n.t('ForgotPassword.Email-Placeholder')}
               theme={theme}
               onChangeText={text => setEmail(text)}
             />
@@ -193,16 +187,18 @@ const ForgotPassword = () => {
 
           <Animated.View style={{transform: [{translateY: Anim4}]}}>
             <TouchableOpacity style={SignInCss.Send} onPress={() => Verify()}>
-              <Text style={SignInCss.BtnText}>SEND</Text>
+              <Text style={SignInCss.BtnText}>
+                {i18n.t('ForgotPassword.Send')}
+              </Text>
             </TouchableOpacity>
           </Animated.View>
 
           <Text style={SignInCss.SignUp}>
-            Remember Password?
+            {i18n.t('ForgotPassword.Remember-Password')}
             <Text
               style={{color: '#3490DE'}}
               onPress={() => navigation.navigate(SignIn as never)}>
-              Sign In
+              {i18n.t('ForgotPassword.Sign-In')}
             </Text>
           </Text>
         </View>

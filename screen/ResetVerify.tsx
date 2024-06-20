@@ -8,7 +8,6 @@ import {
   NativeSyntheticEvent,
   TextInputKeyPressEventData,
   Alert,
-  Modal,
 } from 'react-native';
 import MainContainer from '../components/MainContainer';
 import {VerifyCss} from '../objects/commonCss';
@@ -20,6 +19,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
 import ResetPassword from './ResetPassword';
+import Toast from 'react-native-toast-message';
+import i18n from '../language/language';
+import {useFocusEffect} from '@react-navigation/native';
 
 type OTPInputProps = {
   length: number;
@@ -37,6 +39,21 @@ const ResetVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
   onChange,
   navigation,
 }) => {
+  const showToast = (message: any) => {
+    Toast.show({
+      type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
+
+  const [locale, setLocale] = React.useState(i18n.locale);
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
+  );
+
   const inputRefs = useRef<(TextInput | null)[]>([]);
 
   const onChangeValue = (text: string, index: number) => {
@@ -96,23 +113,18 @@ const ResetVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
               AsyncStorage.setItem('Email', Email);
               navigation.navigate(ResetPassword as never);
             } else {
-              Alert.alert('Your Verify Code is not correct');
+              showToast(i18n.t('UserEditVerify.Not-Correct'));
             }
           });
       } catch (error) {
-        Alert.alert('Verify Unsuccessful');
+        showToast(i18n.t('UserEditVerify.Verify-Unsuccessful'));
       }
     } else {
-      Alert.prompt(
-        'Invalid input: OTP should contain only numeric characters without spaces or symbols.',
-      );
+      showToast(i18n.t('UserEditVerify.Invalid-Input'));
     }
   };
 
-  const [Username, setUsername] = useState('');
   const [Email, setEmail] = useState('');
-  const [Password, setPassword] = useState('');
-  const [Token, setToken] = useState('');
   useEffect(() => {
     const getData = async () => {
       try {
@@ -121,7 +133,7 @@ const ResetVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
           setEmail(storedEmail);
         }
       } catch (error) {
-        console.error('Failed to load email from AsyncStorage', error);
+        showToast(i18n.t('UserEditVerify.Failed-Load-Email'));
       }
     };
 
@@ -138,11 +150,11 @@ const ResetVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
           email: Email,
         }),
       );
-      Alert.prompt('Send OTP Successful');
+      showToast(i18n.t('UserEditVerify.Send-OTP-Successful'));
       AsyncStorage.setItem('Email', Email);
       navigation.navigate(ResetVerify as never);
     } catch (error) {
-      Alert.prompt('Send OTP Unsuccessful');
+      showToast(i18n.t('UserEditVerify.Send-OTP-Unsuccessful'));
     }
   };
 
@@ -181,10 +193,14 @@ const ResetVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
           />
         </TouchableOpacity>
 
-        <Text style={VerifyCss.Title}>Verification</Text>
-        <Text style={VerifyCss.SubTitle}>Code sent to {Email} </Text>
+        <Text style={VerifyCss.Title}>
+          {i18n.t('UserEditVerify.Verification')}
+        </Text>
         <Text style={VerifyCss.SubTitle}>
-          Please Enter the Verification Code{' '}
+          {i18n.t('UserEditVerify.Send-To')} {Email}{' '}
+        </Text>
+        <Text style={VerifyCss.SubTitle}>
+          {i18n.t('UserEditVerify.Please-Enter')}
         </Text>
 
         <Image source={require('../assets/Verify.png')} style={VerifyCss.img} />
@@ -207,21 +223,17 @@ const ResetVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
         </View>
         {countdown > 0 && (
           <Text style={[VerifyCss.resend, {color: '#000'}]}>
-            {countdown} seconds remaining
+            {countdown} {i18n.t('UserEditVerify.Seconds-Remaining')}
           </Text>
         )}
         {showResend && (
           <Text style={VerifyCss.resend} onPress={handleResend}>
-            Resend code
+            {i18n.t('UserEditVerify.Resend')}
           </Text>
         )}
-        <Text
-          style={VerifyCss.resend}
-          onPress={() => navigation.navigate(SignIn as never)}>
-          Already have an account? Sign In
-        </Text>
+      
         <TouchableOpacity style={VerifyCss.Btn} onPress={handleVerify}>
-          <Text style={VerifyCss.font}>VERIFY</Text>
+          <Text style={VerifyCss.font}>{i18n.t('UserEditVerify.Verify')}</Text>
         </TouchableOpacity>
       </View>
     </MainContainer>

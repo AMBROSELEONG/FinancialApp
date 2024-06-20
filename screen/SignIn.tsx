@@ -9,28 +9,50 @@ import {
   KeyboardAvoidingView,
   Platform,
   Dimensions,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import MainContainer from '../components/MainContainer';
 import {SignInCss} from '../objects/commonCss';
 import {TextInput, HelperText} from 'react-native-paper';
-import {CommonActions, useNavigation} from '@react-navigation/native';
-import Welcome from './Welcome';
+import {
+  CommonActions,
+  useNavigation,
+  useFocusEffect,
+} from '@react-navigation/native';
 import React, {useRef, useEffect, useState} from 'react';
 import SignUp from './SignUp';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
 import ForgotPassword from './ForgotPassword';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import i18n from '../language/language';
+import Toast from 'react-native-toast-message';
 
 const SignIn = () => {
   const navigation = useNavigation();
+
+  const [locale, setLocale] = React.useState(i18n.locale);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
+  );
+
   const theme = {
     roundness: 20, // Set the border radius here
     colors: {
       primary: '#000', // Active outline color
       outline: '#808080', // Outline color
     },
+  };
+
+  const showToast = (message: any) => {
+    Toast.show({
+      type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
   };
 
   const Anim = useRef(new Animated.Value(100)).current;
@@ -92,7 +114,6 @@ const SignIn = () => {
   const [loading, setLoading] = useState(false);
 
   const SignIn = async () => {
-    setLoading(true);
     try {
       RNFetchBlob.config({trusty: true})
         .fetch(
@@ -113,6 +134,7 @@ const SignIn = () => {
             AsyncStorage.setItem('UserID', userID.toString());
             AsyncStorage.setItem('UserName', userName);
             AsyncStorage.setItem('Email', Email);
+            setLoading(false);
             navigation.dispatch(
               CommonActions.reset({
                 index: 0,
@@ -121,12 +143,11 @@ const SignIn = () => {
             );
           } else {
             setInvalid(true);
+            setLoading(false);
           }
         });
     } catch (error) {
-      Alert.alert('Error');
-    } finally {
-      setLoading(false);
+      showToast(i18n.t('SignIn.Sign-In-Error'));
     }
   };
 
@@ -134,14 +155,14 @@ const SignIn = () => {
     let valid = true;
 
     if (Email.trim() === '') {
-      setEmailError('Email cannot be empty');
+      setEmailError(i18n.t('SignIn.Email-Empty'));
       valid = false;
     } else {
       setEmailError('');
     }
 
     if (Password.trim() === '') {
-      setPasswordError('Password cannot be empty');
+      setPasswordError(i18n.t('SignIn.Password-Empty'));
       valid = false;
     } else {
       setPasswordError('');
@@ -149,6 +170,7 @@ const SignIn = () => {
 
     if (valid) {
       AsyncStorage.setItem('Email', Email);
+      setLoading(true);
       SignIn();
     }
   };
@@ -176,18 +198,18 @@ const SignIn = () => {
             </Animated.View>
 
             <Animated.View style={{transform: [{translateY: Anim1}]}}>
-              <Text style={SignInCss.Title}>Sign In</Text>
+              <Text style={SignInCss.Title}>{i18n.t('SignIn.Sign-In')}</Text>
               <Text style={SignInCss.Content}>
-                Enter your credentials to sign in
+                {i18n.t('SignIn.Credentials')}
               </Text>
             </Animated.View>
 
             <Animated.View style={{transform: [{translateY: Anim2}]}}>
               <TextInput
-                label="Email"
+                label={i18n.t('SignIn.Email')}
                 mode="outlined"
                 style={SignInCss.Input}
-                placeholder="Please Enter Your Email"
+                placeholder={i18n.t('SignIn.Email-Placeholder')}
                 theme={theme}
                 onChangeText={text => setEmail(text)}
               />
@@ -200,10 +222,10 @@ const SignIn = () => {
 
             <Animated.View style={{transform: [{translateY: Anim3}]}}>
               <TextInput
-                label="Password"
+                label={i18n.t('SignIn.Password')}
                 mode="outlined"
                 style={SignInCss.Input}
-                placeholder="Please Enter Your Password"
+                placeholder={i18n.t('SignIn.Password-Placeholder')}
                 theme={theme}
                 onChangeText={text => setPassword(text)}
                 autoCapitalize="none"
@@ -222,28 +244,28 @@ const SignIn = () => {
               )}
               {Invalid == true && (
                 <HelperText type="error" style={SignInCss.InputError}>
-                  Username or Password is invalid
+                  {i18n.t('SignIn.Invalid')}
                 </HelperText>
               )}
 
               <Text
                 style={SignInCss.Forgot}
                 onPress={() => navigation.navigate(ForgotPassword as never)}>
-                Forgot Password?
+                {i18n.t('SignIn.Forgot')}
               </Text>
             </Animated.View>
             <Animated.View style={{transform: [{translateY: Anim4}]}}>
               <TouchableOpacity
                 style={SignInCss.LoginButton}
                 onPress={() => Verify()}>
-                <Text style={SignInCss.BtnText}>SIGN IN</Text>
+                <Text style={SignInCss.BtnText}>{i18n.t('SignIn.Sign')}</Text>
               </TouchableOpacity>
             </Animated.View>
 
             <Animated.View style={{transform: [{translateY: Anim5}]}}>
               <View style={SignInCss.Other}>
                 <View style={SignInCss.Line}></View>
-                <Text style={SignInCss.Or}>Or Sign In with</Text>
+                <Text style={SignInCss.Or}>{i18n.t('SignIn.Or')}</Text>
                 <View style={SignInCss.Line}></View>
               </View>
             </Animated.View>
@@ -258,11 +280,11 @@ const SignIn = () => {
             </Animated.View>
 
             <Text style={SignInCss.SignUp}>
-              Don't Have an Account?
+              {i18n.t('SignIn.Dont-Have-Account')}
               <Text
                 style={{color: '#3490DE'}}
                 onPress={() => navigation.navigate(SignUp as never)}>
-                Sign Up
+                {i18n.t('SignIn.Sign-Up')}
               </Text>
             </Text>
           </View>
