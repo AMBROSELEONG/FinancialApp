@@ -1,4 +1,4 @@
-import {DefaultTheme, Title} from 'react-native-paper';
+import {DefaultTheme, Modal, Title} from 'react-native-paper';
 import {Dimensions, StyleSheet} from 'react-native';
 import {white} from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 
@@ -692,21 +692,135 @@ export const walletIncomeCss = StyleSheet.create({
     color: '#3490DE',
     marginLeft: '7%',
     marginTop: (Dimensions.get('screen').height / 100) * 3,
-    marginBottom: 5
+    marginBottom: 5,
   },
-  Button:{
+  Button: {
     width: '80%',
-    height: Dimensions.get('screen').width / 100 * 13,
+    height: (Dimensions.get('screen').width / 100) * 13,
     backgroundColor: '#3490DE',
     alignSelf: 'center',
     borderRadius: 10,
     position: 'absolute',
-    bottom: 30
+    bottom: 30,
   },
-  ButtonText:{
+  ButtonText: {
     color: '#fff',
     fontSize: 20,
     textAlign: 'center',
-    lineHeight: Dimensions.get('screen').width / 100 * 13
-  }
+    lineHeight: (Dimensions.get('screen').width / 100) * 13,
+  },
+});
+
+export const bankCss = StyleSheet.create({
+  addButton: {
+    width: (Dimensions.get('screen').width / 100) * 15,
+    height: (Dimensions.get('screen').width / 100) * 15,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    elevation: 5,
+    position: 'absolute',
+    bottom: 15,
+    right: 15,
+    zIndex: 1
+  },
+  addIcon: {
+    alignSelf: 'center',
+    lineHeight: (Dimensions.get('screen').width / 100) * 15,
+  },
+  ModalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  ModalView: {
+    width: (Dimensions.get('screen').width / 100) * 80,
+    height: (Dimensions.get('screen').width / 100) * 120,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  ButtonClose: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
+  },
+  ModalTitle: {
+    color: '#000',
+    fontSize: 20,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+  },
+  Input: {
+    width: '90%',
+    alignSelf: 'center',
+    backgroundColor: '#EEEEEE',
+  },
+  InputError: {
+    width: '80%',
+    alignSelf: 'center',
+    marginBottom: -20,
+  },
+  label: {
+    color: '#3490DE',
+    marginLeft: '7%',
+    marginTop: (Dimensions.get('screen').height / 100) * 3,
+    marginBottom: 5,
+  },
+  SaveButton: {
+    width: '90%',
+    height: (Dimensions.get('screen').width / 100) * 12,
+    backgroundColor: '#3490DE',
+    alignSelf: 'center',
+    position: 'absolute',
+    bottom: 20,
+    borderRadius: 10,
+  },
+  SaveText: {
+    color: '#fff',
+    textAlign: 'center',
+    lineHeight: (Dimensions.get('screen').width / 100) * 12,
+    fontSize: 20,
+  },
+  listContainer: {
+    width: '95%',
+    height: (Dimensions.get('screen').width / 100) * 20,
+    backgroundColor: '#fff',
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 10,
+    marginVertical: 10,
+    flexDirection: 'row',
+    paddingHorizontal: 30
+  },
+  bank: {
+    color: '#000',
+    fontSize: 20,
+    flex: 1,
+    fontWeight: 'bold',
+    lineHeight: (Dimensions.get('screen').width / 100) * 20,
+  },
+  balance: {
+    color: '#3490DE',
+    fontSize: 20,
+    flex: 1,
+    fontWeight: 'bold',
+    lineHeight: (Dimensions.get('screen').width / 100) * 20,
+  },
 });

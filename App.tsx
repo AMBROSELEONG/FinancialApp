@@ -32,6 +32,9 @@ import WalletIncome from './screen/WalletIncome';
 import WalletSpend from './screen/WalletSpend';
 import EWalletIncome from './screen/EWalletIncome';
 import EWalletSpend from './screen/EWalletSpend';
+import BankDetail from './screen/BankDetail';
+import BankIncome from './screen/BankIncome';
+import BankSpend from './screen/BankSpend';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
@@ -100,6 +103,9 @@ function App(): JSX.Element {
               <Stack.Screen name="WalletIncome" component={WalletIncome} />
               <Stack.Screen name="WalletSpend" component={WalletSpend} />
               <Stack.Screen name="Bank" component={Bank} />
+              <Stack.Screen name="BankDetail" component={BankDetail} />
+              <Stack.Screen name="BankIncome" component={BankIncome} />
+              <Stack.Screen name="BankSpend" component={BankSpend} />
               <Stack.Screen name="Ewallet" component={Ewallet} />
               <Stack.Screen name="EWalletIncome" component={EWalletIncome} />
               <Stack.Screen name="EWalletSpend" component={EWalletSpend} />
