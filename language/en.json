@@ -147,5 +147,16 @@
     "Reset": "Reset",
     "Remember": "Remember Password?",
     "Sign-In":"Sign In"
+  },
+  "Home":{
+    "Failed-Load-Username": "Failed to load username",
+    "Failed-Fetch": "Failed to fetch user data",
+    "Error-Fetch": "Error fetching user data",
+    "Home": "Home",
+    "Welcome-Back": "Welcome Back",
+    "Spending": "Spending over the past 7 days",
+    "Total-Spending": "Total Spending Today",
+    "Increase": "Increase in the past 7 days",
+    "Total-Increase": "Total Increase Today"
   }
 }

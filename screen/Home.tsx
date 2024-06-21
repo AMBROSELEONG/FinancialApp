@@ -1,4 +1,4 @@
-import {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import MainContainer from '../components/MainContainer';
 import {
   useNavigation,
@@ -22,6 +22,8 @@ import {LineChart} from 'react-native-gifted-charts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
+import i18n from '../language/language';
+import Toast from 'react-native-toast-message';
 
 const Home = () => {
   const navigation = useNavigation();
@@ -30,6 +32,21 @@ const Home = () => {
   const [userId, setUserId] = useState('');
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
+  const [locale, setLocale] = React.useState(i18n.locale);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
+  );
+
+  const showToast = (message: any) => {
+    Toast.show({
+      type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -40,7 +57,7 @@ const Home = () => {
           setUserId(storedUserID);
         }
       } catch (error) {
-        console.error('Failed to load username from AsyncStorage', error);
+        showToast(i18n.t('Home.Failed-Load-Username'));
       }
     };
     fetchUsername();
@@ -63,10 +80,10 @@ const Home = () => {
             setUsername(json.userData.userName);
             setLoading(false);
           } else {
-            console.log('Failed to fetch user data');
+            showToast(i18n.t('Home.Failed-Fetch'));
           }
         } catch (error) {
-          console.error('Error fetching user data', error);
+          showToast(i18n.t('Home.Error-Fetch'));
         }
       };
       fetchData();
@@ -90,10 +107,10 @@ const Home = () => {
             if (json.success) {
               setUsername(json.userData.userName);
             } else {
-              console.log('Failed to fetch user data');
+              showToast(i18n.t('Home.Failed-Fetch'));
             }
           } catch (error) {
-            console.error('Error fetching user data', error);
+            showToast(i18n.t('Home.Error-Fetch'));
           } finally {
             setLoading(false);
           }
@@ -126,10 +143,10 @@ const Home = () => {
       setCurrentDate(`${day} ${month} ${year}`);
     };
 
-    updateDate(); // Set the initial date
-    const interval = setInterval(updateDate, 24 * 60 * 60 * 1000); // Update every 24 hours
+    updateDate();
+    const interval = setInterval(updateDate, 24 * 60 * 60 * 1000);
 
-    return () => clearInterval(interval); // Clean up interval on component unmount
+    return () => clearInterval(interval);
   }, []);
 
   const data = [
@@ -163,17 +180,17 @@ const Home = () => {
               <Ionicons name="menu" size={30} color={'#000'} />
             </TouchableOpacity>
             <View style={css.HeaderView}>
-              <Text style={css.PageName}>Home</Text>
+              <Text style={css.PageName}>{i18n.t('Home.Home')}</Text>
             </View>
           </View>
           <View style={homeCss.container}>
-            <Text style={homeCss.welcome}>Welcome Back</Text>
+            <Text style={homeCss.welcome}>{i18n.t('Home.Welcome-Back')}</Text>
             <Text style={homeCss.user}>{UserName}</Text>
             <View style={homeCss.dateContainer}>
               <Text style={homeCss.date}>{currentDate}</Text>
             </View>
             <View style={homeCss.spendContainer}>
-              <Text style={homeCss.spend}>Spending over the past 7 days</Text>
+              <Text style={homeCss.spend}>{i18n.t('Home.Spending')}</Text>
               <View style={homeCss.chartContainer}>
                 <LineChart
                   data={data}
@@ -189,11 +206,13 @@ const Home = () => {
                   xAxisLabelTextStyle={homeCss.xAxisLabel}
                 />
               </View>
-              <Text style={homeCss.totalText}>Total Spending Today</Text>
+              <Text style={homeCss.totalText}>
+                {i18n.t('Home.Total-Spending')}
+              </Text>
               <Text style={homeCss.total}>RM 150.00</Text>
             </View>
             <View style={[homeCss.spendContainer, {marginBottom: 30}]}>
-              <Text style={homeCss.spend}>Increase in the past 7 days</Text>
+              <Text style={homeCss.spend}>{i18n.t('Home.Increase')}</Text>
               <View style={homeCss.chartContainer}>
                 <LineChart
                   data={data}
@@ -209,7 +228,9 @@ const Home = () => {
                   xAxisLabelTextStyle={homeCss.xAxisLabel}
                 />
               </View>
-              <Text style={homeCss.totalText}>Total Increase Today</Text>
+              <Text style={homeCss.totalText}>
+                {i18n.t('Home.Total-Increase')}
+              </Text>
               <Text style={homeCss.total}>RM 150.00</Text>
             </View>
           </View>

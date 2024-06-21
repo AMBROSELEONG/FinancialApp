@@ -113,6 +113,28 @@ const SignIn = () => {
   const [Username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const getStoredCredentials = async () => {
+      setLoading(true);
+      try {
+        const storedEmail = await AsyncStorage.getItem('Email');
+        const storedPassword = await AsyncStorage.getItem('Password');
+
+        if (storedEmail && storedPassword) {
+          setEmail(storedEmail);
+          setPassword(storedPassword);
+          SignIn();
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error retrieving stored credentials:', error);
+        setLoading(false);
+      }
+    };
+
+    getStoredCredentials();
+  }, []);
+
   const SignIn = async () => {
     try {
       RNFetchBlob.config({trusty: true})
@@ -134,6 +156,7 @@ const SignIn = () => {
             AsyncStorage.setItem('UserID', userID.toString());
             AsyncStorage.setItem('UserName', userName);
             AsyncStorage.setItem('Email', Email);
+            AsyncStorage.setItem('Password', Password);
             setLoading(false);
             navigation.dispatch(
               CommonActions.reset({
@@ -174,6 +197,7 @@ const SignIn = () => {
       SignIn();
     }
   };
+
   return (
     <MainContainer>
       <KeyboardAvoidingView

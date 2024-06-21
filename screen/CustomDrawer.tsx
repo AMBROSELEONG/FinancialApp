@@ -10,8 +10,8 @@ import {
   CommonActions,
   useFocusEffect,
 } from '@react-navigation/native';
-import React from 'react';
-import {Dimensions, Image, Text, View} from 'react-native';
+import React, {useCallback} from 'react';
+import {Dimensions, Image, Text, View, BackHandler} from 'react-native';
 import {customCss} from '../objects/commonCss';
 import Setting from './Setting';
 import CustomBottomTabNavigator from './BottomNavigation';
@@ -19,6 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18n from '../language/language';
 
 const Drawer = createDrawerNavigator();
+const STORAGE_KEY = '@app_language';
 
 function CustomDrawerContent(props: any) {
   const navigation = useNavigation();
@@ -33,9 +34,10 @@ function CustomDrawerContent(props: any) {
 
   const handleLogout = () => {
     setLoggedOut(true);
+    AsyncStorage.removeItem('UserID');
     AsyncStorage.removeItem('UserName');
     AsyncStorage.removeItem('Email');
-    AsyncStorage.removeItem('Password')
+    AsyncStorage.removeItem('Password');
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
@@ -65,7 +67,7 @@ function CustomDrawerContent(props: any) {
       <DrawerContentScrollView contentContainerStyle={{flex: 1}} {...props}>
         <DrawerItemList {...props} />
         <DrawerItem
-          label={i18n.t("CustomDrawer.Logout")}
+          label={i18n.t('CustomDrawer.Logout')}
           onPress={handleLogout}
           icon={() => (
             <Ionicons
@@ -84,9 +86,32 @@ function CustomDrawerContent(props: any) {
 export function CustomDrawer() {
   const navigation = useNavigation();
 
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        AsyncStorage.removeItem('UserID');
+        AsyncStorage.removeItem('UserName');
+        AsyncStorage.removeItem('Email');
+        AsyncStorage.removeItem('Password');
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: 'Welcome'}],
+          }),
+        );
+        return true; 
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      };
+    }, [navigation]),
+  );
   return (
     <Drawer.Navigator
-      initialRouteName={'Home'}
+      initialRouteName={i18n.t('CustomDrawer.Home')}
       screenOptions={{
         headerShown: false,
         headerStyle: {
@@ -100,10 +125,10 @@ export function CustomDrawer() {
       }}
       drawerContent={props => <CustomDrawerContent {...props} />}>
       <Drawer.Screen
-        name={i18n.t("CustomDrawer.Home")}
+        name={i18n.t('CustomDrawer.Home')}
         component={CustomBottomTabNavigator}
         options={{
-          headerTitle: i18n.t("CustomDrawer.Home"),
+          headerTitle: 'Home',
           headerRight: () => (
             <View
               style={{
@@ -124,10 +149,10 @@ export function CustomDrawer() {
         }}
       />
       <Drawer.Screen
-        name={i18n.t("CustomDrawer.Setting")}
+        name={i18n.t('CustomDrawer.Setting')}
         component={Setting}
         options={{
-          headerTitle: i18n.t("CustomDrawer.Setting"),
+          headerTitle: 'Setting',
           headerRight: () => (
             <View
               style={{

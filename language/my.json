@@ -147,5 +147,16 @@
     "Reset": "Tetapkan Semula",
     "Remember": "Ingat Kata Laluan?",
     "Sign-In": "Log Masuk"
+  },
+  "Home": {
+    "Failed-Load-Username": "Gagal memuatkan nama pengguna",
+    "Failed-Fetch": "Gagal mendapatkan data pengguna",
+    "Error-Fetch": "Ralat mendapatkan data pengguna",
+    "Home": "Laman Utama",
+    "Welcome-Back": "Selamat Kembali",
+    "Spending": "Perbelanjaan dalam 7 hari yang lalu",
+    "Total-Spending": "Jumlah Perbelanjaan Hari Ini",
+    "Increase": "Pendapatan dalam 7 hari yang lalu",
+    "Total-Increase": "Jumlah Pendapatan Hari Ini"
   }
 }

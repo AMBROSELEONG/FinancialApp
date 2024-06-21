@@ -3,6 +3,8 @@ import {
   useNavigation,
   DrawerActions,
   useIsFocused,
+  useFocusEffect,
+  CommonActions,
 } from '@react-navigation/native';
 import {
   KeyboardAvoidingView,
@@ -16,7 +18,7 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {css, languageCss} from '../objects/commonCss';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import i18n from '../language/language';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -65,11 +67,15 @@ const Language = () => {
       [
         {
           text: 'OK',
-          onPress: () => navigation.goBack(),
-          style: 'cancel',
+          onPress: () =>
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{name: 'CustomDrawer'}],
+              }),
+            ),
         },
       ],
-      {cancelable: false},
     );
   };
 

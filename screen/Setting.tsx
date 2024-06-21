@@ -17,6 +17,7 @@ import {
   Switch,
   ActivityIndicator,
   Dimensions,
+  Alert,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -29,6 +30,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
 import i18n from '../language/language';
 import Toast from 'react-native-toast-message';
+const STORAGE_KEY = '@app_language';
 
 const Setting = () => {
   const navigation = useNavigation();
@@ -94,39 +96,29 @@ const Setting = () => {
   }, [userId]);
 
   useFocusEffect(
-    useCallback(() => {
-      if (isFocused && userId) {
-        setLoading(true);
-        const fetchData = async () => {
-          try {
-            const response = await RNFetchBlob.config({trusty: true}).fetch(
-              'GET',
-              `${UrlAccess.Url}User/GetUserData?userId=${userId}`,
-              {'Content-Type': 'application/json'},
-            );
-
-            const json = await response.json();
-
-            if (json.success) {
-              setEmail(json.userData.email);
-              setUsername(json.userData.userName);
-            } else {
-              showToast(i18n.t('SettingPage.Failed-Fetch-Data'));
-            }
-          } catch (error) {
-            showToast(i18n.t('SettingPage.Error-Fetch'));
-          } finally {
-            setLoading(false);
-          }
-        };
-        fetchData();
-      }
-    }, [isFocused, userId]),
-  );
-
-  useFocusEffect(
     React.useCallback(() => {
       setLocale(i18n.locale);
+    }, []),
+  );
+
+  const loadLanguage = async () => {
+    setLoading(true);
+    try {
+      const language = await AsyncStorage.getItem(STORAGE_KEY);
+      if (language) {
+        i18n.locale = language;
+        setLocale(language);
+      }
+    } catch (error) {
+      console.error('Failed to load language', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      loadLanguage();
     }, []),
   );
 
@@ -221,7 +213,9 @@ const Setting = () => {
                     <FontAwesome5 name="angle-right" size={30} color={'#000'} />
                   </View>
                 </TouchableOpacity>
-                <TouchableOpacity style={settingCss.FunctionContainer}>
+                <TouchableOpacity
+                  style={settingCss.FunctionContainer}
+                  onPress={() => toggleSwitch()}>
                   <View style={{flexDirection: 'row'}}>
                     <MaterialCommunityIcons
                       name="theme-light-dark"
@@ -235,15 +229,14 @@ const Setting = () => {
                       </Text>
                     </View>
                   </View>
-                  <View style={settingCss.ClickIcon}>
-                    <Switch
-                      trackColor={{false: '#81b0ff', true: '#767577'}}
-                      thumbColor={isEnabled ? '#f4f3f4' : '#f5dd4b'}
-                      ios_backgroundColor="#3e3e3e"
-                      onValueChange={toggleSwitch}
-                      value={isEnabled}
-                    />
-                  </View>
+                  <Switch
+                    trackColor={{false: '#81b0ff', true: '#767577'}}
+                    thumbColor={isEnabled ? '#f4f3f4' : '#f5dd4b'}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={toggleSwitch}
+                    value={isEnabled}
+                    style={settingCss.ClickIcon}
+                  />
                 </TouchableOpacity>
               </View>
             </View>

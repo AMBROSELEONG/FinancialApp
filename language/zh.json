@@ -147,6 +147,16 @@
     "Reset": "重置",
     "Remember": "记住密码？",
     "Sign-In": "登录"
+  },
+  "Home": {
+    "Failed-Load-Username": "加载用户名失败",
+    "Failed-Fetch": "获取用户数据失败",
+    "Error-Fetch": "获取用户数据出错",
+    "Home": "首页",
+    "Welcome-Back": "欢迎回来",
+    "Spending": "过去7天的开支",
+    "Total-Spending": "今天的总开支",
+    "Increase": "过去7天的收入",
+    "Total-Increase": "今天的总收入"
   }
- 
 }

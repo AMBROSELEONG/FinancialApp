@@ -545,7 +545,7 @@ export const userEditCss = StyleSheet.create({
     borderRadius: (Dimensions.get('screen').width / 100) * 12,
     alignSelf: 'center',
     marginVertical: (Dimensions.get('screen').width / 100) * 2,
-  },  
+  },
   Title: {
     color: '#000',
     fontSize: 18,
