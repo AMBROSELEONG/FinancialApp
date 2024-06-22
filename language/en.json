@@ -11,6 +11,7 @@
     "Preferences": "Prefences",
     "Language": "Language",
     "Dark-Mode": "Dark Mode",
+    "Finger-Print": "Enable Finger Print",
     "Failed-Load-Username": "Failed to load username",
     "Failed-Fetch-Data": "Failed to Fetch User Data",
     "Error-Fetch": "Error fetching user data"
@@ -85,7 +86,8 @@
     "Sign": "SIGN IN",
     "Or": "Or Sign In with",
     "Dont-Have-Account": "Don't Have an Account?",
-    "Sign-Up": "Sign Up"
+    "Sign-Up": "Sign Up",
+    "Successful": "Sign In Successful"
   },
   "SignUp": {
     "Username-Empty": "Username cannot be emtpy",

@@ -11,6 +11,7 @@
     "Preferences": "Keutamaan",
     "Language": "Bahasa",
     "Dark-Mode": "Mod Gelap",
+    "Finger-Print": "Dayakan pengecaman cap jari",
     "Failed-Load-Username": "Gagal memuatkan nama pengguna",
     "Failed-Fetch-Data": "Gagal mendapatkan data pengguna",
     "Error-Fetch": "Ralat mendapatkan data pengguna"
@@ -85,7 +86,8 @@
     "Sign": "LOG MASUK",
     "Or": "Atau Log Masuk dengan",
     "Dont-Have-Account": "Tidak Mempunyai Akaun?",
-    "Sign-Up": "Daftar"
+    "Sign-Up": "Daftar",
+    "Successful": "Log Masuk Berjaya"
   },
   "SignUp": {
     "Username-Empty": "Nama pengguna tidak boleh kosong",

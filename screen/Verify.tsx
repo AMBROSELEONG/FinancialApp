@@ -169,6 +169,8 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
             email: Email,
             password: Password,
             token: Token,
+            publicKey: '',
+            signature: '',
           }),
         )
         .then(response => response.json())
@@ -289,13 +291,17 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
               source={require('../assets/successful.png')}
               style={{alignSelf: 'center', marginTop: 30}}
             />
-            <Text style={VerifyCss.TextModal}>{i18n.t('Verify.Sign-Up-Successful')}</Text>
+            <Text style={VerifyCss.TextModal}>
+              {i18n.t('Verify.Sign-Up-Successful')}
+            </Text>
             <TouchableOpacity
               style={VerifyCss.ButtonModal}
               onPress={() => {
                 Register();
               }}>
-              <Text style={VerifyCss.ButtonText}>{i18n.t('Verify.SIGN-IN')}</Text>
+              <Text style={VerifyCss.ButtonText}>
+                {i18n.t('Verify.SIGN-IN')}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

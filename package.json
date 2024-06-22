@@ -23,6 +23,7 @@
     "i18n-js": "^4.4.3",
     "react": "18.2.0",
     "react-native": "0.74.1",
+    "react-native-biometrics": "^3.0.1",
     "react-native-device-info": "^11.1.0",
     "react-native-dropdown-select-list": "^2.0.5",
     "react-native-gesture-handler": "^2.16.2",

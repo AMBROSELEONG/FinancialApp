@@ -30,19 +30,24 @@ import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
 import i18n from '../language/language';
 import Toast from 'react-native-toast-message';
+import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
+
 const STORAGE_KEY = '@app_language';
 
 const Setting = () => {
   const navigation = useNavigation();
   const [isEnabled, setIsEnabled] = useState(false);
+  const [isFingerEnabled, setFingerIsEnabled] = useState(false);
+  const [FingerAvailable, setFingerAvailable] = useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
   const [UserName, setUsername] = useState('');
   const [Email, setEmail] = useState('');
   const [userId, setUserId] = useState('');
   const [loading, setLoading] = useState(false);
-  const isFocused = useIsFocused();
   const [locale, setLocale] = React.useState(i18n.locale);
+  const rnBiometrics = new ReactNativeBiometrics();
 
   const showToast = (message: any) => {
     Toast.show({
@@ -122,6 +127,161 @@ const Setting = () => {
     }, []),
   );
 
+  useEffect(() => {
+    rnBiometrics
+      .isSensorAvailable()
+      .then(resultObject => {
+        const {available, biometryType} = resultObject;
+
+        if (available && biometryType === BiometryTypes.Biometrics) {
+          setFingerAvailable(true);
+        } else {
+          setFingerAvailable(false);
+        }
+      })
+      .catch(error => {
+        setFingerAvailable(false);
+      });
+  }, []);
+
+  const sendFingerPrintStatusToServer = async (status: any) => {
+    try {
+      await RNFetchBlob.config({trusty: true}).fetch(
+        'POST',
+        UrlAccess.Url + 'User/FingerPrint',
+        {'Content-Type': 'application/json'},
+        JSON.stringify({
+          userId: userId,
+          fingerPrint: status,
+        }),
+      );
+    } catch (error) {
+      showToast('Failed to send fingerprint status to server');
+    }
+  };
+
+  const [PublicKey, setPublicKey] = useState('');
+  const [Signature, setSignature] = useState('');
+  const fingerSwitch = async () => {
+    setFingerIsEnabled(previousState => {
+      setLoading(true);
+      const newState = !previousState;
+      AsyncStorage.setItem('fingerprintEnabled', JSON.stringify(newState));
+      sendFingerPrintStatusToServer(newState);
+      if (newState) {
+        rnBiometrics.createKeys().then(resultObject => {
+          const {publicKey} = resultObject;
+          fingerPrintRegister(newState);
+          setPublicKey(publicKey);
+          if (PublicKey) {
+            updatePublicKey();
+          }
+        });
+      } else {
+        rnBiometrics.deleteKeys().then(resultObject => {
+          const {keysDeleted} = resultObject;
+
+          if (keysDeleted) {
+            console.log('Successful deletion');
+            setLoading(false);
+          } else {
+            console.log(
+              'Unsuccessful deletion because there were no keys to delete',
+            );
+          }
+        });
+      }
+      setLoading(false);
+      return newState;
+    });
+  };
+
+  const fingerPrintRegister = async (status: any) => {
+    let epochTimeSeconds = Math.round(new Date().getTime() / 1000).toString();
+    let payload = epochTimeSeconds + 'some message';
+    setLoading(false);
+    if (status) {
+      try {
+        rnBiometrics
+          .createSignature({
+            promptMessage: 'Register Finger Print',
+            payload: payload,
+            cancelButtonText: 'Cancel',
+          })
+          .then(resultObject => {
+            const {success, signature} = resultObject;
+            if (success) {
+              setSignature(signature!);
+              if (Signature) {
+                updateSignature();
+              }
+            }
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      const getFingerPrintStatus = async () => {
+        try {
+          const response = await RNFetchBlob.config({trusty: true}).fetch(
+            'GET',
+            `${UrlAccess.Url}User/GetFingerPrint?userId=${userId}`,
+            {'Content-Type': 'application/json'},
+          );
+
+          const data = await response.json();
+          if (data.success) {
+            setFingerIsEnabled(data.userData.fingerPrint);
+          } else {
+            showToast('Failed to fetch fingerprint status');
+          }
+        } catch (error) {
+          showToast('Error fetching fingerprint status');
+        }
+      };
+      getFingerPrintStatus();
+    }
+  }, [userId]);
+
+  const updatePublicKey = async () => {
+    try {
+      await RNFetchBlob.config({trusty: true}).fetch(
+        'POST',
+        UrlAccess.Url + 'User/UpdatePublicKey',
+        {'Content-Type': 'application/json'},
+        JSON.stringify({
+          userId: userId,
+          publicKey: PublicKey,
+        }),
+      );
+    } catch (error) {
+      showToast('Failed to send public key status to server');
+    }
+  };
+
+  const updateSignature = async () => {
+    try {
+      await RNFetchBlob.config({trusty: true}).fetch(
+        'POST',
+        UrlAccess.Url + 'User/updateSignature',
+        {'Content-Type': 'application/json'},
+        JSON.stringify({
+          userId: userId,
+          signature: Signature,
+        }),
+      );
+    } catch (error) {
+      showToast('Failed to send public key status to server');
+    }
+  };
+
   return (
     <MainContainer>
       <KeyboardAvoidingView
@@ -193,6 +353,7 @@ const Setting = () => {
                 <Text style={settingCss.PrefenceText}>
                   {i18n.t('SettingPage.Preferences')}
                 </Text>
+
                 <TouchableOpacity
                   style={settingCss.FunctionContainer}
                   onPress={() => navigation.navigate(Language as never)}>
@@ -213,31 +374,62 @@ const Setting = () => {
                     <FontAwesome5 name="angle-right" size={30} color={'#000'} />
                   </View>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={settingCss.FunctionContainer}
-                  onPress={() => toggleSwitch()}>
-                  <View style={{flexDirection: 'row'}}>
-                    <MaterialCommunityIcons
-                      name="theme-light-dark"
-                      size={30}
-                      color={'#000'}
-                      style={[settingCss.EditIcon, {borderWidth: 0}]}
-                    />
-                    <View style={settingCss.TextContainer}>
-                      <Text style={settingCss.text}>
-                        {i18n.t('SettingPage.Dark-Mode')}
-                      </Text>
+
+                <TouchableWithoutFeedback onPress={toggleSwitch}>
+                  <View style={settingCss.FunctionContainer}>
+                    <View style={{flexDirection: 'row'}}>
+                      <MaterialCommunityIcons
+                        name="theme-light-dark"
+                        size={30}
+                        color={'#000'}
+                        style={[settingCss.EditIcon, {borderWidth: 0}]}
+                      />
+                      <View style={settingCss.TextContainer}>
+                        <Text style={settingCss.text}>
+                          {i18n.t('SettingPage.Dark-Mode')}
+                        </Text>
+                      </View>
                     </View>
+                    <Switch
+                      trackColor={{false: '#81b0ff', true: '#767577'}}
+                      thumbColor={isEnabled ? '#f4f3f4' : '#f5dd4b'}
+                      ios_backgroundColor="#3e3e3e"
+                      onValueChange={toggleSwitch}
+                      value={isEnabled}
+                      style={settingCss.ClickIcon}
+                    />
                   </View>
-                  <Switch
-                    trackColor={{false: '#81b0ff', true: '#767577'}}
-                    thumbColor={isEnabled ? '#f4f3f4' : '#f5dd4b'}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch}
-                    value={isEnabled}
-                    style={settingCss.ClickIcon}
-                  />
-                </TouchableOpacity>
+                </TouchableWithoutFeedback>
+
+                {FingerAvailable ? (
+                  <TouchableWithoutFeedback onPress={fingerSwitch}>
+                    <View style={settingCss.FunctionContainer}>
+                      <View style={{flexDirection: 'row'}}>
+                        <MaterialCommunityIcons
+                          name="fingerprint"
+                          size={30}
+                          color={'#000'}
+                          style={[settingCss.EditIcon, {borderWidth: 0}]}
+                        />
+                        <View style={settingCss.TextContainer}>
+                          <Text style={settingCss.text}>
+                            {i18n.t('SettingPage.Finger-Print')}
+                          </Text>
+                        </View>
+                      </View>
+                      <Switch
+                        trackColor={{false: '#81b0ff', true: '#767577'}}
+                        thumbColor={isFingerEnabled ? '#f4f3f4' : '#f5dd4b'}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={fingerSwitch}
+                        value={isFingerEnabled}
+                        style={settingCss.ClickIcon}
+                      />
+                    </View>
+                  </TouchableWithoutFeedback>
+                ) : (
+                  <View></View>
+                )}
               </View>
             </View>
           </View>

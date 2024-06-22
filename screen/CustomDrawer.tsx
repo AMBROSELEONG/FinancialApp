@@ -34,7 +34,6 @@ function CustomDrawerContent(props: any) {
 
   const handleLogout = () => {
     setLoggedOut(true);
-    AsyncStorage.removeItem('UserID');
     AsyncStorage.removeItem('UserName');
     AsyncStorage.removeItem('Email');
     AsyncStorage.removeItem('Password');
@@ -89,7 +88,6 @@ export function CustomDrawer() {
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
-        AsyncStorage.removeItem('UserID');
         AsyncStorage.removeItem('UserName');
         AsyncStorage.removeItem('Email');
         AsyncStorage.removeItem('Password');

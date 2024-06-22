@@ -11,6 +11,7 @@
     "Preferences": "偏好设置",
     "Language": "语言",
     "Dark-Mode": "深色模式",
+    "Finger-Print": "启用指纹识别",
     "Failed-Load-Username": "加载用户名失败",
     "Failed-Fetch-Data": "获取用户数据失败",
     "Error-Fetch": "获取用户数据时出错"
@@ -85,7 +86,8 @@
     "Sign": "登录",
     "Or": "或使用以下方式登录",
     "Dont-Have-Account": "没有账户？",
-    "Sign-Up": "注册"
+    "Sign-Up": "注册",
+    "Successful": "登录成功"
   },
   "SignUp": {
     "Username-Empty": "用户名不能为空",

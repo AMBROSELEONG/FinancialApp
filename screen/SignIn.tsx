@@ -27,10 +27,10 @@ import ForgotPassword from './ForgotPassword';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18n from '../language/language';
 import Toast from 'react-native-toast-message';
+import ReactNativeBiometrics, {Biometrics} from 'react-native-biometrics';
 
 const SignIn = () => {
   const navigation = useNavigation();
-
   const [locale, setLocale] = React.useState(i18n.locale);
 
   useFocusEffect(
@@ -38,6 +38,45 @@ const SignIn = () => {
       setLocale(i18n.locale);
     }, []),
   );
+
+  useEffect(() => {
+    fingerPrint();
+  });
+
+  const [userId, setUserId] = useState('');
+  const [isFingerEnabled, setFingerIsEnabled] = useState(false);
+
+  const fingerPrint = async () => {
+    try {
+      const storedUserID = await AsyncStorage.getItem('UserID');
+      if (storedUserID) {
+        setUserId(storedUserID);
+        isEnabledFingerPrint(storedUserID);
+        console.log(userId);
+      }
+    } catch (error) {
+      showToast(i18n.t('SettingPage.Failed-Load-Username'));
+    }
+  };
+
+  const isEnabledFingerPrint = async (userId: any) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}User/GetFingerPrint?userId=${userId}`,
+        {'Content-Type': 'application/json'},
+      );
+
+      const data = await response.json();
+      if (data.success) {
+        setFingerIsEnabled(data.userData.fingerPrint);
+      } else {
+        showToast('Failed to fetch fingerprint status');
+      }
+    } catch (error) {
+      showToast('Error fetching fingerprint status');
+    }
+  };
 
   const theme = {
     roundness: 20, // Set the border radius here
@@ -113,29 +152,8 @@ const SignIn = () => {
   const [Username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const getStoredCredentials = async () => {
-      setLoading(true);
-      try {
-        const storedEmail = await AsyncStorage.getItem('Email');
-        const storedPassword = await AsyncStorage.getItem('Password');
-
-        if (storedEmail && storedPassword) {
-          setEmail(storedEmail);
-          setPassword(storedPassword);
-          SignIn();
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error('Error retrieving stored credentials:', error);
-        setLoading(false);
-      }
-    };
-
-    getStoredCredentials();
-  }, []);
-
   const SignIn = async () => {
+    setLoading(true);
     try {
       RNFetchBlob.config({trusty: true})
         .fetch(
@@ -171,6 +189,7 @@ const SignIn = () => {
         });
     } catch (error) {
       showToast(i18n.t('SignIn.Sign-In-Error'));
+      setLoading(false);
     }
   };
 
@@ -185,7 +204,7 @@ const SignIn = () => {
     }
 
     if (Password.trim() === '') {
-      setPasswordError(i18n.t('SignIn.Password-Empty'));
+      setPasswordError(i18n.t('SignIn.Password-Emtpy'));
       valid = false;
     } else {
       setPasswordError('');
@@ -196,6 +215,86 @@ const SignIn = () => {
       setLoading(true);
       SignIn();
     }
+  };
+
+  const rnBiometrics = new ReactNativeBiometrics();
+  const handleFingerprint = async () => {
+    try {
+      rnBiometrics
+        .simplePrompt({promptMessage: 'Sign In'})
+        .then(resultObject => {
+          const {success} = resultObject;
+          if (success) {
+            setLoading(true);
+            getUserData(userId);
+          }
+        });
+    } catch (error) {
+      showToast(error);
+    }
+  };
+
+  const getUserData = async (userId: any) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}User/GetSignInData?userId=${userId}`,
+        {'Content-Type': 'application/json'},
+      );
+
+      const data = await response.json();
+      if (data.success) {
+        const email = data.userData.email;
+        const password = data.userData.password;
+        autoSignIn(email, password);
+        setLoading(false);
+      } else {
+        showToast('Failed to fetch user data');
+      }
+    } catch (error) {
+      showToast(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const autoSignIn = async (email: any, password: any) => {
+      setLoading(true);
+      try {
+        RNFetchBlob.config({trusty: true})
+          .fetch(
+            'POST',
+            UrlAccess.Url + 'User/SignIn',
+            {'Content-Type': 'application/json'},
+            JSON.stringify({
+              email: email,
+              password: password,
+            }),
+          )
+          .then(response => response.json())
+          .then(json => {
+            if (json.success) {
+              const {userID, userName} = json;
+              setUserID(userID);
+              setUsername(userName);
+              AsyncStorage.setItem('UserID', userID.toString());
+              AsyncStorage.setItem('UserName', userName);
+              AsyncStorage.setItem('Email', Email);
+              AsyncStorage.setItem('Password', Password);
+              showToast(i18n.t('SignIn.Successful'))
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{name: 'CustomDrawer'}],
+                }),
+              );
+            } else {
+              setInvalid(true);
+            }
+          });
+      } catch (error) {
+        showToast(i18n.t('SignIn.Sign-In-Error'));
+      }
   };
 
   return (
@@ -286,22 +385,30 @@ const SignIn = () => {
               </TouchableOpacity>
             </Animated.View>
 
-            <Animated.View style={{transform: [{translateY: Anim5}]}}>
-              <View style={SignInCss.Other}>
-                <View style={SignInCss.Line}></View>
-                <Text style={SignInCss.Or}>{i18n.t('SignIn.Or')}</Text>
-                <View style={SignInCss.Line}></View>
-              </View>
-            </Animated.View>
+            {isFingerEnabled ? (
+              <View>
+                <Animated.View style={{transform: [{translateY: Anim5}]}}>
+                  <View style={SignInCss.Other}>
+                    <View style={SignInCss.Line}></View>
+                    <Text style={SignInCss.Or}>{i18n.t('SignIn.Or')}</Text>
+                    <View style={SignInCss.Line}></View>
+                  </View>
+                </Animated.View>
 
-            <Animated.View style={{transform: [{translateY: Anim6}]}}>
-              <TouchableOpacity style={SignInCss.Finger}>
-                <Image
-                  style={SignInCss.Finger}
-                  source={require('../assets/fingerprint.png')}
-                />
-              </TouchableOpacity>
-            </Animated.View>
+                <Animated.View style={{transform: [{translateY: Anim6}]}}>
+                  <TouchableOpacity
+                    style={SignInCss.Finger}
+                    onPress={() => handleFingerprint()}>
+                    <Image
+                      style={SignInCss.Finger}
+                      source={require('../assets/fingerprint.png')}
+                    />
+                  </TouchableOpacity>
+                </Animated.View>
+              </View>
+            ) : (
+              <View></View>
+            )}
 
             <Text style={SignInCss.SignUp}>
               {i18n.t('SignIn.Dont-Have-Account')}

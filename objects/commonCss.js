@@ -489,6 +489,8 @@ export const settingCss = StyleSheet.create({
   },
   ClickIcon: {
     marginRight: 30,
+    position: 'absolute',
+    right: 0,
   },
 });
 
