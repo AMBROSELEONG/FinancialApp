@@ -4,7 +4,7 @@ import {
   useNavigation,
   DrawerActions,
   useFocusEffect,
-  useIsFocused,
+  CommonActions,
 } from '@react-navigation/native';
 import {
   KeyboardAvoidingView,
@@ -17,7 +17,6 @@ import {
   Switch,
   ActivityIndicator,
   Dimensions,
-  Alert,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -32,15 +31,17 @@ import i18n from '../language/language';
 import Toast from 'react-native-toast-message';
 import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
-
+import {useTheme} from '../objects/ThemeProvider';
+import {darkCss, darkSetting} from '../objects/darkCss';
+import CustomDrawer from './CustomDrawer';
+import ThemeChange from './ThemeChange';
 const STORAGE_KEY = '@app_language';
 
 const Setting = () => {
   const navigation = useNavigation();
-  const [isEnabled, setIsEnabled] = useState(false);
   const [isFingerEnabled, setFingerIsEnabled] = useState(false);
   const [FingerAvailable, setFingerAvailable] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  // const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
   const [UserName, setUsername] = useState('');
   const [Email, setEmail] = useState('');
@@ -163,10 +164,9 @@ const Setting = () => {
   const [PublicKey, setPublicKey] = useState('');
   const [Signature, setSignature] = useState('');
   const fingerSwitch = async () => {
+    setLoading(true);
     setFingerIsEnabled(previousState => {
-      setLoading(true);
       const newState = !previousState;
-      AsyncStorage.setItem('fingerprintEnabled', JSON.stringify(newState));
       sendFingerPrintStatusToServer(newState);
       if (newState) {
         rnBiometrics.createKeys().then(resultObject => {
@@ -182,16 +182,15 @@ const Setting = () => {
           const {keysDeleted} = resultObject;
 
           if (keysDeleted) {
-            console.log('Successful deletion');
+            showToast(i18n.t('SettingPage.Disable-Finger-Successful'));
             setLoading(false);
           } else {
-            console.log(
+            showToast(
               'Unsuccessful deletion because there were no keys to delete',
             );
           }
         });
       }
-      setLoading(false);
       return newState;
     });
   };
@@ -199,7 +198,6 @@ const Setting = () => {
   const fingerPrintRegister = async (status: any) => {
     let epochTimeSeconds = Math.round(new Date().getTime() / 1000).toString();
     let payload = epochTimeSeconds + 'some message';
-    setLoading(false);
     if (status) {
       try {
         rnBiometrics
@@ -212,16 +210,18 @@ const Setting = () => {
             const {success, signature} = resultObject;
             if (success) {
               setSignature(signature!);
+              showToast(i18n.t('SettingPage.Enable-Finger-Successful'));
+              setLoading(false);
               if (Signature) {
                 updateSignature();
               }
             }
           })
           .catch(error => {
-            console.log(error);
+            showToast(error);
           });
       } catch (error) {
-        console.log(error);
+        showToast(error);
       }
     }
   };
@@ -282,6 +282,16 @@ const Setting = () => {
     }
   };
 
+  const {isDark, toggleTheme} = useTheme();
+  const Style = isDark ? settingCss : darkSetting;
+
+  const toggleSwitch = async () => {
+    toggleTheme();
+    console.log(isDark ? 'light' : 'dark');
+
+    navigation.navigate(ThemeChange as never);
+  };
+
   return (
     <MainContainer>
       <KeyboardAvoidingView
@@ -289,7 +299,7 @@ const Setting = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <StatusBar
           animated={true}
-          backgroundColor="#F9F9F9"
+          backgroundColor={isDark ? '#000' : '#F9F9F9'}
           barStyle={'dark-content'}
         />
         {loading ? (
@@ -297,44 +307,68 @@ const Setting = () => {
             style={{
               flex: 1,
               marginVertical: (Dimensions.get('screen').height / 100) * 50,
+              backgroundColor: isDark ? '#000' : '#fff',
             }}>
-            <ActivityIndicator size={80} color="#000000" />
+            <ActivityIndicator size={80} color={isDark ? '#fff' : '#000'} />
           </View>
         ) : (
-          <View>
-            <View style={[css.mainView, {backgroundColor: '#F9F9F9'}]}>
+          <View style={{backgroundColor: isDark ? '#000' : '#f9f9f9', flex: 1}}>
+            <View
+              style={[
+                css.mainView,
+                {backgroundColor: isDark ? '#000' : '#F9F9F9'},
+              ]}>
               <TouchableOpacity
                 style={{paddingLeft: 20}}
                 onPress={() => {
                   navigation.dispatch(DrawerActions.openDrawer());
                 }}>
-                <Ionicons name="menu" size={30} color={'#000'} />
+                <Ionicons
+                  name="menu"
+                  size={30}
+                  color={isDark ? '#fff' : '#000'}
+                />
               </TouchableOpacity>
               <View style={css.HeaderView}>
-                <Text style={css.PageName}>
+                <Text style={isDark ? darkCss.PageName : css.PageName}>
                   {i18n.t('SettingPage.Setting')}
                 </Text>
               </View>
             </View>
-            <View style={settingCss.container}>
-              <View style={settingCss.UserContainer}>
+            <View style={isDark ? darkSetting.container : settingCss.container}>
+              <View
+                style={
+                  isDark ? darkSetting.UserContainer : settingCss.UserContainer
+                }>
                 <Image
                   source={require('../assets/User.png')}
                   style={[settingCss.UserImage]}
                 />
                 <View style={settingCss.UserInfoContainer}>
-                  <Text style={settingCss.UserName}>{UserName}</Text>
-                  <Text style={settingCss.Email}>{Email}</Text>
+                  <Text
+                    style={isDark ? darkSetting.UserName : settingCss.UserName}>
+                    {UserName}
+                  </Text>
+                  <Text style={isDark ? darkSetting.Email : settingCss.Email}>
+                    {Email}
+                  </Text>
                 </View>
               </View>
-              <View style={settingCss.EditContainer}>
+              <View
+                style={
+                  isDark ? darkSetting.EditContainer : settingCss.EditContainer
+                }>
                 <View style={{flexDirection: 'row'}}>
                   <Image
-                    source={require('../assets/edit.png')}
+                    source={
+                      isDark
+                        ? require('../assets/whiteedit.png')
+                        : require('../assets/edit.png')
+                    }
                     style={[settingCss.EditIcon]}
                   />
                   <View style={settingCss.TextContainer}>
-                    <Text style={settingCss.text}>
+                    <Text style={isDark ? darkSetting.text : settingCss.text}>
                       {i18n.t('SettingPage.Edit-Profile')}
                     </Text>
                   </View>
@@ -349,8 +383,16 @@ const Setting = () => {
                   </Text>
                 </TouchableOpacity>
               </View>
-              <View style={settingCss.PrefenceContainer}>
-                <Text style={settingCss.PrefenceText}>
+              <View
+                style={
+                  isDark
+                    ? darkSetting.PrefenceContainer
+                    : settingCss.PrefenceContainer
+                }>
+                <Text
+                  style={
+                    isDark ? darkSetting.PrefenceText : settingCss.PrefenceText
+                  }>
                   {i18n.t('SettingPage.Preferences')}
                 </Text>
 
@@ -361,17 +403,21 @@ const Setting = () => {
                     <Ionicons
                       name="language"
                       size={30}
-                      color={'#000'}
+                      color={isDark ? '#fff' : '#000'}
                       style={[settingCss.EditIcon, {borderWidth: 0}]}
                     />
                     <View style={settingCss.TextContainer}>
-                      <Text style={settingCss.text}>
+                      <Text style={isDark ? darkSetting.text : settingCss.text}>
                         {i18n.t('SettingPage.Language')}
                       </Text>
                     </View>
                   </View>
                   <View style={settingCss.ClickIcon}>
-                    <FontAwesome5 name="angle-right" size={30} color={'#000'} />
+                    <FontAwesome5
+                      name="angle-right"
+                      size={30}
+                      color={isDark ? '#fff' : '#000'}
+                    />
                   </View>
                 </TouchableOpacity>
 
@@ -381,21 +427,22 @@ const Setting = () => {
                       <MaterialCommunityIcons
                         name="theme-light-dark"
                         size={30}
-                        color={'#000'}
+                        color={isDark ? '#fff' : '#000'}
                         style={[settingCss.EditIcon, {borderWidth: 0}]}
                       />
                       <View style={settingCss.TextContainer}>
-                        <Text style={settingCss.text}>
+                        <Text
+                          style={isDark ? darkSetting.text : settingCss.text}>
                           {i18n.t('SettingPage.Dark-Mode')}
                         </Text>
                       </View>
                     </View>
                     <Switch
                       trackColor={{false: '#81b0ff', true: '#767577'}}
-                      thumbColor={isEnabled ? '#f4f3f4' : '#f5dd4b'}
+                      thumbColor={isDark ? '#f4f3f4' : '#f5dd4b'}
                       ios_backgroundColor="#3e3e3e"
                       onValueChange={toggleSwitch}
-                      value={isEnabled}
+                      value={isDark}
                       style={settingCss.ClickIcon}
                     />
                   </View>
@@ -408,11 +455,12 @@ const Setting = () => {
                         <MaterialCommunityIcons
                           name="fingerprint"
                           size={30}
-                          color={'#000'}
+                          color={isDark ? '#fff' : '#000'}
                           style={[settingCss.EditIcon, {borderWidth: 0}]}
                         />
                         <View style={settingCss.TextContainer}>
-                          <Text style={settingCss.text}>
+                          <Text
+                            style={isDark ? darkSetting.text : settingCss.text}>
                             {i18n.t('SettingPage.Finger-Print')}
                           </Text>
                         </View>

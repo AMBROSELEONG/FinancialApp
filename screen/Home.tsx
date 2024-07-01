@@ -24,6 +24,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
 import i18n from '../language/language';
 import Toast from 'react-native-toast-message';
+import {darkCss, darkHome} from '../objects/darkCss';
 
 const Home = () => {
   const navigation = useNavigation();
@@ -33,6 +34,7 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
   const [locale, setLocale] = React.useState(i18n.locale);
+  const [token, setToken] = useState('');
 
   useFocusEffect(
     React.useCallback(() => {
@@ -60,11 +62,16 @@ const Home = () => {
         showToast(i18n.t('Home.Failed-Load-Username'));
       }
     };
-    fetchUsername();
-  }, []);
 
-  useEffect(() => {
-    setLoading(true);
+    AsyncStorage.getItem('Token').then(token => {
+      if(token !== null){
+        setToken(token)
+        console.log(token)
+      } else{
+        console.log('not token')
+      }
+    })
+    
     if (userId) {
       const fetchData = async () => {
         try {
@@ -86,8 +93,26 @@ const Home = () => {
           showToast(i18n.t('Home.Error-Fetch'));
         }
       };
+
+      const updateToken = async () => {
+        try {
+          RNFetchBlob.config({trusty: true}).fetch(
+            'POST',
+            `${UrlAccess.Url}User/UpdateToken`,
+            {'Content-Type': 'application/json'},
+            JSON.stringify({
+              userId: userId,
+              token: token,
+            }),
+          );
+        } catch (error) {
+          showToast(error);
+        }
+      };
       fetchData();
+      updateToken();
     }
+    fetchUsername();
   }, [userId]);
 
   useFocusEffect(
@@ -159,6 +184,17 @@ const Home = () => {
     {value: 60, label: '3/6'},
   ];
   const screenWidth = (Dimensions.get('window').width / 100) * 70;
+  const screenHeight = (Dimensions.get('window').width / 100) * 50;
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    })();
+  }, []);
 
   return (
     <MainContainer>
@@ -167,35 +203,49 @@ const Home = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <StatusBar
           animated={true}
-          backgroundColor="#fff"
+          backgroundColor={isDark ? '#000' : '#fff'}
           barStyle={'dark-content'}
         />
         <ScrollView>
-          <View style={css.mainView}>
+          <View style={isDark ? darkCss.mainView : css.mainView}>
             <TouchableOpacity
               style={{paddingLeft: 20}}
               onPress={() => {
                 navigation.dispatch(DrawerActions.openDrawer());
               }}>
-              <Ionicons name="menu" size={30} color={'#000'} />
+              <Ionicons
+                name="menu"
+                size={30}
+                color={isDark ? '#fff' : '#000'}
+              />
             </TouchableOpacity>
             <View style={css.HeaderView}>
-              <Text style={css.PageName}>{i18n.t('Home.Home')}</Text>
+              <Text style={isDark ? darkCss.PageName : css.PageName}>
+                {i18n.t('Home.Home')}
+              </Text>
             </View>
           </View>
-          <View style={homeCss.container}>
-            <Text style={homeCss.welcome}>{i18n.t('Home.Welcome-Back')}</Text>
+          <View style={isDark ? darkHome.container : homeCss.container}>
+            <Text style={isDark ? darkHome.welcome : homeCss.welcome}>
+              {i18n.t('Home.Welcome-Back')}
+            </Text>
             <Text style={homeCss.user}>{UserName}</Text>
-            <View style={homeCss.dateContainer}>
-              <Text style={homeCss.date}>{currentDate}</Text>
+            <View
+              style={isDark ? darkHome.dateContainer : homeCss.dateContainer}>
+              <Text style={isDark ? darkHome.date : homeCss.date}>
+                {currentDate}
+              </Text>
             </View>
-            <View style={homeCss.spendContainer}>
-              <Text style={homeCss.spend}>{i18n.t('Home.Spending')}</Text>
+            <View
+              style={isDark ? darkHome.spendContainer : homeCss.spendContainer}>
+              <Text style={isDark ? darkHome.spend : homeCss.spend}>
+                {i18n.t('Home.Spending')}
+              </Text>
               <View style={homeCss.chartContainer}>
                 <LineChart
                   data={data}
                   width={screenWidth}
-                  height={180}
+                  height={screenHeight}
                   color="#1E90FF"
                   thickness={1}
                   hideDataPoints={false}
@@ -203,21 +253,29 @@ const Home = () => {
                   showVerticalLines={true}
                   verticalLinesColor="#E0E0E0"
                   showValuesAsDataPointsText
-                  xAxisLabelTextStyle={homeCss.xAxisLabel}
+                  xAxisLabelTextStyle={
+                    isDark ? darkHome.xAxisLabel : homeCss.xAxisLabel
+                  }
                 />
               </View>
-              <Text style={homeCss.totalText}>
+              <Text style={isDark ? darkHome.totalText : homeCss.totalText}>
                 {i18n.t('Home.Total-Spending')}
               </Text>
               <Text style={homeCss.total}>RM 150.00</Text>
             </View>
-            <View style={[homeCss.spendContainer, {marginBottom: 30}]}>
-              <Text style={homeCss.spend}>{i18n.t('Home.Increase')}</Text>
+            <View
+              style={[
+                isDark ? darkHome.spendContainer : homeCss.spendContainer,
+                {marginBottom: 30},
+              ]}>
+              <Text style={isDark ? darkHome.spend : homeCss.spend}>
+                {i18n.t('Home.Increase')}
+              </Text>
               <View style={homeCss.chartContainer}>
                 <LineChart
                   data={data}
                   width={screenWidth}
-                  height={180}
+                  height={screenHeight}
                   color="#1E90FF"
                   thickness={1}
                   hideDataPoints={false}
@@ -225,10 +283,12 @@ const Home = () => {
                   showVerticalLines={true}
                   verticalLinesColor="#E0E0E0"
                   showValuesAsDataPointsText
-                  xAxisLabelTextStyle={homeCss.xAxisLabel}
+                  xAxisLabelTextStyle={
+                    isDark ? darkHome.xAxisLabel : homeCss.xAxisLabel
+                  }
                 />
               </View>
-              <Text style={homeCss.totalText}>
+              <Text style={isDark ? darkHome.totalText : homeCss.totalText}>
                 {i18n.t('Home.Total-Increase')}
               </Text>
               <Text style={homeCss.total}>RM 150.00</Text>

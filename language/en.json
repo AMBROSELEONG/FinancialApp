@@ -14,7 +14,10 @@
     "Finger-Print": "Enable Finger Print",
     "Failed-Load-Username": "Failed to load username",
     "Failed-Fetch-Data": "Failed to Fetch User Data",
-    "Error-Fetch": "Error fetching user data"
+    "Error-Fetch": "Error fetching user data",
+    "Enable-Finger-Successful": "Enable Fingerprint successful",
+    "Disable-Finger-Successful": "Disable Fingerprint successful",
+    "Darkmode": "Successfully changed the app theme"
   },
   "EditPage": {
     "Username-Empty": "Username cannot be emtpy",
@@ -74,7 +77,7 @@
   "SignIn": {
     "Sign-In-Error": "Sign In Error",
     "Email-Empty": "Email cannot be empty",
-    "Password-Emtpy": "Password cannot be empty",
+    "Password-Empty": "Password cannot be empty",
     "Sign-In": "Sign In",
     "Credentials": "Enter your credentials to sign in",
     "Email": "Email",
@@ -148,9 +151,9 @@
     "Confirm-Password-Placeholder": "Please Enter Password Again",
     "Reset": "Reset",
     "Remember": "Remember Password?",
-    "Sign-In":"Sign In"
+    "Sign-In": "Sign In"
   },
-  "Home":{
+  "Home": {
     "Failed-Load-Username": "Failed to load username",
     "Failed-Fetch": "Failed to fetch user data",
     "Error-Fetch": "Error fetching user data",
@@ -160,5 +163,44 @@
     "Total-Spending": "Total Spending Today",
     "Increase": "Increase in the past 7 days",
     "Total-Increase": "Total Increase Today"
+  },
+  "ThemeChange": {
+    "Text": "Processing switching themes"
+  },
+  "Wallet": {
+    "Wallet": "Wallet",
+    "Balance": "Balance",
+    "Income": "Income",
+    "Spend": "Spend",
+    "Income-History": "Income History",
+    "Spend-History": "Spend History",
+    "Type": "Type",
+    "Date": "Date"
+  },
+  "WalletIncome": {
+    "Income": "INCOME",
+    "Fill": "Fill in wallet income",
+    "Balance": "Current Balance",
+    "Total-Income": "Total Income",
+    "Income-Placeholder": "Please Enter Your Total Income",
+    "Income-Type": "Income Source Type",
+    "Type-Placeholder": "Select the Income Source Type",
+    "Bank": "Select Bank",
+    "Bank-Placeholder": "Select the Bank",
+    "Date": "Date",
+    "Save": "Save"
+  },
+  "WalletSpend": {
+    "Spend": "SPEND",
+    "Fill": "Fill in wallet spend",
+    "Balance": "Current Balance",
+    "Total-Spend": "Total Spend",
+    "Spend-Placeholder": "Please Enter Your Total Spend",
+    "Spend-Type": "Spend Type",
+    "Type-Placeholder": "Select the Spend Source Type",
+    "Bank": "Select Bank",
+    "Bank-Placeholder": "Select the Bank",
+    "Date": "Date",
+    "Save": "Save"
   }
 }

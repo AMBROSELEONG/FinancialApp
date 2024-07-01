@@ -21,6 +21,7 @@ import ResetVerify from './ResetVerify';
 import i18n from '../language/language';
 import SignIn from './SignIn';
 import Toast from 'react-native-toast-message';
+import {darkSignIn} from '../objects/darkCss';
 
 const ForgotPassword = () => {
   const navigation = useNavigation();
@@ -28,6 +29,14 @@ const ForgotPassword = () => {
     roundness: 20, // Set the border radius here
     colors: {
       primary: '#000', // Active outline color
+      outline: '#808080', // Outline color
+    },
+  };
+
+  const darkTheme = {
+    roundness: 20, // Set the border radius here
+    colors: {
+      primary: '#3490DE', // Active outline color
       outline: '#808080', // Outline color
     },
   };
@@ -146,13 +155,25 @@ const ForgotPassword = () => {
       }
     }
   };
+
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    })();
+  }, []);
+
   return (
     <MainContainer>
       <KeyboardAvoidingView
         style={{flex: 1}}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <StatusBar backgroundColor="#FFFFFF" />
-        <View style={SignInCss.container}>
+        <StatusBar backgroundColor={isDark ? '#000' : '#fff'} />
+        <View style={isDark ? darkSignIn.container : SignInCss.container}>
           <Animated.View style={{transform: [{translateY: Anim}]}}>
             <Image
               style={SignInCss.Logo}
@@ -161,10 +182,10 @@ const ForgotPassword = () => {
           </Animated.View>
 
           <Animated.View style={{transform: [{translateY: Anim1}]}}>
-            <Text style={SignInCss.Title}>
+            <Text style={isDark ? darkSignIn.Title : SignInCss.Title}>
               {i18n.t('ForgotPassword.Forgot-Password')}
             </Text>
-            <Text style={SignInCss.Content}>
+            <Text style={isDark ? darkSignIn.Content : SignInCss.Content}>
               {i18n.t('ForgotPassword.Credentials')}
             </Text>
           </Animated.View>
@@ -173,10 +194,11 @@ const ForgotPassword = () => {
             <TextInput
               label={i18n.t('ForgotPassword.Email')}
               mode="outlined"
-              style={SignInCss.Input}
+              style={isDark ? darkSignIn.Input : SignInCss.Input}
               placeholder={i18n.t('ForgotPassword.Email-Placeholder')}
-              theme={theme}
+              theme={isDark ? darkTheme : theme}
               onChangeText={text => setEmail(text)}
+              textColor={isDark ? '#fff' : '#000'}
             />
             {emailError !== '' && (
               <HelperText type="error" style={SignInCss.InputError}>
@@ -193,7 +215,7 @@ const ForgotPassword = () => {
             </TouchableOpacity>
           </Animated.View>
 
-          <Text style={SignInCss.SignUp}>
+          <Text style={isDark ? darkSignIn.SignUp : SignInCss.SignUp}>
             {i18n.t('ForgotPassword.Remember-Password')}
             <Text
               style={{color: '#3490DE'}}

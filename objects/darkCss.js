@@ -2,21 +2,21 @@ import {DefaultTheme, Modal, Title} from 'react-native-paper';
 import {Dimensions, StyleSheet} from 'react-native';
 import {white} from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 
-const whiteTheme = {
+const darkTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    background: 'white',
+    background: '#000',
   },
 };
 
-export default whiteTheme;
+export default darkTheme;
 
-export const WelcomeCss = StyleSheet.create({
+export const darkWelcome = StyleSheet.create({
   Container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#000',
   },
   Logo: {
     alignSelf: 'center',
@@ -54,10 +54,10 @@ export const WelcomeCss = StyleSheet.create({
   },
 });
 
-export const SignInCss = StyleSheet.create({
+export const darkSignIn = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: '#000',
     flexDirection: 'column',
   },
   Logo: {
@@ -70,21 +70,21 @@ export const SignInCss = StyleSheet.create({
     fontSize: 25,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#000',
+    color: '#fff',
     marginTop: '10%',
   },
   Content: {
     fontSize: 16,
     marginTop: '5%',
     textAlign: 'center',
-    color: '#000',
+    color: '#fff',
   },
   Input: {
     marginTop: '5%',
     width: '80%',
     alignSelf: 'center',
     borderRadius: 20,
-    backgroundColor: '#fff'
+    backgroundColor: '#000'
   },
   InputError: {
     width: '80%',
@@ -135,7 +135,7 @@ export const SignInCss = StyleSheet.create({
   },
   SignUp: {
     fontSize: 16,
-    color: '#000',
+    color: '#fff',
     textAlign: 'center',
     position: 'absolute',
     width: '100%',
@@ -159,10 +159,10 @@ export const SignInCss = StyleSheet.create({
   },
 });
 
-export const VerifyCss = StyleSheet.create({
+export const darkVerify = StyleSheet.create({
   Container: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: '#000',
   },
   Back: {
     width: 30,
@@ -171,7 +171,7 @@ export const VerifyCss = StyleSheet.create({
   Title: {
     fontSize: 25,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#fff',
     marginHorizontal: 20,
     marginBottom: 10,
   },
@@ -248,7 +248,7 @@ export const VerifyCss = StyleSheet.create({
   ModalContainer: {
     width: '60%',
     height: Dimensions.get('screen').width / 1.4,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#000',
     alignSelf: 'center',
     borderRadius: 20,
     shadowColor: '#000',
@@ -262,7 +262,7 @@ export const VerifyCss = StyleSheet.create({
   },
   TextModal: {
     fontSize: 20,
-    color: '#000000',
+    color: '#fff',
     fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 15,
@@ -284,7 +284,7 @@ export const VerifyCss = StyleSheet.create({
   },
 });
 
-export const css = StyleSheet.create({
+export const darkCss = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -295,7 +295,7 @@ export const css = StyleSheet.create({
     height: (Dimensions.get('screen').height / 100) * 8,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#000',
   },
   HeaderView: {
     flex: 1,
@@ -304,15 +304,15 @@ export const css = StyleSheet.create({
     marginRight: '12%',
   },
   PageName: {
-    color: '#000',
+    color: '#fff',
     fontSize: 25,
     fontWeight: 'bold',
   },
 });
 
-export const customCss = StyleSheet.create({
+export const darkCustom = StyleSheet.create({
   header: {
-    color: 'black',
+    color: 'white',
     fontSize: 30,
     fontWeight: 'bold',
     lineHeight: (Dimensions.get('screen').height / 100) * 8,
@@ -320,14 +320,14 @@ export const customCss = StyleSheet.create({
   },
 });
 
-export const homeCss = StyleSheet.create({
+export const darkHome = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#fff',
+    backgroundColor: '#000',
   },
   welcome: {
-    color: '#000',
+    color: '#fff',
     fontWeight: 'bold',
     fontSize: 20,
     marginLeft: (Dimensions.get('screen').width / 100) * 6,
@@ -346,12 +346,12 @@ export const homeCss = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
     elevation: 5,
-    backgroundColor: '#fff',
+    backgroundColor: '#202020',
     alignSelf: 'center',
     marginTop: 20,
   },
   date: {
-    color: '#8D8D8D',
+    color: '#fff',
     fontSize: 18,
     textAlign: 'center',
     lineHeight: (Dimensions.get('screen').width / 100) * 10,
@@ -360,7 +360,7 @@ export const homeCss = StyleSheet.create({
   spendContainer: {
     width: (Dimensions.get('screen').width / 100) * 95,
     height: (Dimensions.get('screen').width / 100) * 90,
-    backgroundColor: '#fff',
+    backgroundColor: '#202020',
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
@@ -370,7 +370,7 @@ export const homeCss = StyleSheet.create({
     padding: 5,
   },
   spend: {
-    color: '#000',
+    color: '#fff',
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 15,
@@ -380,10 +380,10 @@ export const homeCss = StyleSheet.create({
     marginTop: 10,
   },
   xAxisLabel: {
-    color: '#000',
+    color: '#fff',
   },
   totalText: {
-    color: '#000',
+    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -398,22 +398,22 @@ export const homeCss = StyleSheet.create({
   },
 });
 
-export const settingCss = StyleSheet.create({
+export const darkSetting = StyleSheet.create({
   container: {
     flexDirection: 'column',
     flex: 1,
-    backgroundColor: '#F9F9F9',
+    backgroundColor: '#000000',
   },
   UserContainer: {
     width: '100%',
     height: (Dimensions.get('screen').width / 100) * 25,
-    backgroundColor: '#fff',
+    backgroundColor: '#202020',
     flexDirection: 'row',
   },
   EditContainer: {
     width: '100%',
     height: (Dimensions.get('screen').width / 100) * 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#202020',
     marginTop: 30,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -421,7 +421,7 @@ export const settingCss = StyleSheet.create({
   PrefenceContainer: {
     width: '100%',
     height: (Dimensions.get('screen').height / 100) * 50,
-    backgroundColor: '#fff',
+    backgroundColor: '#202020',
     marginTop: 30,
   },
   UserImage: {
@@ -438,12 +438,12 @@ export const settingCss = StyleSheet.create({
     paddingHorizontal: 20,
   },
   UserName: {
-    color: '#000',
+    color: '#fff',
     fontWeight: 'bold',
     fontSize: 18,
   },
   Email: {
-    color: '#6F6F6F',
+    color: '#cccccc',
     fontWeight: 'bold',
     fontSize: 16,
   },
@@ -455,7 +455,7 @@ export const settingCss = StyleSheet.create({
     alignSelf: 'center',
   },
   text: {
-    color: '#000',
+    color: '#fff',
     fontSize: 18,
   },
   TextContainer: {
@@ -478,7 +478,7 @@ export const settingCss = StyleSheet.create({
     fontSize: 16,
   },
   PrefenceText: {
-    color: '#6E6E6E',
+    color: '#fff',
     fontWeight: 'bold',
     margin: 20,
     fontSize: 16,
@@ -495,11 +495,11 @@ export const settingCss = StyleSheet.create({
   },
 });
 
-export const languageCss = StyleSheet.create({
+export const darkLanguage = StyleSheet.create({
   container: {
     flexDirection: 'column',
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#000',
   },
   languageContainer: {
     flexDirection: 'row',
@@ -510,7 +510,7 @@ export const languageCss = StyleSheet.create({
     height: (Dimensions.get('screen').width / 100) * 15,
   },
   text: {
-    color: '#000',
+    color: '#fff',
     alignSelf: 'center',
   },
   tick: {
@@ -521,21 +521,21 @@ export const languageCss = StyleSheet.create({
   },
 });
 
-export const userEditCss = StyleSheet.create({
+export const darkUserEdit = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#fff',
+    backgroundColor: '#202020',
     position: 'relative',
   },
   header: {
-    backgroundColor: '#3490DE',
+    backgroundColor: '#000',
     height: (Dimensions.get('screen').height / 100) * 13,
   },
   imageContainer: {
     width: (Dimensions.get('screen').width / 100) * 28,
     height: (Dimensions.get('screen').width / 100) * 28,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#202020',
     borderRadius: Dimensions.get('screen').width * 100,
     position: 'absolute',
     alignSelf: 'center',
@@ -550,7 +550,7 @@ export const userEditCss = StyleSheet.create({
     marginVertical: (Dimensions.get('screen').width / 100) * 2,
   },
   Title: {
-    color: '#000',
+    color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
     marginTop: (Dimensions.get('screen').height / 100) * 5,
@@ -560,7 +560,7 @@ export const userEditCss = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
     marginTop: (Dimensions.get('screen').height / 100) * 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#000',
   },
   Button: {
     width: (Dimensions.get('screen').width / 100) * 80,
@@ -585,20 +585,20 @@ export const userEditCss = StyleSheet.create({
   },
 });
 
-export const walletCss = StyleSheet.create({
+export const darkWallet = StyleSheet.create({
   container: {
     width: '100%',
     flex: 1,
     flexDirection: 'column',
   },
   header: {
-    backgroundColor: '#3490DE',
+    backgroundColor: '#000',
     flex: 1,
     width: '100%',
   },
   body: {
     flex: 3,
-    backgroundColor: '#fff',
+    backgroundColor: '#202020',
     paddingHorizontal: 10,
     paddingTop: (Dimensions.get('screen').height / 100) * 6,
     zIndex: -1,
@@ -617,7 +617,7 @@ export const walletCss = StyleSheet.create({
   positionContainer: {
     width: '80%',
     height: (Dimensions.get('screen').height / 100) * 10,
-    backgroundColor: '#fff',
+    backgroundColor: '#202020',
     position: 'absolute',
     alignSelf: 'center',
     top: '75%',
@@ -639,13 +639,13 @@ export const walletCss = StyleSheet.create({
     height: (Dimensions.get('screen').width / 100) * 8,
   },
   text: {
-    color: '#3490DE',
+    color: '#fff',
     textAlign: 'center',
     fontSize: 18,
   },
   TabBackground: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#202020',
   },
   TableHeader: {
     textAlign: 'center',
@@ -660,18 +660,18 @@ export const walletCss = StyleSheet.create({
     backgroundColor: '#DE343450',
   },
   oddRow: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#202020',
   },
 });
 
-export const walletIncomeCss = StyleSheet.create({
+export const darkWalletIncome = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#fff',
+    backgroundColor: '#000',
   },
   title: {
-    color: '#000',
+    color: '#fff',
     fontSize: 20,
     fontWeight: 'bold',
     marginLeft: '7%',
@@ -682,7 +682,7 @@ export const walletIncomeCss = StyleSheet.create({
     fontSize: 16,
   },
   balance: {
-    color: '#000',
+    color: '#fff',
     marginLeft: '7%',
     fontSize: 32,
     fontWeight: 'bold',
@@ -690,7 +690,7 @@ export const walletIncomeCss = StyleSheet.create({
   Input: {
     width: '90%',
     alignSelf: 'center',
-    backgroundColor: '#EEEEEE',
+    backgroundColor: '#000',
   },
   InputError: {
     width: '80%',
@@ -720,7 +720,7 @@ export const walletIncomeCss = StyleSheet.create({
   },
 });
 
-export const bankCss = StyleSheet.create({
+export const darkBank = StyleSheet.create({
   addButton: {
     width: (Dimensions.get('screen').width / 100) * 15,
     height: (Dimensions.get('screen').width / 100) * 15,

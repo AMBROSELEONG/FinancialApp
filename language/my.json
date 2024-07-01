@@ -14,7 +14,10 @@
     "Finger-Print": "Dayakan pengecaman cap jari",
     "Failed-Load-Username": "Gagal memuatkan nama pengguna",
     "Failed-Fetch-Data": "Gagal mendapatkan data pengguna",
-    "Error-Fetch": "Ralat mendapatkan data pengguna"
+    "Error-Fetch": "Ralat mendapatkan data pengguna",
+    "Enable-Finger-Successful": "Dayakan Cap Jari berjaya",
+    "Disable-Finger-Successful": "Lumpuhkan Cap Jari berjaya",
+    "Darkmode": "Berjaya menukar tema apl"
   },
   "EditPage": {
     "Username-Empty": "Nama pengguna tidak boleh kosong",
@@ -160,5 +163,44 @@
     "Total-Spending": "Jumlah Perbelanjaan Hari Ini",
     "Increase": "Pendapatan dalam 7 hari yang lalu",
     "Total-Increase": "Jumlah Pendapatan Hari Ini"
+  },
+  "ThemeChange": {
+    "Text": "Sedang Menukar tema..."
+  },
+  "Wallet": {
+    "Wallet": "Dompet",
+    "Balance": "Baki",
+    "Income": "Pendapatan",
+    "Spend": "Perbelanjaan",
+    "Income-History": "Sejarah Pendapatan",
+    "Spend-History": "Sejarah Perbelanjaan",
+    "Type": "Jenis",
+    "Date": "Tarikh"
+  },
+  "WalletIncome": {
+    "Income": "Pendapatan",
+    "Fill": "Isi pendapatan dompet",
+    "Balance": "Baki Semasa",
+    "Total-Income": "Jumlah Pendapatan",
+    "Income-Placeholder": "Sila Masukkan Jumlah Pendapatan Anda",
+    "Income-Type": "Jenis Sumber Pendapatan",
+    "Type-Placeholder": "Pilih Jenis Sumber Pendapatan",
+    "Bank": "Pilih Bank",
+    "Bank-Placeholder": "Pilih Bank",
+    "Date": "Tarikh",
+    "Save": "Simpan"
+  },
+  "WalletSpend": {
+    "Spend": "Perbelanjaan",
+    "Fill": "Isi perbelanjaan dompet",
+    "Balance": "Baki Semasa",
+    "Total-Spend": "Jumlah Perbelanjaan",
+    "Spend-Placeholder": "Sila Masukkan Jumlah Perbelanjaan Anda",
+    "Spend-Type": "Jenis Perbelanjaan",
+    "Type-Placeholder": "Pilih Jenis Sumber Perbelanjaan",
+    "Bank": "Pilih Bank",
+    "Bank-Placeholder": "Pilih Bank",
+    "Date": "Tarikh",
+    "Save": "Simpan"
   }
 }

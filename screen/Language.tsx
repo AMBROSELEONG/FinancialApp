@@ -1,11 +1,5 @@
 import MainContainer from '../components/MainContainer';
-import {
-  useNavigation,
-  DrawerActions,
-  useIsFocused,
-  useFocusEffect,
-  CommonActions,
-} from '@react-navigation/native';
+import {useNavigation, useIsFocused} from '@react-navigation/native';
 import {
   KeyboardAvoidingView,
   StatusBar,
@@ -18,9 +12,11 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {css, languageCss} from '../objects/commonCss';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import i18n from '../language/language';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ThemeChange from './ThemeChange';
+import {darkCss, darkLanguage} from '../objects/darkCss';
 
 const STORAGE_KEY = '@app_language';
 
@@ -61,23 +57,19 @@ const Language = () => {
   };
 
   const showLanguageUpdateAlert = () => {
-    Alert.alert(
-      i18n.t('LanguagePage.Language-Update'),
-      i18n.t('LanguagePage.Update'),
-      [
-        {
-          text: 'OK',
-          onPress: () =>
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{name: 'CustomDrawer'}],
-              }),
-            ),
-        },
-      ],
-    );
+    navigation.navigate(ThemeChange as never);
   };
+
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    })();
+  }, []);
 
   return (
     <MainContainer>
@@ -86,30 +78,36 @@ const Language = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <StatusBar
           animated={true}
-          backgroundColor="#fff"
+          backgroundColor={isDark ? '#000' : '#fff'}
           barStyle={'dark-content'}
         />
-        <View style={css.mainView}>
+        <View style={isDark ? darkCss.mainView : css.mainView}>
           <TouchableOpacity
             style={{paddingLeft: 20}}
             onPress={() => {
               navigation.goBack();
             }}>
-            <Ionicons name="arrow-back" size={30} color={'#000'} />
+            <Ionicons
+              name="arrow-back"
+              size={30}
+              color={isDark ? '#fff' : '#000'}
+            />
           </TouchableOpacity>
           <View style={css.HeaderView}>
-            <Text style={css.PageName}>
+            <Text style={isDark ? darkCss.PageName : css.PageName}>
               {i18n.t('LanguagePage.Change-Language')}
             </Text>
           </View>
         </View>
-        <View style={languageCss.container}>
+        <View style={isDark ? darkLanguage.container : languageCss.container}>
           <TouchableOpacity
             style={languageCss.languageContainer}
             onPress={() => {
               changeLanguage('en');
             }}>
-            <Text style={languageCss.text}>English</Text>
+            <Text style={isDark ? darkLanguage.text : languageCss.text}>
+              English
+            </Text>
             {selectedLanguage === 'en' && (
               <Image
                 source={require('../assets/tick.png')}
@@ -122,7 +120,9 @@ const Language = () => {
             onPress={() => {
               changeLanguage('my');
             }}>
-            <Text style={languageCss.text}>Bahasa Melayu</Text>
+            <Text style={isDark ? darkLanguage.text : languageCss.text}>
+              Bahasa Melayu
+            </Text>
             {selectedLanguage === 'my' && (
               <Image
                 source={require('../assets/tick.png')}
@@ -135,7 +135,9 @@ const Language = () => {
             onPress={() => {
               changeLanguage('zh');
             }}>
-            <Text style={languageCss.text}>中文</Text>
+            <Text style={isDark ? darkLanguage.text : languageCss.text}>
+              中文
+            </Text>
             {selectedLanguage === 'zh' && (
               <Image
                 source={require('../assets/tick.png')}

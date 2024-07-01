@@ -22,6 +22,7 @@ import {UrlAccess} from '../objects/url';
 import {useFocusEffect} from '@react-navigation/native';
 import i18n from '../language/language';
 import Toast from 'react-native-toast-message';
+import {darkVerify} from '../objects/darkCss';
 
 type OTPInputProps = {
   length: number;
@@ -130,24 +131,21 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
   const [Username, setUsername] = useState('');
   const [Email, setEmail] = useState('');
   const [Password, setPassword] = useState('');
-  const [Token, setToken] = useState('');
+  
   useEffect(() => {
     const getData = async () => {
       try {
         const storedEmail = await AsyncStorage.getItem('Email');
         const storedUsername = await AsyncStorage.getItem('UserName');
         const storedPassword = await AsyncStorage.getItem('Password');
-        const storedToken = await AsyncStorage.getItem('Token');
         if (
           storedEmail !== null &&
           storedUsername !== null &&
-          storedPassword !== null &&
-          storedToken !== null
+          storedPassword !== null
         ) {
           setEmail(storedEmail);
           setUsername(storedUsername);
           setPassword(storedPassword);
-          setToken(storedToken);
         }
       } catch (error) {
         showToast(i18n.t('UserEditVerify.Failed-Load-Email'));
@@ -168,7 +166,7 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
             userName: Username,
             email: Email,
             password: Password,
-            token: Token,
+            token: '',
             publicKey: '',
             signature: '',
           }),
@@ -224,20 +222,35 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
     return () => clearInterval(interval);
   }, [countdown]);
 
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    })();
+  }, []);
+
   return (
     <MainContainer>
-      <StatusBar backgroundColor="#FFFFFF" />
-      <View style={VerifyCss.Container}>
+      <StatusBar backgroundColor={isDark ? '#000' : '#FFFFFF'} />
+      <View style={isDark ? darkVerify.Container : VerifyCss.Container}>
         <TouchableOpacity
           style={[VerifyCss.Back, {margin: 20}]}
           onPress={() => navigation.goBack()}>
           <Image
-            source={require('../assets/arrow.png')}
+            source={
+              isDark
+                ? require('../assets/whitearrow.png')
+                : require('../assets/arrow.png')
+            }
             style={VerifyCss.Back}
           />
         </TouchableOpacity>
 
-        <Text style={VerifyCss.Title}>
+        <Text style={isDark ? darkVerify.Title : VerifyCss.Title}>
           {i18n.t('UserEditVerify.Verification')}
         </Text>
         <Text style={VerifyCss.SubTitle}>
@@ -266,7 +279,7 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
           ))}
         </View>
         {countdown > 0 && (
-          <Text style={[VerifyCss.resend, {color: '#000'}]}>
+          <Text style={[VerifyCss.resend, {color: isDark ? '#fff' : '#000'}]}>
             {countdown} {i18n.t('UserEditVerify.Seconds-Remaining')}
           </Text>
         )}
@@ -286,12 +299,15 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
       </View>
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={VerifyCss.ModalView}>
-          <View style={VerifyCss.ModalContainer}>
+          <View
+            style={
+              isDark ? darkVerify.ModalContainer : VerifyCss.ModalContainer
+            }>
             <Image
               source={require('../assets/successful.png')}
               style={{alignSelf: 'center', marginTop: 30}}
             />
-            <Text style={VerifyCss.TextModal}>
+            <Text style={isDark ? darkVerify.TextModal : VerifyCss.TextModal}>
               {i18n.t('Verify.Sign-Up-Successful')}
             </Text>
             <TouchableOpacity

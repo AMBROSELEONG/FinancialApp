@@ -1,6 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import MainContainer from '../components/MainContainer';
-import {useNavigation, DrawerActions} from '@react-navigation/native';
+import {
+  useNavigation,
+  DrawerActions,
+  useFocusEffect,
+} from '@react-navigation/native';
 import {
   KeyboardAvoidingView,
   StatusBar,
@@ -18,6 +22,9 @@ import {DataTable} from 'react-native-paper';
 import {ScrollView} from 'react-native-gesture-handler';
 import WalletIncome from './WalletIncome';
 import WalletSpend from './WalletSpend';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {darkWallet} from '../objects/darkCss';
+import i18n from '../language/language';
 
 const FirstRoute = () => {
   const [items] = React.useState([
@@ -95,29 +102,66 @@ const FirstRoute = () => {
     },
   ]);
 
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    })();
+  }, []);
+
+  const [locale, setLocale] = React.useState(i18n.locale);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
+  );
+
   return (
-    <View style={walletCss.TabBackground}>
+    <View style={isDark ? darkWallet.TabBackground : walletCss.TabBackground}>
       <ScrollView>
         <DataTable>
           <DataTable.Header>
-            <DataTable.Title>Type</DataTable.Title>
-            <DataTable.Title style={walletCss.cell}>
-              Income (RM)
+            <DataTable.Title textStyle={{color: isDark ? '#fff' : '#000'}}>
+              {i18n.t('Wallet.Type')}
             </DataTable.Title>
-            <DataTable.Title style={walletCss.cell}>Date</DataTable.Title>
+            <DataTable.Title
+              style={walletCss.cell}
+              textStyle={{color: isDark ? '#fff' : '#000'}}>
+              {i18n.t('Wallet.Income')} (RM)
+            </DataTable.Title>
+            <DataTable.Title
+              style={walletCss.cell}
+              textStyle={{color: isDark ? '#fff' : '#000'}}>
+              {i18n.t('Wallet.Date')}
+            </DataTable.Title>
           </DataTable.Header>
 
           {items.map((item, index) => (
             <DataTable.Row
               key={item.key}
               style={
-                index % 2 === 0 ? walletCss.evenRowIncome : walletCss.oddRow
+                index % 2 === 0
+                  ? walletCss.evenRowIncome
+                  : isDark
+                  ? darkWallet.oddRow
+                  : walletCss.oddRow
               }>
-              <DataTable.Cell>{item.type}</DataTable.Cell>
-              <DataTable.Cell style={walletCss.cell}>
+              <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
+                {item.type}
+              </DataTable.Cell>
+              <DataTable.Cell
+                style={walletCss.cell}
+                textStyle={{color: isDark ? '#fff' : '#000'}}>
                 {item.income}
               </DataTable.Cell>
-              <DataTable.Cell style={walletCss.cell}>
+              <DataTable.Cell
+                style={walletCss.cell}
+                textStyle={{color: isDark ? '#fff' : '#000'}}>
                 {item.date}
               </DataTable.Cell>
             </DataTable.Row>
@@ -204,29 +248,66 @@ const SecondRoute = () => {
     },
   ]);
 
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    })();
+  }, []);
+
+  const [locale, setLocale] = React.useState(i18n.locale);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
+  );
+
   return (
-    <View style={walletCss.TabBackground}>
+    <View style={isDark ? darkWallet.TabBackground : walletCss.TabBackground}>
       <ScrollView>
         <DataTable>
           <DataTable.Header>
-            <DataTable.Title>Type</DataTable.Title>
-            <DataTable.Title style={walletCss.cell}>
-              Income (RM)
+            <DataTable.Title textStyle={{color: isDark ? '#fff' : '#000'}}>
+              {i18n.t('Wallet.Type')}
             </DataTable.Title>
-            <DataTable.Title style={walletCss.cell}>Date</DataTable.Title>
+            <DataTable.Title
+              style={walletCss.cell}
+              textStyle={{color: isDark ? '#fff' : '#000'}}>
+              {i18n.t('Wallet.Income')} (RM)
+            </DataTable.Title>
+            <DataTable.Title
+              style={walletCss.cell}
+              textStyle={{color: isDark ? '#fff' : '#000'}}>
+              {i18n.t('Wallet.Date')}
+            </DataTable.Title>
           </DataTable.Header>
 
           {items.map((item, index) => (
             <DataTable.Row
               key={item.key}
               style={
-                index % 2 === 0 ? walletCss.evenRowSpend : walletCss.oddRow
+                index % 2 === 0
+                  ? walletCss.evenRowSpend
+                  : isDark
+                  ? darkWallet.oddRow
+                  : walletCss.oddRow
               }>
-              <DataTable.Cell>{item.type}</DataTable.Cell>
-              <DataTable.Cell style={walletCss.cell}>
+              <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
+                {item.type}
+              </DataTable.Cell>
+              <DataTable.Cell
+                style={walletCss.cell}
+                textStyle={{color: isDark ? '#fff' : '#000'}}>
                 {item.income}
               </DataTable.Cell>
-              <DataTable.Cell style={walletCss.cell}>
+              <DataTable.Cell
+                style={walletCss.cell}
+                textStyle={{color: isDark ? '#fff' : '#000'}}>
                 {item.date}
               </DataTable.Cell>
             </DataTable.Row>
@@ -248,8 +329,8 @@ const Wallet = () => {
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    {key: 'first', title: 'Income History'},
-    {key: 'second', title: 'Spend History'},
+    {key: 'first', title: i18n.t('Wallet.Income-History')},
+    {key: 'second', title: i18n.t('Wallet.Spend-History')},
   ]);
 
   type Route = {
@@ -260,11 +341,30 @@ const Wallet = () => {
   const renderTabBar = (props: TabBarProps<Route>) => (
     <TabBar
       {...props}
-      indicatorStyle={{backgroundColor: '#000'}}
+      indicatorStyle={{backgroundColor: isDark ? '#fff' : '#000'}}
       inactiveColor="#999999"
-      style={{backgroundColor: '#fff'}}
-      activeColor="#000"
+      style={{backgroundColor: isDark ? '#000' : '#fff'}}
+      activeColor={isDark ? '#fff' : '#000'}
     />
+  );
+
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    })();
+  }, []);
+
+  const [locale, setLocale] = React.useState(i18n.locale);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
   );
 
   return (
@@ -274,10 +374,14 @@ const Wallet = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <StatusBar
           animated={true}
-          backgroundColor="#3490DE"
+          backgroundColor={isDark ? '#000' : '#3490DE'}
           barStyle={'dark-content'}
         />
-        <View style={[css.mainView, {backgroundColor: '#3490DE'}]}>
+        <View
+          style={[
+            css.mainView,
+            {backgroundColor: isDark ? '#000' : '#3490DE'},
+          ]}>
           <TouchableOpacity
             style={{paddingLeft: 20}}
             onPress={() => {
@@ -286,29 +390,54 @@ const Wallet = () => {
             <Ionicons name="menu" size={30} color={'#fff'} />
           </TouchableOpacity>
           <View style={css.HeaderView}>
-            <Text style={[css.PageName, {color: '#fff'}]}>Wallet</Text>
+            <Text style={[css.PageName, {color: '#fff'}]}>
+              {i18n.t('Wallet.Wallet')}
+            </Text>
           </View>
         </View>
         <View style={walletCss.container}>
-          <View style={walletCss.header}>
-            <Text style={walletCss.balanceText}>Balance</Text>
+          <View style={isDark ? darkWallet.header : walletCss.header}>
+            <Text style={walletCss.balanceText}>
+              {i18n.t('Wallet.Balance')}
+            </Text>
             <Text style={walletCss.balance}>RM 100.00</Text>
-            <View style={walletCss.positionContainer}>
-              <TouchableOpacity style={walletCss.button} onPress={()=>navigation.navigate(WalletIncome as never)}>
+            <View
+              style={
+                isDark
+                  ? darkWallet.positionContainer
+                  : walletCss.positionContainer
+              }>
+              <TouchableOpacity
+                style={walletCss.button}
+                onPress={() => navigation.navigate(WalletIncome as never)}>
                 <Image
-                  source={require('../assets/income.png')}
+                  source={
+                    isDark
+                      ? require('../assets/whiteincome.png')
+                      : require('../assets/income.png')
+                  }
                   style={walletCss.icon}></Image>
-                <Text style={walletCss.text}>Income</Text>
+                <Text style={isDark ? darkWallet.text : walletCss.text}>
+                  {i18n.t('Wallet.Income')}
+                </Text>
               </TouchableOpacity>
-              <TouchableOpacity style={walletCss.button} onPress={()=>navigation.navigate(WalletSpend as never)}>
+              <TouchableOpacity
+                style={walletCss.button}
+                onPress={() => navigation.navigate(WalletSpend as never)}>
                 <Image
-                  source={require('../assets/spend.png')}
+                  source={
+                    isDark
+                      ? require('../assets/whitespend.png')
+                      : require('../assets/spend.png')
+                  }
                   style={walletCss.icon}></Image>
-                <Text style={walletCss.text}>Spend</Text>
+                <Text style={isDark ? darkWallet.text : walletCss.text}>
+                  {i18n.t('Wallet.Spend')}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
-          <View style={walletCss.body}>
+          <View style={isDark ? darkWallet.body : walletCss.body}>
             <TabView
               navigationState={{index, routes}}
               renderScene={renderScene}

@@ -14,7 +14,10 @@
     "Finger-Print": "启用指纹识别",
     "Failed-Load-Username": "加载用户名失败",
     "Failed-Fetch-Data": "获取用户数据失败",
-    "Error-Fetch": "获取用户数据时出错"
+    "Error-Fetch": "获取用户数据时出错",
+    "Enable-Finger-Successful": "启用指纹识别成功",
+    "Disable-Finger-Successful": "禁用指纹识别成功",
+    "Darkmode": "成功更改应用主题"
   },
   "EditPage": {
     "Username-Empty": "用户名不能为空",
@@ -160,5 +163,44 @@
     "Total-Spending": "今天的总开支",
     "Increase": "过去7天的收入",
     "Total-Increase": "今天的总收入"
+  },
+  "ThemeChange": {
+    "Text": "正在切换主题"
+  },
+  "Wallet": {
+    "Wallet": "钱包",
+    "Balance": "余额",
+    "Income": "收入",
+    "Spend": "支出",
+    "Income-History": "收入历史",
+    "Spend-History": "支出历史",
+    "Type": "类型",
+    "Date": "日期"
+  },
+  "WalletIncome": {
+    "Income": "收入",
+    "Fill": "填写钱包收入",
+    "Balance": "当前余额",
+    "Total-Income": "总收入",
+    "Income-Placeholder": "请输入您的总收入",
+    "Income-Type": "收入来源类型",
+    "Type-Placeholder": "选择收入来源类型",
+    "Bank": "选择银行",
+    "Bank-Placeholder": "选择银行",
+    "Date": "日期",
+    "Save": "保存"
+  },
+  "WalletSpend": {
+    "Spend": "支出",
+    "Fill": "填写钱包支出",
+    "Balance": "当前余额",
+    "Total-Spend": "总支出",
+    "Spend-Placeholder": "请输入您的总支出",
+    "Spend-Type": "支出类型",
+    "Type-Placeholder": "选择支出来源类型",
+    "Bank": "选择银行",
+    "Bank-Placeholder": "选择银行",
+    "Date": "日期",
+    "Save": "保存"
   }
 }

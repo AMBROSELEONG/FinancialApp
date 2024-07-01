@@ -21,6 +21,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
 import i18n from '../language/language';
 import Toast from 'react-native-toast-message';
+import {darkSignIn} from '../objects/darkCss';
 
 const SignUp = () => {
   const navigation = useNavigation();
@@ -37,6 +38,14 @@ const SignUp = () => {
     roundness: 20, // Set the border radius here
     colors: {
       primary: '#000', // Active outline color
+      outline: '#808080', // Outline color
+    },
+  };
+
+  const darkTheme = {
+    roundness: 20, // Set the border radius here
+    colors: {
+      primary: '#3490DE', // Active outline color
       outline: '#808080', // Outline color
     },
   };
@@ -232,13 +241,24 @@ const SignUp = () => {
     }
   };
 
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    })();
+  }, []);
+
   return (
     <MainContainer>
       <KeyboardAvoidingView
         style={{flex: 1}}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <StatusBar backgroundColor="#FFFFFF" />
-        <View style={SignInCss.container}>
+        <StatusBar backgroundColor={isDark ? '#000' : '#FFFFFF'} />
+        <View style={isDark ? darkSignIn.container : SignInCss.container}>
           <Animated.View style={{transform: [{translateY: Anim}]}}>
             <Image
               style={SignInCss.Logo}
@@ -247,8 +267,10 @@ const SignUp = () => {
           </Animated.View>
 
           <Animated.View style={{transform: [{translateY: Anim1}]}}>
-            <Text style={SignInCss.Title}>{i18n.t('SignUp.Sign-Up')}</Text>
-            <Text style={SignInCss.Content}>
+            <Text style={isDark ? darkSignIn.Title : SignInCss.Title}>
+              {i18n.t('SignUp.Sign-Up')}
+            </Text>
+            <Text style={isDark ? darkSignIn.Content : SignInCss.Content}>
               {i18n.t('SignUp.Credentials')}
             </Text>
           </Animated.View>
@@ -257,10 +279,11 @@ const SignUp = () => {
             <TextInput
               label={i18n.t('SignUp.Username')}
               mode="outlined"
-              style={SignInCss.Input}
+              style={isDark ? darkSignIn.Input : SignInCss.Input}
               placeholder={i18n.t('SignUp.Username-Placeholder')}
-              theme={theme}
+              theme={isDark ? darkTheme : theme}
               onChangeText={text => setUsername(text)}
+              textColor={isDark ? '#fff' : '#000'}
             />
             {usernameError !== '' && (
               <HelperText type="error" style={SignInCss.InputError}>
@@ -273,10 +296,11 @@ const SignUp = () => {
             <TextInput
               label={i18n.t('SignUp.Email')}
               mode="outlined"
-              style={SignInCss.Input}
+              style={isDark ? darkSignIn.Input : SignInCss.Input}
               placeholder={i18n.t('SignUp.Email-Placeholder')}
-              theme={theme}
+              theme={isDark ? darkTheme : theme}
               onChangeText={text => setEmail(text)}
+              textColor={isDark ? '#fff' : '#000'}
             />
             {emailError !== '' && (
               <HelperText type="error" style={SignInCss.InputError}>
@@ -289,12 +313,13 @@ const SignUp = () => {
             <TextInput
               label={i18n.t('SignUp.Password')}
               mode="outlined"
-              style={SignInCss.Input}
+              style={isDark ? darkSignIn.Input : SignInCss.Input}
               placeholder={i18n.t('SignUp.Password-Placeholder')}
-              theme={theme}
+              theme={isDark ? darkTheme : theme}
               onChangeText={text => setPassword(text)}
               autoCapitalize="none"
               secureTextEntry={hidePass ? true : false}
+              textColor={isDark ? '#fff' : '#000'}
               right={
                 <TextInput.Icon
                   icon={hidePass ? 'eye-off' : 'eye'}
@@ -314,14 +339,15 @@ const SignUp = () => {
               label={i18n.t('SignUp.Confirm-Password')}
               mode="outlined"
               style={[
-                SignInCss.Input,
+                isDark ? darkSignIn.Input : SignInCss.Input,
                 {marginBottom: (Dimensions.get('screen').height / 100) * 5},
               ]}
               placeholder={i18n.t('SignUp.Confirm-Password-Placeholder')}
-              theme={theme}
+              theme={isDark ? darkTheme : theme}
               autoCapitalize="none"
               secureTextEntry={hidePass ? true : false}
               onChangeText={text => setConfirmPassword(text)}
+              textColor={isDark ? '#fff' : '#000'}
               right={
                 <TextInput.Icon
                   icon={hidePass ? 'eye-off' : 'eye'}
@@ -339,7 +365,7 @@ const SignUp = () => {
             </TouchableOpacity>
           </Animated.View>
 
-          <Text style={SignInCss.SignUp}>
+          <Text style={isDark ? darkSignIn.SignUp : SignInCss.SignUp}>
             {i18n.t('SignUp.Already-Have-Account')}
             <Text
               style={{color: '#3490DE'}}

@@ -10,13 +10,14 @@ import {
   CommonActions,
   useFocusEffect,
 } from '@react-navigation/native';
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Dimensions, Image, Text, View, BackHandler} from 'react-native';
 import {customCss} from '../objects/commonCss';
 import Setting from './Setting';
 import CustomBottomTabNavigator from './BottomNavigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18n from '../language/language';
+import {darkCustom} from '../objects/darkCss';
 
 const Drawer = createDrawerNavigator();
 const STORAGE_KEY = '@app_language';
@@ -45,8 +46,23 @@ function CustomDrawerContent(props: any) {
     );
   };
 
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    })();
+  }, []);
+
   return (
-    <View style={{height: (Dimensions.get('screen').height / 100) * 93}}>
+    <View
+      style={{
+        height: (Dimensions.get('screen').height / 100) * 93,
+        backgroundColor: isDark ? '#000' : '#fff',
+      }}>
       <View
         style={{
           flexDirection: 'row',
@@ -61,18 +77,21 @@ function CustomDrawerContent(props: any) {
             alignSelf: 'center',
           }}
         />
-        <Text style={customCss.header}>My Financial</Text>
+        <Text style={isDark ? darkCustom.header : customCss.header}>
+          My Financial
+        </Text>
       </View>
       <DrawerContentScrollView contentContainerStyle={{flex: 1}} {...props}>
         <DrawerItemList {...props} />
         <DrawerItem
           label={i18n.t('CustomDrawer.Logout')}
+          labelStyle={{color: isDark ? '#fff' : '#000'}}
           onPress={handleLogout}
           icon={() => (
             <Ionicons
               name="log-out-sharp"
               size={35}
-              color="black"
+              color={isDark ? '#fff' : '#000'}
               style={{marginLeft: 5, marginRight: 5}}
             />
           )}
@@ -97,7 +116,7 @@ export function CustomDrawer() {
             routes: [{name: 'Welcome'}],
           }),
         );
-        return true; 
+        return true;
       };
 
       BackHandler.addEventListener('hardwareBackPress', onBackPress);
@@ -107,16 +126,29 @@ export function CustomDrawer() {
       };
     }, [navigation]),
   );
+
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    })();
+  }, []);
+
   return (
     <Drawer.Navigator
       initialRouteName={i18n.t('CustomDrawer.Home')}
       screenOptions={{
         headerShown: false,
         headerStyle: {
-          backgroundColor: '#000',
+          backgroundColor: isDark ? '#fff' : '#000',
         },
-        headerTitleStyle: {color: '#FFF'},
-        headerTintColor: '#fff',
+        headerTitleStyle: {color: isDark ? '#000' : '#FFF'},
+        headerTintColor: isDark ? '#fff' : '#fff',
+        drawerInactiveTintColor: isDark ? '#fff' : '#000',
         headerTitleAlign: 'left',
         drawerActiveBackgroundColor: '#3490DE',
         drawerActiveTintColor: '#fff',
@@ -140,7 +172,7 @@ export function CustomDrawer() {
             <Ionicons
               name="home"
               size={35}
-              color={focused ? '#fff' : 'black'}
+              color={isDark ? '#fff' : focused ? '#fff' : '#000'}
               style={{marginLeft: 5, marginRight: 5}}
             />
           ),
@@ -164,7 +196,7 @@ export function CustomDrawer() {
             <Ionicons
               name="settings"
               size={35}
-              color={focused ? '#fff' : 'black'}
+              color={isDark ? '#fff' : focused ? '#fff' : '#000'}
               style={{marginLeft: 5, marginRight: 5}}
             />
           ),

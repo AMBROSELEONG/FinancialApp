@@ -22,6 +22,7 @@ import UserEdit from './UserEdit';
 import Toast from 'react-native-toast-message';
 import i18n from '../language/language';
 import {useFocusEffect} from '@react-navigation/native';
+import {darkVerify} from '../objects/darkCss';
 
 type OTPInputProps = {
   length: number;
@@ -226,20 +227,35 @@ const UserEditVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
     return () => clearInterval(interval);
   }, [countdown]);
 
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    })();
+  }, []);
+
   return (
     <MainContainer>
-      <StatusBar backgroundColor="#FFFFFF" />
-      <View style={VerifyCss.Container}>
+      <StatusBar backgroundColor={isDark ? '#000' : '#FFFFFF'} />
+      <View style={isDark ? darkVerify.Container : VerifyCss.Container}>
         <TouchableOpacity
           style={[VerifyCss.Back, {margin: 20}]}
           onPress={() => navigation.goBack()}>
           <Image
-            source={require('../assets/arrow.png')}
+            source={
+              isDark
+                ? require('../assets/whitearrow.png')
+                : require('../assets/arrow.png')
+            }
             style={VerifyCss.Back}
           />
         </TouchableOpacity>
 
-        <Text style={VerifyCss.Title}>
+        <Text style={isDark ? darkVerify.Title : VerifyCss.Title}>
           {i18n.t('UserEditVerify.Verification')}
         </Text>
         <Text style={VerifyCss.SubTitle}>
@@ -268,7 +284,7 @@ const UserEditVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
           ))}
         </View>
         {countdown > 0 && (
-          <Text style={[VerifyCss.resend, {color: '#000'}]}>
+          <Text style={[VerifyCss.resend, {color: isDark ? '#fff' : '#000'}]}>
             {countdown} {i18n.t('UserEditVerify.Seconds-Remaining')}
           </Text>
         )}
@@ -283,18 +299,25 @@ const UserEditVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
       </View>
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={VerifyCss.ModalView}>
-          <View style={VerifyCss.ModalContainer}>
+          <View
+            style={
+              isDark ? darkVerify.ModalContainer : VerifyCss.ModalContainer
+            }>
             <Image
               source={require('../assets/successful.png')}
               style={{alignSelf: 'center', marginTop: 30}}
             />
-            <Text style={VerifyCss.TextModal}>{i18n.t('UserEditVerify.Edit-Data-Successful')}</Text>
+            <Text style={isDark ? darkVerify.TextModal : VerifyCss.TextModal}>
+              {i18n.t('UserEditVerify.Edit-Data-Successful')}
+            </Text>
             <TouchableOpacity
               style={VerifyCss.ButtonModal}
               onPress={() => {
                 EditData();
               }}>
-              <Text style={VerifyCss.ButtonText}>{i18n.t('UserEditVerify.Save-Data')}</Text>
+              <Text style={VerifyCss.ButtonText}>
+                {i18n.t('UserEditVerify.Save-Data')}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

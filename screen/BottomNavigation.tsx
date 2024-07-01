@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import Home from './Home';
@@ -8,6 +8,7 @@ import Bank from './Bank';
 import Ewallet from './Ewallet';
 import Expenses from './Expenses';
 import i18n from '../language/language';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -20,17 +21,28 @@ function CustomBottomTabNavigator() {
     }, []),
   );
 
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    })();
+  }, []);
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
       shifting={false}
-      activeColor="#000000"
+      activeColor={isDark ? '#fff' : '#000000'}
       activeIndicatorStyle={{
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
       }}
       inactiveColor="#999999"
       barStyle={{
-        backgroundColor: '#F9F9F9',
+        backgroundColor: isDark ? '#000' : '#F9F9F9',
         borderTopWidth: 1,
         borderTopColor: '#e6e6e6',
       }}>
@@ -38,7 +50,7 @@ function CustomBottomTabNavigator() {
         name="Home"
         component={Home}
         options={{
-          title: i18n.t("BottomNavigation.Home"),
+          title: i18n.t('BottomNavigation.Home'),
           tabBarIcon: 'home',
         }}
       />
@@ -46,15 +58,15 @@ function CustomBottomTabNavigator() {
         name="Wallet"
         component={Wallet}
         options={{
-          title: i18n.t("BottomNavigation.Wallet"),
+          title: i18n.t('BottomNavigation.Wallet'),
           tabBarIcon: ({color, focused}) => (
-            <Image 
-            source={
+            <Image
+              source={
                 focused
                   ? require('../assets/wallet-active.png')
                   : require('../assets/wallet.png')
               }
-              style={{ tintColor: color, width: 22, height: 22 }}
+              style={{tintColor: color, width: 22, height: 22}}
             />
           ),
         }}
@@ -63,15 +75,15 @@ function CustomBottomTabNavigator() {
         name="Bank"
         component={Bank}
         options={{
-          title: i18n.t("BottomNavigation.Bank"),
+          title: i18n.t('BottomNavigation.Bank'),
           tabBarIcon: ({color, focused}) => (
-            <Image 
-            source={
+            <Image
+              source={
                 focused
                   ? require('../assets/Bank-active.png')
                   : require('../assets/Bank.png')
               }
-              style={{ tintColor: color, width: 22, height: 22 }}
+              style={{tintColor: color, width: 22, height: 22}}
             />
           ),
         }}
@@ -80,15 +92,15 @@ function CustomBottomTabNavigator() {
         name="Ewallet"
         component={Ewallet}
         options={{
-          title: i18n.t("BottomNavigation.E-Wallet"),
+          title: i18n.t('BottomNavigation.E-Wallet'),
           tabBarIcon: ({color, focused}) => (
-            <Image 
-            source={
+            <Image
+              source={
                 focused
                   ? require('../assets/Ewallet-active.png')
                   : require('../assets/Ewallet.png')
               }
-              style={{ tintColor: color, width: 22, height: 22 }}
+              style={{tintColor: color, width: 22, height: 22}}
             />
           ),
         }}
@@ -97,15 +109,15 @@ function CustomBottomTabNavigator() {
         name="Expenses"
         component={Expenses}
         options={{
-          title: i18n.t("BottomNavigation.Expenses"),
+          title: i18n.t('BottomNavigation.Expenses'),
           tabBarIcon: ({color, focused}) => (
-            <Image 
-            source={
+            <Image
+              source={
                 focused
                   ? require('../assets/Debt-active.png')
                   : require('../assets/Debt.png')
               }
-              style={{ tintColor: color, width: 22, height: 22 }}
+              style={{tintColor: color, width: 22, height: 22}}
             />
           ),
         }}

@@ -8,12 +8,13 @@ import {
 } from 'react-native';
 import {WelcomeCss} from '../objects/commonCss';
 import MainContainer from '../components/MainContainer';
-import React, {useRef, useEffect, useCallback} from 'react';
+import React, {useRef, useEffect, useCallback, useState} from 'react';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
 import i18n from '../language/language';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { darkWelcome } from '../objects/darkCss';
 const STORAGE_KEY = '@app_language';
 const Welcome = () => {
   const navigation = useNavigation();
@@ -55,13 +56,24 @@ const Welcome = () => {
     ]).start();
   }, [Anim]);
 
+  const [isDark, setIsDark] = useState(false);  
+
+  useEffect(() => {
+    (async () => {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    })();
+  }, []);
+
   return (
     <MainContainer>
-      <StatusBar backgroundColor="#FFFFFF" />
-      <View style={WelcomeCss.Container}>
+      <StatusBar backgroundColor={isDark ? '#000' : '#fff'} />
+      <View style={isDark ? darkWelcome.Container : WelcomeCss.Container}>
         <Animated.View style={{transform: [{translateY: Anim}]}}>
           <Image
-            style={WelcomeCss.Logo}
+            style={isDark ? darkWelcome.Logo : WelcomeCss.Logo}
             source={require('../assets/Logo.png')}
           />
         </Animated.View>

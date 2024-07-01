@@ -1,6 +1,6 @@
 import messaging from '@react-native-firebase/messaging';
-import {PermissionsAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useEffect, useState} from 'react';
 
 export async function requestUserPermission() {
   const authStatus = await messaging().requestPermission();
@@ -17,8 +17,7 @@ export async function GetFCMToken() {
   try {
     const FCMToken = await messaging().getToken();
     if (FCMToken) {
-      await AsyncStorage.setItem('Token', FCMToken);
-      console.log(FCMToken)
+      AsyncStorage.setItem('Token', FCMToken);
     }
   } catch (error) {
     console.log(error);

@@ -22,6 +22,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserEditVerify from './UserEditVerify';
 import i18n from '../language/language';
 import Toast from 'react-native-toast-message';
+import {darkUserEdit} from '../objects/darkCss';
 
 const UserEdit = () => {
   const navigation = useNavigation();
@@ -236,6 +237,31 @@ const UserEdit = () => {
     }
   };
 
+  const theme = {
+    colors: {
+      primary: '#000', // Active outline color
+      outline: '#808080', // Outline color
+    },
+  };
+
+  const darkTheme = {
+    colors: {
+      primary: '#3490DE', // Active outline color
+      outline: '#808080', // Outline color
+    },
+  };
+
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    })();
+  }, []);
+
   return (
     <MainContainer>
       <KeyboardAvoidingView
@@ -243,7 +269,7 @@ const UserEdit = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <StatusBar
           animated={true}
-          backgroundColor="#3490DE"
+          backgroundColor={isDark ? '#000' : '#3490DE'}
           barStyle={'dark-content'}
         />
         {loading ? (
@@ -251,12 +277,17 @@ const UserEdit = () => {
             style={{
               flex: 1,
               marginVertical: (Dimensions.get('screen').height / 100) * 50,
+              backgroundColor: isDark ? '#000' : '#fff',
             }}>
-            <ActivityIndicator size={80} color="#000000" />
+            <ActivityIndicator size={80} color={isDark ? '#fff' : '#000000'} />
           </View>
         ) : (
           <View style={{flex: 1}}>
-            <View style={[css.mainView, {backgroundColor: '#3490DE'}]}>
+            <View
+              style={[
+                css.mainView,
+                {backgroundColor: isDark ? '#000' : '#3490DE'},
+              ]}>
               <TouchableOpacity
                 style={{paddingLeft: 20}}
                 onPress={() => {
@@ -271,9 +302,15 @@ const UserEdit = () => {
               </View>
             </View>
 
-            <View style={userEditCss.container}>
-              <View style={userEditCss.header}>
-                <View style={userEditCss.imageContainer}>
+            <View
+              style={isDark ? darkUserEdit.container : userEditCss.container}>
+              <View style={isDark ? darkUserEdit.header : userEditCss.header}>
+                <View
+                  style={
+                    isDark
+                      ? darkUserEdit.imageContainer
+                      : userEditCss.imageContainer
+                  }>
                   <Image
                     source={require('../assets/User.png')}
                     style={userEditCss.image}
@@ -281,17 +318,18 @@ const UserEdit = () => {
                 </View>
               </View>
               <View>
-                <Text style={userEditCss.Title}>
+                <Text style={isDark ? darkUserEdit.Title : userEditCss.Title}>
                   {i18n.t('EditPage.User-Info')}
                 </Text>
                 <TextInput
                   label={i18n.t('EditPage.Username')}
                   mode="outlined"
-                  style={userEditCss.Input}
+                  style={isDark ? darkUserEdit.Input : userEditCss.Input}
                   placeholder={i18n.t('EditPage.Username-Placeholder')}
-                  //   theme={theme}
+                  theme={isDark ? darkTheme : theme}
                   value={Username}
                   onChangeText={text => setUsername(text)}
+                  textColor={isDark ? '#fff' : '#000'}
                 />
                 {usernameError !== '' && (
                   <HelperText type="error" style={userEditCss.InputError}>
@@ -302,11 +340,12 @@ const UserEdit = () => {
                 <TextInput
                   label={i18n.t('EditPage.Email')}
                   mode="outlined"
-                  style={userEditCss.Input}
+                  style={isDark ? darkUserEdit.Input : userEditCss.Input}
                   placeholder={i18n.t('EditPage.Email-Placeholder')}
-                  //   theme={theme}
+                  theme={isDark ? darkTheme : theme}
                   value={Email}
                   onChangeText={text => setEmail(text)}
+                  textColor={isDark ? '#fff' : '#000'}
                 />
                 {emailError !== '' && (
                   <HelperText type="error" style={userEditCss.InputError}>
@@ -317,13 +356,14 @@ const UserEdit = () => {
                 <TextInput
                   label={i18n.t('EditPage.Password')}
                   mode="outlined"
-                  style={userEditCss.Input}
+                  style={isDark ? darkUserEdit.Input : userEditCss.Input}
                   placeholder={i18n.t('EditPage.Password-Placeholder')}
-                  //   theme={theme}
+                  theme={isDark ? darkTheme : theme}
                   value={password}
                   onChangeText={text => setPassword(text)}
                   autoCapitalize="none"
                   secureTextEntry={hidePass ? true : false}
+                  textColor={isDark ? '#fff' : '#000'}
                   right={
                     <TextInput.Icon
                       icon={hidePass ? 'eye-off' : 'eye'}
@@ -340,12 +380,13 @@ const UserEdit = () => {
                 <TextInput
                   label={i18n.t('EditPage.Confirm-Password')}
                   mode="outlined"
-                  style={userEditCss.Input}
+                  style={isDark ? darkUserEdit.Input : userEditCss.Input}
                   placeholder={i18n.t('EditPage.Confirm-Password-Placeholder')}
-                  //   theme={theme}
+                  theme={isDark ? darkTheme : theme}
                   onChangeText={text => setConfirmPassword(text)}
                   autoCapitalize="none"
                   secureTextEntry={hidePass ? true : false}
+                  textColor={isDark ? '#fff' : '#000'}
                   right={
                     <TextInput.Icon
                       icon={hidePass ? 'eye-off' : 'eye'}

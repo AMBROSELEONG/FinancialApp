@@ -28,6 +28,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18n from '../language/language';
 import Toast from 'react-native-toast-message';
 import ReactNativeBiometrics, {Biometrics} from 'react-native-biometrics';
+import {darkSignIn} from '../objects/darkCss';
 
 const SignIn = () => {
   const navigation = useNavigation();
@@ -82,6 +83,14 @@ const SignIn = () => {
     roundness: 20, // Set the border radius here
     colors: {
       primary: '#000', // Active outline color
+      outline: '#808080', // Outline color
+    },
+  };
+
+  const darkTheme = {
+    roundness: 20, // Set the border radius here
+    colors: {
+      primary: '#3490DE', // Active outline color
       outline: '#808080', // Outline color
     },
   };
@@ -204,7 +213,7 @@ const SignIn = () => {
     }
 
     if (Password.trim() === '') {
-      setPasswordError(i18n.t('SignIn.Password-Emtpy'));
+      setPasswordError(i18n.t('SignIn.Password-Empty'));
       valid = false;
     } else {
       setPasswordError('');
@@ -259,60 +268,72 @@ const SignIn = () => {
   };
 
   const autoSignIn = async (email: any, password: any) => {
-      setLoading(true);
-      try {
-        RNFetchBlob.config({trusty: true})
-          .fetch(
-            'POST',
-            UrlAccess.Url + 'User/SignIn',
-            {'Content-Type': 'application/json'},
-            JSON.stringify({
-              email: email,
-              password: password,
-            }),
-          )
-          .then(response => response.json())
-          .then(json => {
-            if (json.success) {
-              const {userID, userName} = json;
-              setUserID(userID);
-              setUsername(userName);
-              AsyncStorage.setItem('UserID', userID.toString());
-              AsyncStorage.setItem('UserName', userName);
-              AsyncStorage.setItem('Email', Email);
-              AsyncStorage.setItem('Password', Password);
-              showToast(i18n.t('SignIn.Successful'))
-              navigation.dispatch(
-                CommonActions.reset({
-                  index: 0,
-                  routes: [{name: 'CustomDrawer'}],
-                }),
-              );
-            } else {
-              setInvalid(true);
-            }
-          });
-      } catch (error) {
-        showToast(i18n.t('SignIn.Sign-In-Error'));
-      }
+    setLoading(true);
+    try {
+      RNFetchBlob.config({trusty: true})
+        .fetch(
+          'POST',
+          UrlAccess.Url + 'User/SignIn',
+          {'Content-Type': 'application/json'},
+          JSON.stringify({
+            email: email,
+            password: password,
+          }),
+        )
+        .then(response => response.json())
+        .then(json => {
+          if (json.success) {
+            const {userID, userName} = json;
+            setUserID(userID);
+            setUsername(userName);
+            AsyncStorage.setItem('UserID', userID.toString());
+            AsyncStorage.setItem('UserName', userName);
+            AsyncStorage.setItem('Email', Email);
+            AsyncStorage.setItem('Password', Password);
+            showToast(i18n.t('SignIn.Successful'));
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{name: 'CustomDrawer'}],
+              }),
+            );
+          } else {
+            setInvalid(true);
+          }
+        });
+    } catch (error) {
+      showToast(i18n.t('SignIn.Sign-In-Error'));
+    }
   };
+
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    })();
+  }, []);
 
   return (
     <MainContainer>
       <KeyboardAvoidingView
         style={{flex: 1}}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <StatusBar backgroundColor="#FFFFFF" />
+        <StatusBar backgroundColor={isDark ? '#000' : '#fff'} />
         {loading ? (
           <View
             style={{
               flex: 1,
               marginVertical: (Dimensions.get('screen').height / 100) * 50,
+              backgroundColor: isDark ? '#000' : '#fff',
             }}>
-            <ActivityIndicator size={80} color="#000000" />
+            <ActivityIndicator size={80} color={isDark ? '#fff' : '#000000'} />
           </View>
         ) : (
-          <View style={SignInCss.container}>
+          <View style={isDark ? darkSignIn.container : SignInCss.container}>
             <Animated.View style={{transform: [{translateY: Anim}]}}>
               <Image
                 style={SignInCss.Logo}
@@ -321,8 +342,10 @@ const SignIn = () => {
             </Animated.View>
 
             <Animated.View style={{transform: [{translateY: Anim1}]}}>
-              <Text style={SignInCss.Title}>{i18n.t('SignIn.Sign-In')}</Text>
-              <Text style={SignInCss.Content}>
+              <Text style={isDark ? darkSignIn.Title : SignInCss.Title}>
+                {i18n.t('SignIn.Sign-In')}
+              </Text>
+              <Text style={isDark ? darkSignIn.Content : SignInCss.Content}>
                 {i18n.t('SignIn.Credentials')}
               </Text>
             </Animated.View>
@@ -331,10 +354,11 @@ const SignIn = () => {
               <TextInput
                 label={i18n.t('SignIn.Email')}
                 mode="outlined"
-                style={SignInCss.Input}
+                style={isDark? darkSignIn.Input : SignInCss.Input}
                 placeholder={i18n.t('SignIn.Email-Placeholder')}
-                theme={theme}
+                theme={isDark ? darkTheme : theme}
                 onChangeText={text => setEmail(text)}
+                textColor={isDark ? '#fff' : '#000'}
               />
               {emailError !== '' && (
                 <HelperText type="error" style={SignInCss.InputError}>
@@ -347,12 +371,13 @@ const SignIn = () => {
               <TextInput
                 label={i18n.t('SignIn.Password')}
                 mode="outlined"
-                style={SignInCss.Input}
+                style={isDark? darkSignIn.Input : SignInCss.Input}
                 placeholder={i18n.t('SignIn.Password-Placeholder')}
-                theme={theme}
+                theme={isDark ? darkTheme : theme}
                 onChangeText={text => setPassword(text)}
                 autoCapitalize="none"
                 secureTextEntry={hidePass ? true : false}
+                textColor={isDark ? '#fff' : '#000'}
                 right={
                   <TextInput.Icon
                     icon={hidePass ? 'eye-off' : 'eye'}
@@ -401,7 +426,7 @@ const SignIn = () => {
                     onPress={() => handleFingerprint()}>
                     <Image
                       style={SignInCss.Finger}
-                      source={require('../assets/fingerprint.png')}
+                      source={isDark ? require('../assets/whitefingerprint.png'):require('../assets/fingerprint.png')}
                     />
                   </TouchableOpacity>
                 </Animated.View>
@@ -410,7 +435,7 @@ const SignIn = () => {
               <View></View>
             )}
 
-            <Text style={SignInCss.SignUp}>
+            <Text style={isDark ? darkSignIn.SignUp : SignInCss.SignUp}>
               {i18n.t('SignIn.Dont-Have-Account')}
               <Text
                 style={{color: '#3490DE'}}
