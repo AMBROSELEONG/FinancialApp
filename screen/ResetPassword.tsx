@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import MainContainer from '../components/MainContainer';
 import {SignInCss} from '../objects/commonCss';
@@ -48,9 +49,17 @@ const ResetPassword = () => {
     }, []),
   );
 
-  const showToast = (message: any) => {
+  const ErrorToast = (message: any) => {
     Toast.show({
       type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
+
+  const SuccessToast = (message: any) => {
+    Toast.show({
+      type: 'success',
       text1: message,
       visibilityTime: 3000,
     });
@@ -98,6 +107,8 @@ const ResetPassword = () => {
   const [Invalid, setInvalid] = useState(false);
   const [hidePass, setHidePass] = useState(true);
   const [Email, setEmail] = useState('');
+  const [isDark, setIsDark] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const checkPasswordFormat = (Password: any) => {
     const passwordRegex =
@@ -105,83 +116,112 @@ const ResetPassword = () => {
     return passwordRegex.test(Password);
   };
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const storedEmail = await AsyncStorage.getItem('Email');
-        if (storedEmail !== null) {
-          setEmail(storedEmail);
-        } else {
-          showToast(i18n.t('ResetPassword.Error'));
-        }
-      } catch (error) {
-        showToast(i18n.t('ResetPassword.Failed-Load-Email'));
+  const getData = async () => {
+    try {
+      const storedEmail = await AsyncStorage.getItem('Email');
+      if (storedEmail !== null) {
+        setEmail(storedEmail);
+      } else {
+        ErrorToast(i18n.t('ResetPassword.Error'));
       }
-    };
-    getData();
-  }, []);
-
-  const Verify = () => {
-    let valid = true;
-
-    if (Password.trim() === '') {
-      setPasswordError(i18n.t('ResetPassword.Password-Empty'));
-      valid = false;
-    } else if (!checkPasswordFormat(Password)) {
-      setPasswordError(i18n.t('ResetPassword.Password-Format'));
-      valid = false;
-    } else if (Password !== ConfirmPassword) {
-      setPasswordError(i18n.t('ResetPassword.Password-Match'));
-      valid = false;
-    } else {
-      setPasswordError('');
-    }
-
-    if (valid) {
-      try {
-        RNFetchBlob.config({trusty: true})
-          .fetch(
-            'POST',
-            UrlAccess.Url + 'User/Reset',
-            {'Content-Type': 'application/json'},
-            JSON.stringify({
-              email: Email,
-              password: Password,
-            }),
-          )
-          .then(response => response.json())
-          .then(json => {
-            if (json.success) {
-              Alert.alert(
-                i18n.t('ResetPassword.Password-Successful'),
-                i18n.t('ResetPassword.Reset-Successful'),
-                [
-                  {
-                    text: 'OK',
-                    onPress: () => navigation.navigate(SignIn as never),
-                  },
-                ],
-              );
-            } else {
-              setInvalid(true);
-            }
-          });
-      } catch (error) {
-        showToast(error);
-      }
+    } catch (error) {
+      ErrorToast(i18n.t('ResetPassword.Failed-Load-Email'));
     }
   };
 
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    (async () => {
+  const loadTheme = async () => {
+    try {
       const savedTheme = await AsyncStorage.getItem('theme');
       if (savedTheme) {
         setIsDark(savedTheme === 'dark');
       }
-    })();
+    } catch (error) {
+      ErrorToast(i18n.t('Fail-Load-Theme'));
+    }
+  };
+
+  const initialize = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([loadTheme(), getData()]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    initialize();
   }, []);
+
+  const Verify = () => {
+    setLoading(true);
+    try {
+      let valid = true;
+
+      if (Password.trim() === '') {
+        setPasswordError(i18n.t('ResetPassword.Password-Empty'));
+        valid = false;
+      } else if (!checkPasswordFormat(Password)) {
+        setPasswordError(i18n.t('ResetPassword.Password-Format'));
+        valid = false;
+      } else if (Password !== ConfirmPassword) {
+        setPasswordError(i18n.t('ResetPassword.Password-Match'));
+        valid = false;
+      } else {
+        setPasswordError('');
+      }
+
+      if (valid) {
+        try {
+          RNFetchBlob.config({trusty: true})
+            .fetch(
+              'POST',
+              UrlAccess.Url + 'User/Reset',
+              {'Content-Type': 'application/json'},
+              JSON.stringify({
+                email: Email,
+                password: Password,
+              }),
+            )
+            .then(response => response.json())
+            .then(json => {
+              if (json.success) {
+                Alert.alert(
+                  i18n.t('ResetPassword.Password-Successful'),
+                  i18n.t('ResetPassword.Reset-Successful'),
+                  [
+                    {
+                      text: 'OK',
+                      onPress: () => navigation.navigate(SignIn as never),
+                    },
+                  ],
+                );
+              } else {
+                setInvalid(true);
+              }
+            });
+        } catch (error) {
+          ErrorToast(i18n.t('ResetPassword.Reset-Password-Error'));
+        }
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: isDark ? '#000' : '#fff',
+        }}>
+        <ActivityIndicator size="large" color={isDark ? '#fff' : '#000'} />
+      </View>
+    );
+  }
 
   return (
     <MainContainer>

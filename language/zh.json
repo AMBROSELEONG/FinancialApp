@@ -1,33 +1,45 @@
 {
+  "Error-Load-Page": "页面加载错误",
+  "Fail-Load-Language": "加载语言失败",
+  "Fail-Load-Theme": "加载主题失败",
+  "Fail-Load-Data": "加载数据失败",
+  "Fail-Load-UserID": "加载用户ID失败",
+  "Fail-Load-Token": "加载令牌失败",
+
   "LanguagePage": {
-    "Change-Language": "更换语言",
+    "Change-Language": "更改语言",
     "Language-Update": "语言更新",
-    "Update": "语言更新为中文"
+    "Update": "语言更新为英语",
+    "Fail-Save-Language": "保存语言失败"
   },
   "SettingPage": {
     "Setting": "设置",
     "Edit-Profile": "编辑个人资料",
     "Edit": "编辑",
-    "Preferences": "偏好设置",
+    "Preferences": "偏好",
     "Language": "语言",
-    "Dark-Mode": "深色模式",
-    "Finger-Print": "启用指纹识别",
+    "Dark-Mode": "夜间模式",
+    "Finger-Print": "启用指纹",
     "Failed-Load-Username": "加载用户名失败",
     "Failed-Fetch-Data": "获取用户数据失败",
-    "Error-Fetch": "获取用户数据时出错",
-    "Enable-Finger-Successful": "启用指纹识别成功",
-    "Disable-Finger-Successful": "禁用指纹识别成功",
-    "Darkmode": "成功更改应用主题"
+    "Error-Fetch": "获取用户数据错误",
+    "Enable-Finger-Successful": "启用指纹成功",
+    "Disable-Finger-Successful": "禁用指纹成功",
+    "Darkmode": "成功更改应用程序主题",
+    "Error-Initializing": "初始化错误",
+    "Fail-Send-Fingerprint": "向服务器发送指纹状态失败",
+    "Unsuccessful-Delete-Key": "删除失败，因为没有要删除的密钥",
+    "Error-Create-Key": "创建指纹密钥错误"
   },
   "EditPage": {
     "Username-Empty": "用户名不能为空",
-    "Username-Duplication": "用户名已被使用",
+    "Username-Duplication": "用户名已被占用",
     "Email-Empty": "电子邮件不能为空",
     "Email-Format": "无效的电子邮件格式",
-    "Email-Duplication": "电子邮件已被使用",
+    "Emial-Duplication": "电子邮件已被占用",
     "Password-Empty": "密码不能为空",
     "Password-Format": "密码必须包含大小写字母、数字和符号",
-    "Password-Match": "密码与确认密码不匹配",
+    "Password-Match": "与确认密码不匹配",
     "Edit-Profile": "编辑个人资料",
     "User-Info": "用户信息",
     "Username": "用户名",
@@ -42,7 +54,7 @@
   },
   "UserEditVerify": {
     "Not-Correct": "您的验证码不正确",
-    "Verify-Unsuccessful": "验证失败",
+    "Verify-Unsuccessful": "验证不成功",
     "Invalid-Input": "无效输入",
     "Failed-Load-Email": "加载电子邮件失败",
     "Data-Insert-Successful": "数据插入成功",
@@ -50,9 +62,9 @@
     "Send-OTP-Successful": "发送OTP成功",
     "Send-OTP-Unsuccessful": "发送OTP失败",
     "Verification": "验证",
-    "Send-To": "验证码发送到",
+    "Send-To": "验证码已发送至",
     "Please-Enter": "请输入验证码",
-    "Seconds-Remaining": "秒剩余",
+    "Seconds-Remaining": "剩余秒数",
     "Resend": "重新发送验证码",
     "Verify": "验证",
     "Edit-Data-Successful": "编辑数据成功",
@@ -68,7 +80,7 @@
     "Wallet": "钱包",
     "Bank": "银行",
     "E-Wallet": "电子钱包",
-    "Expenses": "固定支出"
+    "Expenses": "支出"
   },
   "Welcome": {
     "Login": "登录",
@@ -76,12 +88,12 @@
   },
   "SignIn": {
     "Sign-In-Error": "登录错误",
-    "Email-Empty": "邮箱不能为空",
+    "Email-Empty": "电子邮件不能为空",
     "Password-Empty": "密码不能为空",
     "Sign-In": "登录",
     "Credentials": "输入您的凭据以登录",
-    "Email": "邮箱",
-    "Email-Placeholder": "请输入您的邮箱",
+    "Email": "电子邮件",
+    "Email-Placeholder": "请输入您的电子邮件",
     "Password": "密码",
     "Password-Placeholder": "请输入您的密码",
     "Invalid": "用户名或密码无效",
@@ -90,25 +102,28 @@
     "Or": "或使用以下方式登录",
     "Dont-Have-Account": "没有账户？",
     "Sign-Up": "注册",
-    "Successful": "登录成功"
+    "Successful": "登录成功",
+    "Fail-Fetch-Fingerprint": "获取指纹状态失败",
+    "Fetch-Fingerprint-Error": "获取指纹状态错误",
+    "Error-Handle-Fingerprint": "处理指纹错误"
   },
   "SignUp": {
     "Username-Empty": "用户名不能为空",
     "Username-Duplication": "用户名已被占用",
-    "Email-Empty": "邮箱不能为空",
-    "Email-Format": "邮箱格式无效",
-    "Email-Duplication": "邮箱已被占用",
+    "Email-Empty": "电子邮件不能为空",
+    "Email-Format": "无效的电子邮件格式",
+    "Email-Duplication": "电子邮件已被占用",
     "Password-Empty": "密码不能为空",
     "Password-Format": "密码必须包含大小写字母、数字和符号",
-    "Password-Match": "密码与确认密码不匹配",
-    "Send-OTP-Successful": "OTP发送成功",
-    "Send-OTP-Unsuccessful": "OTP发送失败",
+    "Password-Match": "与确认密码不匹配",
+    "Send-OTP-Successful": "发送OTP成功",
+    "Send-OTP-Unsuccessful": "发送OTP失败",
     "Sign-Up": "注册",
     "Credentials": "输入您的凭据以注册",
     "Username": "用户名",
     "Username-Placeholder": "请输入您的用户名",
-    "Email": "邮箱",
-    "Email-Placeholder": "请输入您的邮箱",
+    "Email": "电子邮件",
+    "Email-Placeholder": "请输入您的电子邮件",
     "Password": "密码",
     "Password-Placeholder": "请输入您的密码",
     "Confirm-Password": "确认密码",
@@ -118,19 +133,19 @@
     "Sign-In": "登录"
   },
   "Verify": {
-    "Already-Have-Account": "已有账户？ 登录",
+    "Already-Have-Account": "已有账户？登录",
     "Sign-Up-Successful": "注册成功",
     "SIGN-IN": "登录"
   },
   "ForgotPassword": {
-    "Email-Empty": "邮箱不能为空",
-    "Email-Find": "无法找到邮箱",
-    "Send-OTP-Successful": "OTP发送成功",
-    "Send-OTP-Unsuccessful": "OTP发送失败",
+    "Email-Empty": "电子邮件不能为空",
+    "Email-Find": "找不到电子邮件",
+    "Send-OTP-Successful": "发送OTP成功",
+    "Send-OTP-Unsuccessful": "发送OTP失败",
     "Forgot-Password": "忘记密码",
     "Credentials": "输入您的凭据以验证",
-    "Email": "邮箱",
-    "Email-Placeholder": "请输入您的邮箱",
+    "Email": "电子邮件",
+    "Email-Placeholder": "请输入您的电子邮件",
     "Send": "发送",
     "Remember-Password": "记得密码？",
     "Sign-In": "登录"
@@ -139,10 +154,10 @@
     "Error": "获取电子邮件错误",
     "Failed-Load-Email": "加载电子邮件失败",
     "Password-Empty": "密码不能为空",
-    "Password-Format": "密码必须包含大写字母、小写字母、数字和符号",
-    "Password-Match": "密码与确认密码不匹配",
+    "Password-Format": "密码必须包含大小写字母、数字和符号",
+    "Password-Match": "与确认密码不匹配",
     "Password-Successful": "密码重置成功",
-    "Reset-Successful": "您的密码重置成功！请前往登录页面测试您的新密码",
+    "Reset-Successful": "您的密码重置成功！请登录测试您的新密码",
     "Reset-Password": "重置密码",
     "Enter-Password": "输入您的新密码",
     "Password": "密码",
@@ -150,22 +165,24 @@
     "Confirm-Password": "确认密码",
     "Confirm-Password-Placeholder": "请再次输入密码",
     "Reset": "重置",
-    "Remember": "记住密码？",
-    "Sign-In": "登录"
+    "Remember": "记得密码？",
+    "Sign-In": "登录",
+    "Reset-Password-Error": "重置密码错误"
   },
   "Home": {
     "Failed-Load-Username": "加载用户名失败",
     "Failed-Fetch": "获取用户数据失败",
-    "Error-Fetch": "获取用户数据出错",
-    "Home": "首页",
+    "Error-Fetch": "获取用户数据错误",
+    "Home": "主页",
     "Welcome-Back": "欢迎回来",
-    "Spending": "过去7天的开支",
-    "Total-Spending": "今天的总开支",
-    "Increase": "过去7天的收入",
-    "Total-Increase": "今天的总收入"
+    "Spending": "过去7天的支出",
+    "Total-Spending": "今天的总支出",
+    "Increase": "过去7天的增长",
+    "Total-Increase": "今天的总增长",
+    "Fail-Create-Data": "创建数据失败"
   },
   "ThemeChange": {
-    "Text": "正在切换主题"
+    "Text": "正在处理切换主题"
   },
   "Wallet": {
     "Wallet": "钱包",
@@ -197,10 +214,34 @@
     "Total-Spend": "总支出",
     "Spend-Placeholder": "请输入您的总支出",
     "Spend-Type": "支出类型",
-    "Type-Placeholder": "选择支出来源类型",
+    "Type-Placeholder": "选择支出类型",
     "Bank": "选择银行",
     "Bank-Placeholder": "选择银行",
     "Date": "日期",
     "Save": "保存"
+  },
+  "Ewallet": {
+    "Ewallet": "电子钱包"
+  },
+  "EwalletIncome": {
+    "Fill": "填写电子钱包收入"
+  },
+  "EwalletSpend": {
+    "Fill": "填写电子钱包支出"
+  },
+  "Bank": {
+    "Bank": "银行",
+    "Add-Bank": "添加银行",
+    "Bank-Name": "银行名称",
+    "Add-Bank-Placeholder": "选择银行",
+    "Initial-Balance": "初始余额",
+    "Initial-Balance-Placeholder": "请输入您的初始余额",
+    "Save": "保存"
+  },
+  "BankIncome": {
+    "Fill": "填写银行收入"
+  },
+  "BankSpend": {
+    "Fill": "填写银行支出"
   }
 }

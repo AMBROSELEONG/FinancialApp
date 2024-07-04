@@ -1,5 +1,5 @@
 import MainContainer from '../components/MainContainer';
-import {useNavigation, DrawerActions} from '@react-navigation/native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {
   KeyboardAvoidingView,
   StatusBar,
@@ -7,23 +7,52 @@ import {
   Text,
   TouchableOpacity,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {css, walletIncomeCss} from '../objects/commonCss';
 import {TextInput, HelperText, List} from 'react-native-paper';
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {SelectList} from 'react-native-dropdown-select-list';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {darkCss, darkWalletIncome} from '../objects/darkCss';
+import i18n from '../language/language';
+import Toast from 'react-native-toast-message';
 
 const EWalletIncome = () => {
   const navigation = useNavigation();
 
   const theme = {
-    roundness: 10, // Set the border radius here
+    roundness: 20, // Set the border radius here
     colors: {
       primary: '#000', // Active outline color
       outline: '#808080', // Outline color
     },
+  };
+
+  const darkTheme = {
+    roundness: 20, // Set the border radius here
+    colors: {
+      primary: '#3490DE', // Active outline color
+      outline: '#808080', // Outline color
+    },
+  };
+
+  const ErrorToast = (message: any) => {
+    Toast.show({
+      type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
+
+  const SuccessToast = (message: any) => {
+    Toast.show({
+      type: 'success',
+      text1: message,
+      visibilityTime: 3000,
+    });
   };
 
   const [Total, setTotal] = useState('');
@@ -75,9 +104,54 @@ const EWalletIncome = () => {
     setShow(true);
   };
 
+  const [isDark, setIsDark] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const loadTheme = async () => {
+    try {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('Fail-Load-Theme'));
+    }
+  };
+
+  const initialize = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([loadTheme()]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    console.log(formattedDate);
-  });
+    initialize();
+  }, []);
+
+  const [locale, setLocale] = React.useState(i18n.locale);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
+  );
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: isDark ? '#000' : '#fff',
+        }}>
+        <ActivityIndicator size="large" color={isDark ? '#fff' : '#000'} />
+      </View>
+    );
+  }
 
   return (
     <MainContainer>
@@ -86,91 +160,123 @@ const EWalletIncome = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <StatusBar
           animated={true}
-          backgroundColor="#fff"
+          backgroundColor={isDark ? '#000' : '#fff'}
           barStyle={'dark-content'}
         />
-        <View style={css.mainView}>
+        <View style={isDark ? darkCss.mainView : css.mainView}>
           <TouchableOpacity
             style={{paddingLeft: 20}}
             onPress={() => {
               navigation.goBack();
             }}>
-            <Ionicons name="arrow-back" size={30} color={'#000'} />
+            <Ionicons
+              name="arrow-back"
+              size={30}
+              color={isDark ? '#fff' : '#000'}
+            />
           </TouchableOpacity>
           <View style={css.HeaderView}>
-            <Text style={css.PageName}>INCOME</Text>
+            <Text style={isDark ? darkCss.PageName : css.PageName}>
+              {i18n.t('WalletIncome.Income')}
+            </Text>
           </View>
         </View>
-        <View style={walletIncomeCss.container}>
-            <Text style={walletIncomeCss.title}>Fill in E-Wallet income</Text>
-            <Text style={walletIncomeCss.subtitle}>Current Balance</Text>
-            <Text style={walletIncomeCss.balance}>RM 100</Text>
-            <Text style={walletIncomeCss.label}>Total Income</Text>
-            <TextInput
-              mode="outlined"
-              style={walletIncomeCss.Input}
-              placeholder="Please Enter Your Total Income"
-              theme={theme}
-              onChangeText={text => setTotal(text)}
-            />
-            {TotalError !== '' && (
-              <HelperText type="error" style={walletIncomeCss.InputError}>
-                {TotalError}
-              </HelperText>
-            )}
+        <View
+          style={
+            isDark ? darkWalletIncome.container : walletIncomeCss.container
+          }>
+          <Text style={isDark ? darkWalletIncome.title : walletIncomeCss.title}>
+            {i18n.t('EwalletIncome.Fill')}
+          </Text>
+          <Text style={walletIncomeCss.subtitle}>
+            {i18n.t('WalletIncome.Balance')}
+          </Text>
+          <Text
+            style={isDark ? darkWalletIncome.balance : walletIncomeCss.balance}>
+            RM 100
+          </Text>
+          <Text style={walletIncomeCss.label}>
+            {i18n.t('WalletIncome.Total-Income')}
+          </Text>
+          <TextInput
+            mode="outlined"
+            style={isDark ? darkWalletIncome.Input : walletIncomeCss.Input}
+            placeholder={i18n.t('WalletIncome.Income-Placeholder')}
+            theme={isDark ? darkTheme : theme}
+            onChangeText={text => setTotal(text)}
+            textColor={isDark ? '#fff' : '#000'}
+          />
+          {TotalError !== '' && (
+            <HelperText type="error" style={walletIncomeCss.InputError}>
+              {TotalError}
+            </HelperText>
+          )}
 
-            <Text style={walletIncomeCss.label}>Income Source Type</Text>
-            <SelectList
-              setSelected={(text: string) => setSelectedType(text)}
-              data={selectType}
-              save="value"
-              boxStyles={walletIncomeCss.Input}
-              inputStyles={{color: '#000'}}
-              dropdownStyles={walletIncomeCss.Input}
-              dropdownTextStyles={{color: '#000'}}
-              search={false}
-              placeholder={'Select the Income Source Type'}
-            />
-            {selectedType === 'Bank Transfer' && (
-              <View>
-                <Text style={walletIncomeCss.label}>Select Bank</Text>
-                <SelectList
-                  setSelected={(text: string) => setSelectedBank(text)}
-                  data={selectBank}
-                  save="value"
-                  boxStyles={walletIncomeCss.Input}
-                  inputStyles={{color: '#000'}}
-                  dropdownStyles={walletIncomeCss.Input}
-                  dropdownTextStyles={{color: '#000'}}
-                  search={false}
-                  placeholder={'Select the Bank'}
-                />
-              </View>
-            )}
-
-            <Text style={walletIncomeCss.label}>Date</Text>
-            <TextInput
-              mode="outlined"
-              style={walletIncomeCss.Input}
-              theme={theme}
-              value={date.toDateString()}
-              right={
-                <TextInput.Icon icon="calendar" onPress={showDatepicker} />
-              }
-              editable={false}
-            />
-            {show && (
-              <DateTimePicker
-                value={date}
-                mode="date"
-                display="default"
-                onChange={onChange}
+          <Text style={walletIncomeCss.label}>
+            {i18n.t('WalletIncome.Income-Type')}
+          </Text>
+          <SelectList
+            setSelected={(text: string) => setSelectedType(text)}
+            data={selectType}
+            save="value"
+            boxStyles={isDark ? darkWalletIncome.Input : walletIncomeCss.Input}
+            inputStyles={{color: isDark ? '#fff' : '#000'}}
+            dropdownStyles={
+              isDark ? darkWalletIncome.Input : walletIncomeCss.Input
+            }
+            dropdownTextStyles={{color: isDark ? '#fff' : '#000'}}
+            search={false}
+            placeholder={i18n.t('WalletIncome.Type-Placeholder')}
+          />
+          {selectedType === 'Bank Transfer' && (
+            <View>
+              <Text style={walletIncomeCss.label}>
+                {i18n.t('WalletIncome.Bank')}
+              </Text>
+              <SelectList
+                setSelected={(text: string) => setSelectedBank(text)}
+                data={selectBank}
+                save="value"
+                boxStyles={
+                  isDark ? darkWalletIncome.Input : walletIncomeCss.Input
+                }
+                inputStyles={{color: isDark ? '#fff' : '#000'}}
+                dropdownStyles={
+                  isDark ? darkWalletIncome.Input : walletIncomeCss.Input
+                }
+                dropdownTextStyles={{color: isDark ? '#fff' : '#000'}}
+                search={false}
+                placeholder={i18n.t('WalletIncome.Bank-Placeholder')}
               />
-            )}
+            </View>
+          )}
 
-            <TouchableOpacity style={walletIncomeCss.Button}>
-              <Text style={walletIncomeCss.ButtonText}>Save</Text>
-            </TouchableOpacity>
+          <Text style={walletIncomeCss.label}>
+            {i18n.t('WalletIncome.Date')}
+          </Text>
+          <TextInput
+            mode="outlined"
+            style={isDark ? darkWalletIncome.Input : walletIncomeCss.Input}
+            theme={isDark ? darkTheme : theme}
+            value={date.toDateString()}
+            right={<TextInput.Icon icon="calendar" onPress={showDatepicker} />}
+            editable={false}
+            textColor={isDark ? '#fff' : '#000'}
+          />
+          {show && (
+            <DateTimePicker
+              value={date}
+              mode="date"
+              display="default"
+              onChange={onChange}
+            />
+          )}
+
+          <TouchableOpacity style={walletIncomeCss.Button}>
+            <Text style={walletIncomeCss.ButtonText}>
+              {i18n.t('WalletIncome.Save')}
+            </Text>
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </MainContainer>

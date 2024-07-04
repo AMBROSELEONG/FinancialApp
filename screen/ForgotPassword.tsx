@@ -4,10 +4,9 @@ import {
   Image,
   Text,
   TouchableOpacity,
-  Animated,
-  Alert,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import MainContainer from '../components/MainContainer';
 import {SignInCss} from '../objects/commonCss';
@@ -49,7 +48,7 @@ const ForgotPassword = () => {
     }, []),
   );
 
-  const showToast = (message: any) => {
+  const ErrorToast = (message: any) => {
     Toast.show({
       type: 'error',
       text1: message,
@@ -57,42 +56,21 @@ const ForgotPassword = () => {
     });
   };
 
-  const Anim = useRef(new Animated.Value(100)).current;
-  const Anim1 = useRef(new Animated.Value(110)).current;
-  const Anim2 = useRef(new Animated.Value(120)).current;
-  const Anim4 = useRef(new Animated.Value(130)).current;
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(Anim, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-      Animated.timing(Anim1, {
-        toValue: 0,
-        duration: 550,
-        useNativeDriver: true,
-      }),
-      Animated.timing(Anim2, {
-        toValue: 0,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-      Animated.timing(Anim4, {
-        toValue: 0,
-        duration: 650,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [Anim, Anim1, Anim2, Anim4]);
+  const SuccessToast = (message: any) => {
+    Toast.show({
+      type: 'success',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
 
   const [Email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
-
   const [CheckEmail, setCheckEmail] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const checkEmail = (Email: any) => {
+    setLoading(true);
     try {
       RNFetchBlob.config({trusty: true})
         .fetch(
@@ -111,8 +89,8 @@ const ForgotPassword = () => {
             setCheckEmail(false);
           }
         });
-    } catch (error) {
-      return error;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -123,49 +101,83 @@ const ForgotPassword = () => {
   }, [Email]);
 
   const Verify = () => {
-    let valid = true;
+    setLoading(true);
+    try {
+      let valid = true;
 
-    if (Email.trim() === '') {
-      setEmailError(i18n.t('ForgotPassword.Email-Empty'));
-      valid = false;
-    } else {
-      if (CheckEmail === true) {
-        setEmailError(i18n.t('ForgotPassword.Email-Find'));
+      if (Email.trim() === '') {
+        setEmailError(i18n.t('ForgotPassword.Email-Empty'));
         valid = false;
       } else {
-        setEmailError('');
+        if (CheckEmail === true) {
+          setEmailError(i18n.t('ForgotPassword.Email-Find'));
+          valid = false;
+        } else {
+          setEmailError('');
+        }
       }
-    }
 
-    if (valid) {
-      AsyncStorage.setItem('Email', Email);
-      try {
-        RNFetchBlob.config({trusty: true}).fetch(
-          'POST',
-          UrlAccess.Url + 'OTP/SendOTP',
-          {'Content-Type': 'application/json'},
-          JSON.stringify({
-            email: Email,
-          }),
-        );
-        showToast(i18n.t('ForgotPassword.Send-OTP-Successful'));
-        navigation.navigate(ResetVerify as never);
-      } catch (error) {
-        showToast(i18n.t('ForgotPassword.Send-OTP-Unsuccessful'));
+      if (valid) {
+        AsyncStorage.setItem('Email', Email);
+        try {
+          RNFetchBlob.config({trusty: true}).fetch(
+            'POST',
+            UrlAccess.Url + 'OTP/SendOTP',
+            {'Content-Type': 'application/json'},
+            JSON.stringify({
+              email: Email,
+            }),
+          );
+          SuccessToast(i18n.t('ForgotPassword.Send-OTP-Successful'));
+          navigation.navigate(ResetVerify as never);
+        } catch (error) {
+          ErrorToast(i18n.t('ForgotPassword.Send-OTP-Unsuccessful'));
+        }
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   const [isDark, setIsDark] = useState(false);
 
-  useEffect(() => {
-    (async () => {
+  const loadTheme = async () => {
+    try {
       const savedTheme = await AsyncStorage.getItem('theme');
       if (savedTheme) {
         setIsDark(savedTheme === 'dark');
       }
-    })();
+    } catch (error) {
+      ErrorToast(i18n.t('Fail-Load-Theme'));
+    }
+  };
+
+  const initialize = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([loadTheme()]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    initialize();
   }, []);
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: isDark ? '#000' : '#fff',
+        }}>
+        <ActivityIndicator size="large" color={isDark ? '#fff' : '#000'} />
+      </View>
+    );
+  }
 
   return (
     <MainContainer>
@@ -174,46 +186,39 @@ const ForgotPassword = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <StatusBar backgroundColor={isDark ? '#000' : '#fff'} />
         <View style={isDark ? darkSignIn.container : SignInCss.container}>
-          <Animated.View style={{transform: [{translateY: Anim}]}}>
-            <Image
-              style={SignInCss.Logo}
-              source={require('../assets/Logo.png')}
-            />
-          </Animated.View>
+          <Image
+            style={SignInCss.Logo}
+            source={require('../assets/Logo.png')}
+          />
 
-          <Animated.View style={{transform: [{translateY: Anim1}]}}>
-            <Text style={isDark ? darkSignIn.Title : SignInCss.Title}>
-              {i18n.t('ForgotPassword.Forgot-Password')}
+          <Text style={isDark ? darkSignIn.Title : SignInCss.Title}>
+            {i18n.t('ForgotPassword.Forgot-Password')}
+          </Text>
+          <Text style={isDark ? darkSignIn.Content : SignInCss.Content}>
+            {i18n.t('ForgotPassword.Credentials')}
+          </Text>
+
+          <TextInput
+            label={i18n.t('ForgotPassword.Email')}
+            mode="outlined"
+            style={isDark ? darkSignIn.Input : SignInCss.Input}
+            placeholder={i18n.t('ForgotPassword.Email-Placeholder')}
+            theme={isDark ? darkTheme : theme}
+            onChangeText={text => setEmail(text)}
+            textColor={isDark ? '#fff' : '#000'}
+            value={Email}
+          />
+          {emailError !== '' && (
+            <HelperText type="error" style={SignInCss.InputError}>
+              {emailError}
+            </HelperText>
+          )}
+
+          <TouchableOpacity style={SignInCss.Send} onPress={() => Verify()}>
+            <Text style={SignInCss.BtnText}>
+              {i18n.t('ForgotPassword.Send')}
             </Text>
-            <Text style={isDark ? darkSignIn.Content : SignInCss.Content}>
-              {i18n.t('ForgotPassword.Credentials')}
-            </Text>
-          </Animated.View>
-
-          <Animated.View style={{transform: [{translateY: Anim2}]}}>
-            <TextInput
-              label={i18n.t('ForgotPassword.Email')}
-              mode="outlined"
-              style={isDark ? darkSignIn.Input : SignInCss.Input}
-              placeholder={i18n.t('ForgotPassword.Email-Placeholder')}
-              theme={isDark ? darkTheme : theme}
-              onChangeText={text => setEmail(text)}
-              textColor={isDark ? '#fff' : '#000'}
-            />
-            {emailError !== '' && (
-              <HelperText type="error" style={SignInCss.InputError}>
-                {emailError}
-              </HelperText>
-            )}
-          </Animated.View>
-
-          <Animated.View style={{transform: [{translateY: Anim4}]}}>
-            <TouchableOpacity style={SignInCss.Send} onPress={() => Verify()}>
-              <Text style={SignInCss.BtnText}>
-                {i18n.t('ForgotPassword.Send')}
-              </Text>
-            </TouchableOpacity>
-          </Animated.View>
+          </TouchableOpacity>
 
           <Text style={isDark ? darkSignIn.SignUp : SignInCss.SignUp}>
             {i18n.t('ForgotPassword.Remember-Password')}

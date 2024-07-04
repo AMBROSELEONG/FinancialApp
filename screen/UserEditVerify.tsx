@@ -43,9 +43,17 @@ const UserEditVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
   onChange,
   navigation,
 }) => {
-  const showToast = (message: any) => {
+  const ErrorToast = (message: any) => {
     Toast.show({
       type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
+
+  const SuccessToast = (message: any) => {
+    Toast.show({
+      type: 'success',
       text1: message,
       visibilityTime: 3000,
     });
@@ -100,7 +108,6 @@ const UserEditVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
 
     if (isValid) {
       const OTP = value.join('');
-      console.log(Email, OTP);
       try {
         RNFetchBlob.config({trusty: true})
           .fetch(
@@ -120,14 +127,14 @@ const UserEditVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
               AsyncStorage.removeItem('UserName');
               AsyncStorage.removeItem('Password');
             } else {
-              showToast(i18n.t('UserEditVerify.Not-Correct'));
+              ErrorToast(i18n.t('UserEditVerify.Not-Correct'));
             }
           });
       } catch (error) {
-        showToast(i18n.t('UserEditVerify.Verify-Unsuccessful'));
+        ErrorToast(i18n.t('UserEditVerify.Verify-Unsuccessful'));
       }
     } else {
-      showToast(i18n.t('UserEditVerify.Invalid-Input'));
+      ErrorToast(i18n.t('UserEditVerify.Invalid-Input'));
     }
   };
 
@@ -135,31 +142,53 @@ const UserEditVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
   const [Email, setEmail] = useState('');
   const [Password, setPassword] = useState('');
   const [userId, setUserId] = useState<number | null>(null);
+  const [isDark, setIsDark] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const getData = async () => {
+    try {
+      const storedEmail = await AsyncStorage.getItem('Email');
+      const storedUsername = await AsyncStorage.getItem('UserName');
+      const storedPassword = await AsyncStorage.getItem('Password');
+      const storedUserID = await AsyncStorage.getItem('UserID');
+      if (
+        storedEmail !== null &&
+        storedUsername !== null &&
+        storedPassword !== null &&
+        storedUserID !== null
+      ) {
+        setEmail(storedEmail);
+        setUsername(storedUsername);
+        setPassword(storedPassword);
+        setUserId(parseInt(storedUserID));
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('UserEditVerify.Failed-Load-Email'));
+    }
+  };
+
+  const loadTheme = async () => {
+    try {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('Fail-Load-Theme'));
+    }
+  };
+
+  const initialize = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([loadTheme(), getData()]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const storedEmail = await AsyncStorage.getItem('Email');
-        const storedUsername = await AsyncStorage.getItem('UserName');
-        const storedPassword = await AsyncStorage.getItem('Password');
-        const storedUserID = await AsyncStorage.getItem('UserID');
-        if (
-          storedEmail !== null &&
-          storedUsername !== null &&
-          storedPassword !== null &&
-          storedUserID !== null
-        ) {
-          setEmail(storedEmail);
-          setUsername(storedUsername);
-          setPassword(storedPassword);
-          setUserId(parseInt(storedUserID));
-        }
-      } catch (error) {
-        showToast(i18n.t('UserEditVerify.Failed-Load-Email'));
-      }
-    };
-
-    getData();
+    initialize();
   }, []);
 
   const EditData = () => {
@@ -180,9 +209,9 @@ const UserEditVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
         .then(json => {
           if (json && json.success) {
             navigation.navigate(UserEdit as never);
-            showToast(i18n.t('UserEditVerify.Data-Insert-Successful'));
+            SuccessToast(i18n.t('UserEditVerify.Data-Insert-Successful'));
           } else {
-            showToast(i18n.t('UserEditVerify.Data-Insert-Unsuccessful'));
+            ErrorToast(i18n.t('UserEditVerify.Data-Insert-Unsuccessful'));
           }
         });
     } catch (error) {}
@@ -198,10 +227,10 @@ const UserEditVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
           email: Email,
         }),
       );
-      showToast(i18n.t('UserEditVerify.Send-OTP-Successful'));
+      SuccessToast(i18n.t('UserEditVerify.Send-OTP-Successful'));
       navigation.navigate(UserEditVerify as never);
     } catch (error) {
-      showToast(i18n.t('UserEditVerify.Send-OTP-Unsuccessful'));
+      ErrorToast(i18n.t('UserEditVerify.Send-OTP-Unsuccessful'));
     }
   };
 
@@ -226,17 +255,6 @@ const UserEditVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
 
     return () => clearInterval(interval);
   }, [countdown]);
-
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const savedTheme = await AsyncStorage.getItem('theme');
-      if (savedTheme) {
-        setIsDark(savedTheme === 'dark');
-      }
-    })();
-  }, []);
 
   return (
     <MainContainer>

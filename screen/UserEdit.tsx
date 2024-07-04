@@ -41,13 +41,36 @@ const UserEdit = () => {
   const [passwordError, setPasswordError] = useState('');
   const [loading, setLoading] = useState(false);
   const [locale, setLocale] = React.useState(i18n.locale);
+  const [isDark, setIsDark] = useState(false);
 
-  const showToast = (message: any) => {
+  const ErrorToast = (message: any) => {
     Toast.show({
       type: 'error',
       text1: message,
       visibilityTime: 3000,
     });
+  };
+
+  const SuccessToast = (message: any) => {
+    Toast.show({
+      type: 'success',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
+
+  const theme = {
+    colors: {
+      primary: '#000', // Active outline color
+      outline: '#808080', // Outline color
+    },
+  };
+
+  const darkTheme = {
+    colors: {
+      primary: '#3490DE', // Active outline color
+      outline: '#808080', // Outline color
+    },
   };
 
   useFocusEffect(
@@ -56,50 +79,66 @@ const UserEdit = () => {
     }, []),
   );
 
+  const fetchUsername = async () => {
+    try {
+      const storedUserID = await AsyncStorage.getItem('UserID');
+      if (storedUserID !== null) {
+        setUserId(storedUserID);
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('SettingPage.Failed-Load-Username'));
+    }
+  };
+
+  const fetchData = async (userId: any) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}User/GetUserData?userId=${userId}`,
+        {'Content-Type': 'application/json'},
+      );
+
+      const json = await response.json();
+
+      if (json.success) {
+        setEmail(json.userData.email);
+        setOriEmail(json.userData.email);
+        setPassword(json.userData.password);
+        setUsername(json.userData.userName);
+        setOriUsername(json.userData.userName);
+      } else {
+        ErrorToast(i18n.t('SettingPage.Failed-Fetch-Data'));
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
+    }
+  };
+
   useEffect(() => {
-    setLoading(true);
-    const fetchUsername = async () => {
+    const initialize = async () => {
+      setLoading(true);
+
       try {
-        const storedUserID = await AsyncStorage.getItem('UserID');
-        if (storedUserID !== null) {
+        const [savedTheme, storedUserID] = await Promise.all([
+          AsyncStorage.getItem('theme'),
+          AsyncStorage.getItem('UserID'),
+        ]);
+
+        if (savedTheme) {
+          setIsDark(savedTheme === 'dark');
+        }
+
+        if (storedUserID) {
           setUserId(storedUserID);
+          await fetchData(storedUserID);
         }
       } catch (error) {
-        showToast(i18n.t('SettingPage.Failed-Load-Username'));
+      } finally {
+        setLoading(false);
       }
     };
-    fetchUsername();
+    initialize();
   }, []);
-
-  useEffect(() => {
-    if (userId) {
-      const fetchData = async () => {
-        try {
-          const response = await RNFetchBlob.config({trusty: true}).fetch(
-            'GET',
-            `${UrlAccess.Url}User/GetUserData?userId=${userId}`,
-            {'Content-Type': 'application/json'},
-          );
-
-          const json = await response.json();
-
-          if (json.success) {
-            setEmail(json.userData.email);
-            setOriEmail(json.userData.email);
-            setPassword(json.userData.password);
-            setUsername(json.userData.userName);
-            setOriUsername(json.userData.userName);
-          } else {
-            showToast(i18n.t('SettingPage.Failed-Fetch-Data'));
-          }
-        } catch (error) {
-          showToast(i18n.t('SettingPage.Error-Fetch'));
-        }
-      };
-      setLoading(false);
-      fetchData();
-    }
-  }, [userId]);
 
   const checkEmailFormat = (Email: any) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -230,37 +269,27 @@ const UserEdit = () => {
             email: Email,
           }),
         );
+        SuccessToast(i18n.t('SignUp.Send-OTP-Successful'));
         navigation.navigate(UserEditVerify as never);
       } catch (error) {
-        Alert.alert('Send OTP Unsuccessful');
+        ErrorToast(i18n.t('SignUp.Send-OTP-Unsuccessful'));
       }
     }
   };
 
-  const theme = {
-    colors: {
-      primary: '#000', // Active outline color
-      outline: '#808080', // Outline color
-    },
-  };
-
-  const darkTheme = {
-    colors: {
-      primary: '#3490DE', // Active outline color
-      outline: '#808080', // Outline color
-    },
-  };
-
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const savedTheme = await AsyncStorage.getItem('theme');
-      if (savedTheme) {
-        setIsDark(savedTheme === 'dark');
-      }
-    })();
-  }, []);
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: isDark ? '#000' : '#fff',
+        }}>
+        <ActivityIndicator size="large" color={isDark ? '#fff' : '#000'} />
+      </View>
+    );
+  }
 
   return (
     <MainContainer>
@@ -272,139 +301,124 @@ const UserEdit = () => {
           backgroundColor={isDark ? '#000' : '#3490DE'}
           barStyle={'dark-content'}
         />
-        {loading ? (
-          <View
-            style={{
-              flex: 1,
-              marginVertical: (Dimensions.get('screen').height / 100) * 50,
-              backgroundColor: isDark ? '#000' : '#fff',
+
+        <View
+          style={[
+            css.mainView,
+            {backgroundColor: isDark ? '#000' : '#3490DE'},
+          ]}>
+          <TouchableOpacity
+            style={{paddingLeft: 20}}
+            onPress={() => {
+              navigation.goBack();
             }}>
-            <ActivityIndicator size={80} color={isDark ? '#fff' : '#000000'} />
+            <Ionicons name="arrow-back" size={30} color={'#fff'} />
+          </TouchableOpacity>
+          <View style={css.HeaderView}>
+            <Text style={[css.PageName, {color: '#fff'}]}>
+              {i18n.t('EditPage.Edit-Profile')}
+            </Text>
           </View>
-        ) : (
-          <View style={{flex: 1}}>
+        </View>
+
+        <View style={isDark ? darkUserEdit.container : userEditCss.container}>
+          <View style={isDark ? darkUserEdit.header : userEditCss.header}>
             <View
-              style={[
-                css.mainView,
-                {backgroundColor: isDark ? '#000' : '#3490DE'},
-              ]}>
-              <TouchableOpacity
-                style={{paddingLeft: 20}}
-                onPress={() => {
-                  navigation.goBack();
-                }}>
-                <Ionicons name="arrow-back" size={30} color={'#fff'} />
-              </TouchableOpacity>
-              <View style={css.HeaderView}>
-                <Text style={[css.PageName, {color: '#fff'}]}>
-                  {i18n.t('EditPage.Edit-Profile')}
-                </Text>
-              </View>
-            </View>
-
-            <View
-              style={isDark ? darkUserEdit.container : userEditCss.container}>
-              <View style={isDark ? darkUserEdit.header : userEditCss.header}>
-                <View
-                  style={
-                    isDark
-                      ? darkUserEdit.imageContainer
-                      : userEditCss.imageContainer
-                  }>
-                  <Image
-                    source={require('../assets/User.png')}
-                    style={userEditCss.image}
-                  />
-                </View>
-              </View>
-              <View>
-                <Text style={isDark ? darkUserEdit.Title : userEditCss.Title}>
-                  {i18n.t('EditPage.User-Info')}
-                </Text>
-                <TextInput
-                  label={i18n.t('EditPage.Username')}
-                  mode="outlined"
-                  style={isDark ? darkUserEdit.Input : userEditCss.Input}
-                  placeholder={i18n.t('EditPage.Username-Placeholder')}
-                  theme={isDark ? darkTheme : theme}
-                  value={Username}
-                  onChangeText={text => setUsername(text)}
-                  textColor={isDark ? '#fff' : '#000'}
-                />
-                {usernameError !== '' && (
-                  <HelperText type="error" style={userEditCss.InputError}>
-                    {usernameError}
-                  </HelperText>
-                )}
-
-                <TextInput
-                  label={i18n.t('EditPage.Email')}
-                  mode="outlined"
-                  style={isDark ? darkUserEdit.Input : userEditCss.Input}
-                  placeholder={i18n.t('EditPage.Email-Placeholder')}
-                  theme={isDark ? darkTheme : theme}
-                  value={Email}
-                  onChangeText={text => setEmail(text)}
-                  textColor={isDark ? '#fff' : '#000'}
-                />
-                {emailError !== '' && (
-                  <HelperText type="error" style={userEditCss.InputError}>
-                    {emailError}
-                  </HelperText>
-                )}
-
-                <TextInput
-                  label={i18n.t('EditPage.Password')}
-                  mode="outlined"
-                  style={isDark ? darkUserEdit.Input : userEditCss.Input}
-                  placeholder={i18n.t('EditPage.Password-Placeholder')}
-                  theme={isDark ? darkTheme : theme}
-                  value={password}
-                  onChangeText={text => setPassword(text)}
-                  autoCapitalize="none"
-                  secureTextEntry={hidePass ? true : false}
-                  textColor={isDark ? '#fff' : '#000'}
-                  right={
-                    <TextInput.Icon
-                      icon={hidePass ? 'eye-off' : 'eye'}
-                      onPress={() => setHidePass(!hidePass)}
-                    />
-                  }
-                />
-                {passwordError !== '' && (
-                  <HelperText type="error" style={userEditCss.InputError}>
-                    {passwordError}
-                  </HelperText>
-                )}
-
-                <TextInput
-                  label={i18n.t('EditPage.Confirm-Password')}
-                  mode="outlined"
-                  style={isDark ? darkUserEdit.Input : userEditCss.Input}
-                  placeholder={i18n.t('EditPage.Confirm-Password-Placeholder')}
-                  theme={isDark ? darkTheme : theme}
-                  onChangeText={text => setConfirmPassword(text)}
-                  autoCapitalize="none"
-                  secureTextEntry={hidePass ? true : false}
-                  textColor={isDark ? '#fff' : '#000'}
-                  right={
-                    <TextInput.Icon
-                      icon={hidePass ? 'eye-off' : 'eye'}
-                      onPress={() => setHidePass(!hidePass)}
-                    />
-                  }
-                />
-              </View>
-              <TouchableOpacity
-                style={userEditCss.Button}
-                onPress={() => Verify()}>
-                <Text style={userEditCss.ButtonText}>
-                  {i18n.t('EditPage.Save-Change')}
-                </Text>
-              </TouchableOpacity>
+              style={
+                isDark
+                  ? darkUserEdit.imageContainer
+                  : userEditCss.imageContainer
+              }>
+              <Image
+                source={require('../assets/User.png')}
+                style={userEditCss.image}
+              />
             </View>
           </View>
-        )}
+          <View>
+            <Text style={isDark ? darkUserEdit.Title : userEditCss.Title}>
+              {i18n.t('EditPage.User-Info')}
+            </Text>
+            <TextInput
+              label={i18n.t('EditPage.Username')}
+              mode="outlined"
+              style={isDark ? darkUserEdit.Input : userEditCss.Input}
+              placeholder={i18n.t('EditPage.Username-Placeholder')}
+              theme={isDark ? darkTheme : theme}
+              value={Username}
+              onChangeText={text => setUsername(text)}
+              textColor={isDark ? '#fff' : '#000'}
+            />
+            {usernameError !== '' && (
+              <HelperText type="error" style={userEditCss.InputError}>
+                {usernameError}
+              </HelperText>
+            )}
+
+            <TextInput
+              label={i18n.t('EditPage.Email')}
+              mode="outlined"
+              style={isDark ? darkUserEdit.Input : userEditCss.Input}
+              placeholder={i18n.t('EditPage.Email-Placeholder')}
+              theme={isDark ? darkTheme : theme}
+              value={Email}
+              onChangeText={text => setEmail(text)}
+              textColor={isDark ? '#fff' : '#000'}
+            />
+            {emailError !== '' && (
+              <HelperText type="error" style={userEditCss.InputError}>
+                {emailError}
+              </HelperText>
+            )}
+
+            <TextInput
+              label={i18n.t('EditPage.Password')}
+              mode="outlined"
+              style={isDark ? darkUserEdit.Input : userEditCss.Input}
+              placeholder={i18n.t('EditPage.Password-Placeholder')}
+              theme={isDark ? darkTheme : theme}
+              value={password}
+              onChangeText={text => setPassword(text)}
+              autoCapitalize="none"
+              secureTextEntry={hidePass ? true : false}
+              textColor={isDark ? '#fff' : '#000'}
+              right={
+                <TextInput.Icon
+                  icon={hidePass ? 'eye-off' : 'eye'}
+                  onPress={() => setHidePass(!hidePass)}
+                />
+              }
+            />
+            {passwordError !== '' && (
+              <HelperText type="error" style={userEditCss.InputError}>
+                {passwordError}
+              </HelperText>
+            )}
+
+            <TextInput
+              label={i18n.t('EditPage.Confirm-Password')}
+              mode="outlined"
+              style={isDark ? darkUserEdit.Input : userEditCss.Input}
+              placeholder={i18n.t('EditPage.Confirm-Password-Placeholder')}
+              theme={isDark ? darkTheme : theme}
+              onChangeText={text => setConfirmPassword(text)}
+              autoCapitalize="none"
+              secureTextEntry={hidePass ? true : false}
+              textColor={isDark ? '#fff' : '#000'}
+              right={
+                <TextInput.Icon
+                  icon={hidePass ? 'eye-off' : 'eye'}
+                  onPress={() => setHidePass(!hidePass)}
+                />
+              }
+            />
+          </View>
+          <TouchableOpacity style={userEditCss.Button} onPress={() => Verify()}>
+            <Text style={userEditCss.ButtonText}>
+              {i18n.t('EditPage.Save-Change')}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </KeyboardAvoidingView>
     </MainContainer>
   );

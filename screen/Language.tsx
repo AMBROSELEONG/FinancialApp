@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Platform,
   Image,
-  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {css, languageCss} from '../objects/commonCss';
@@ -17,12 +17,27 @@ import i18n from '../language/language';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ThemeChange from './ThemeChange';
 import {darkCss, darkLanguage} from '../objects/darkCss';
+import Toast from 'react-native-toast-message';
 
 const STORAGE_KEY = '@app_language';
 
 const Language = () => {
   const navigation = useNavigation();
+  const ErrorToast = (message: any) => {
+    Toast.show({
+      type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
 
+  const SuccessToast = (message: any) => {
+    Toast.show({
+      type: 'success',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
   const [selectedLanguage, setSelectedLanguage] = React.useState(i18n.locale);
   const isFocused = useIsFocused();
   React.useEffect(() => {
@@ -37,7 +52,7 @@ const Language = () => {
         setSelectedLanguage(language);
       }
     } catch (error) {
-      console.error('Failed to load language', error);
+      ErrorToast(i18n.t('Fail-Load-Language'));
     }
   };
 
@@ -45,7 +60,7 @@ const Language = () => {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, language);
     } catch (error) {
-      console.error('Failed to save language', error);
+      ErrorToast(i18n.t('LanguagePage.Fail-Save-Language'));
     }
   };
 
@@ -61,15 +76,45 @@ const Language = () => {
   };
 
   const [isDark, setIsDark] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    (async () => {
+  const loadTheme = async () => {
+    try {
       const savedTheme = await AsyncStorage.getItem('theme');
       if (savedTheme) {
         setIsDark(savedTheme === 'dark');
       }
-    })();
+    } catch (error) {
+      ErrorToast(i18n.t('Fail-Load-Theme'));
+    }
+  };
+
+  const initialize = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([loadTheme()]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    initialize();
   }, []);
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: isDark ? '#000' : '#fff',
+        }}>
+        <ActivityIndicator size="large" color={isDark ? '#fff' : '#000'} />
+      </View>
+    );
+  }
 
   return (
     <MainContainer>

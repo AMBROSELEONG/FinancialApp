@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   Platform,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {css, homeCss} from '../objects/commonCss';
@@ -35,14 +36,9 @@ const Home = () => {
   const isFocused = useIsFocused();
   const [locale, setLocale] = React.useState(i18n.locale);
   const [token, setToken] = useState('');
+  const [isDark, setIsDark] = useState(false);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setLocale(i18n.locale);
-    }, []),
-  );
-
-  const showToast = (message: any) => {
+  const ErrorToast = (message: any) => {
     Toast.show({
       type: 'error',
       text1: message,
@@ -50,100 +46,119 @@ const Home = () => {
     });
   };
 
-  useEffect(() => {
-    setLoading(true);
-    const fetchUsername = async () => {
-      try {
-        const storedUserID = await AsyncStorage.getItem('UserID');
-        if (storedUserID !== null) {
-          setUserId(storedUserID);
-        }
-      } catch (error) {
-        showToast(i18n.t('Home.Failed-Load-Username'));
-      }
-    };
-
-    AsyncStorage.getItem('Token').then(token => {
-      if(token !== null){
-        setToken(token)
-        console.log(token)
-      } else{
-        console.log('not token')
-      }
-    })
-    
-    if (userId) {
-      const fetchData = async () => {
-        try {
-          const response = await RNFetchBlob.config({trusty: true}).fetch(
-            'GET',
-            `${UrlAccess.Url}User/GetUserData?userId=${userId}`,
-            {'Content-Type': 'application/json'},
-          );
-
-          const json = await response.json();
-
-          if (json.success) {
-            setUsername(json.userData.userName);
-            setLoading(false);
-          } else {
-            showToast(i18n.t('Home.Failed-Fetch'));
-          }
-        } catch (error) {
-          showToast(i18n.t('Home.Error-Fetch'));
-        }
-      };
-
-      const updateToken = async () => {
-        try {
-          RNFetchBlob.config({trusty: true}).fetch(
-            'POST',
-            `${UrlAccess.Url}User/UpdateToken`,
-            {'Content-Type': 'application/json'},
-            JSON.stringify({
-              userId: userId,
-              token: token,
-            }),
-          );
-        } catch (error) {
-          showToast(error);
-        }
-      };
-      fetchData();
-      updateToken();
-    }
-    fetchUsername();
-  }, [userId]);
+  const SuccessToast = (message: any) => {
+    Toast.show({
+      type: 'success',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
 
   useFocusEffect(
-    useCallback(() => {
-      if (isFocused && userId) {
-        setLoading(true);
-        const fetchData = async () => {
-          try {
-            const response = await RNFetchBlob.config({trusty: true}).fetch(
-              'GET',
-              `${UrlAccess.Url}User/GetUserData?userId=${userId}`,
-              {'Content-Type': 'application/json'},
-            );
-
-            const json = await response.json();
-
-            if (json.success) {
-              setUsername(json.userData.userName);
-            } else {
-              showToast(i18n.t('Home.Failed-Fetch'));
-            }
-          } catch (error) {
-            showToast(i18n.t('Home.Error-Fetch'));
-          } finally {
-            setLoading(false);
-          }
-        };
-        fetchData();
-      }
-    }, [isFocused, userId]),
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
   );
+
+  useEffect(() => {
+    const initialize = async () => {
+      setLoading(true);
+
+      try {
+        const [storedUserID, storedToken, savedTheme] = await Promise.all([
+          AsyncStorage.getItem('UserID'),
+          AsyncStorage.getItem('Token'),
+          AsyncStorage.getItem('theme'),
+        ]);
+
+        if (storedUserID) {
+          setUserId(storedUserID);
+          await fetchData(storedUserID);
+          await updateToken(storedUserID, storedToken);
+          await CreateWallet(storedUserID);
+          await CreateEwallet(storedUserID);
+        }
+
+        if (storedToken) {
+          setToken(storedToken);
+        }
+
+        if (savedTheme) {
+          setIsDark(savedTheme === 'dark');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    initialize();
+  }, [userId, token]);
+
+  const fetchData = async (userId: any) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}User/GetUserData?userId=${userId}`,
+        {'Content-Type': 'application/json'},
+      );
+
+      const json = await response.json();
+
+      if (json.success) {
+        setUsername(json.userData.userName);
+        setLoading(false);
+      } else {
+        ErrorToast(i18n.t('Home.Failed-Fetch'));
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('Home.Error-Fetch'));
+    }
+  };
+
+  const updateToken = async (userId: any, token: any) => {
+    try {
+      RNFetchBlob.config({trusty: true}).fetch(
+        'POST',
+        `${UrlAccess.Url}User/UpdateToken`,
+        {'Content-Type': 'application/json'},
+        JSON.stringify({
+          userId: userId,
+          token: token,
+        }),
+      );
+    } catch (error) {
+      ErrorToast(i18n.t('Fail-Load-Token'));
+    }
+  };
+
+  const CreateWallet = async (userId: any) => {
+    try {
+      RNFetchBlob.config({trusty: true}).fetch(
+        'POST',
+        `${UrlAccess.Url}Wallet/CreateWallet`,
+        {'Content-Type': 'application/json'},
+        JSON.stringify({
+          userID: userId,
+        }),
+      );
+    } catch (error) {
+      ErrorToast(i18n.t('Home.Fail-Create-Data'));
+    }
+  };
+
+  const CreateEwallet = async (userId: any) => {
+    try {
+      RNFetchBlob.config({trusty: true}).fetch(
+        'POST',
+        `${UrlAccess.Url}Ewallet/CreateEwallet`,
+        {'Content-Type': 'application/json'},
+        JSON.stringify({
+          userID: userId,
+        }),
+      );
+    } catch (error) {
+      ErrorToast(i18n.t('Home.Fail-Create-Data'));
+    }
+  };
 
   useEffect(() => {
     const updateDate = () => {
@@ -185,17 +200,20 @@ const Home = () => {
   ];
   const screenWidth = (Dimensions.get('window').width / 100) * 70;
   const screenHeight = (Dimensions.get('window').width / 100) * 50;
-  const [isDark, setIsDark] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      const savedTheme = await AsyncStorage.getItem('theme');
-      if (savedTheme) {
-        setIsDark(savedTheme === 'dark');
-      }
-    })();
-  }, []);
-
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: isDark ? '#000' : '#fff',
+        }}>
+        <ActivityIndicator size="large" color={isDark ? '#fff' : '#000'} />
+      </View>
+    );
+  }
   return (
     <MainContainer>
       <KeyboardAvoidingView

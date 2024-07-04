@@ -7,8 +7,8 @@ import {
   TextInput,
   NativeSyntheticEvent,
   TextInputKeyPressEventData,
-  Alert,
   Modal,
+  ActivityIndicator,
 } from 'react-native';
 import MainContainer from '../components/MainContainer';
 import {VerifyCss} from '../objects/commonCss';
@@ -23,6 +23,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import i18n from '../language/language';
 import Toast from 'react-native-toast-message';
 import {darkVerify} from '../objects/darkCss';
+import SignUp from './SignUp';
 
 type OTPInputProps = {
   length: number;
@@ -42,14 +43,7 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
 }) => {
   const inputRefs = useRef<(TextInput | null)[]>([]);
 
-  const [locale, setLocale] = React.useState(i18n.locale);
-  useFocusEffect(
-    React.useCallback(() => {
-      setLocale(i18n.locale);
-    }, []),
-  );
-
-  const showToast = (message: any) => {
+  const ErrorToast = (message: any) => {
     Toast.show({
       type: 'error',
       text1: message,
@@ -57,12 +51,75 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
     });
   };
 
+  const SuccessToast = (message: any) => {
+    Toast.show({
+      type: 'success',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
+
+  const [locale, setLocale] = React.useState(i18n.locale);
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
+  );
+
+  const [isDark, setIsDark] = useState(false);
+  const loadTheme = async () => {
+    try {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('Fail-Load-Theme'));
+    }
+  };
+
+  const [Username, setUsername] = useState('');
+  const [Email, setEmail] = useState('');
+  const [Password, setPassword] = useState('');
+
+  const getData = async () => {
+    try {
+      const storedEmail = await AsyncStorage.getItem('Email');
+      const storedUsername = await AsyncStorage.getItem('UserName');
+      const storedPassword = await AsyncStorage.getItem('Password');
+      if (
+        storedEmail !== null &&
+        storedUsername !== null &&
+        storedPassword !== null
+      ) {
+        setEmail(storedEmail);
+        setUsername(storedUsername);
+        setPassword(storedPassword);
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('UserEditVerify.Failed-Load-Email'));
+    }
+  };
+
+  const [loading, setLoading] = useState(false);
+  const initialize = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([loadTheme(), getData()]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    initialize();
+  }, []);
+
   const onChangeValue = (text: string, index: number) => {
     const newValue = value.map((item, valueIndex) => {
       if (valueIndex === index) {
         return text;
       }
-
       return item;
     });
 
@@ -72,11 +129,9 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
   const handleChange = (text: string, index: number) => {
     const sanitizedText = text.replace(/[^0-9]/g, '');
     onChangeValue(text, index);
-
     if (sanitizedText.length !== 0) {
       return inputRefs?.current[index + 1]?.focus();
     }
-
     return inputRefs?.current[index - 1]?.focus();
   };
 
@@ -85,7 +140,6 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
     index: number,
   ) => {
     const {nativeEvent} = event;
-
     if (nativeEvent.key === 'Backspace') {
       handleChange('', index);
     }
@@ -93,11 +147,11 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
 
   const [modalVisible, setModalVisible] = useState(false);
   const handleVerify = () => {
+    setLoading(true);
     const isValid = value.every(char => /^[0-9]$/.test(char));
 
     if (isValid) {
       const OTP = value.join('');
-      console.log(Email, OTP);
       try {
         RNFetchBlob.config({trusty: true})
           .fetch(
@@ -117,45 +171,22 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
               AsyncStorage.removeItem('UserName');
               AsyncStorage.removeItem('Password');
             } else {
-              showToast(i18n.t('UserEditVerify.Not-Correct'));
+              ErrorToast(i18n.t('UserEditVerify.Not-Correct'));
             }
           });
       } catch (error) {
-        showToast(i18n.t('UserEditVerify.Verify-Unsuccessful'));
+        ErrorToast(i18n.t('UserEditVerify.Verify-Unsuccessful'));
+      } finally {
+        setLoading(false);
       }
     } else {
-      showToast(i18n.t('UserEditVerify.Invalid-Input'));
+      ErrorToast(i18n.t('UserEditVerify.Invalid-Input'));
+      setLoading(false);
     }
   };
 
-  const [Username, setUsername] = useState('');
-  const [Email, setEmail] = useState('');
-  const [Password, setPassword] = useState('');
-  
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const storedEmail = await AsyncStorage.getItem('Email');
-        const storedUsername = await AsyncStorage.getItem('UserName');
-        const storedPassword = await AsyncStorage.getItem('Password');
-        if (
-          storedEmail !== null &&
-          storedUsername !== null &&
-          storedPassword !== null
-        ) {
-          setEmail(storedEmail);
-          setUsername(storedUsername);
-          setPassword(storedPassword);
-        }
-      } catch (error) {
-        showToast(i18n.t('UserEditVerify.Failed-Load-Email'));
-      }
-    };
-
-    getData();
-  }, []);
-
   const Register = () => {
+    setLoading(true);
     try {
       RNFetchBlob.config({trusty: true})
         .fetch(
@@ -175,15 +206,18 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
         .then(json => {
           if (json && json.success) {
             navigation.navigate(SignIn as never);
-            showToast(i18n.t('UserEditVerify.Data-Insert-Successful'));
+            SuccessToast(i18n.t('UserEditVerify.Data-Insert-Successful'));
           } else {
-            showToast(i18n.t('UserEditVerify.Data-Insert-Unsuccessful'));
+            ErrorToast(i18n.t('UserEditVerify.Data-Insert-Unsuccessful'));
           }
         });
-    } catch (error) {}
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resend = () => {
+    setLoading(true);
     try {
       RNFetchBlob.config({trusty: true}).fetch(
         'POST',
@@ -193,10 +227,12 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
           email: Email,
         }),
       );
-      showToast(i18n.t('UserEditVerify.Send-OTP-Successful'));
+      SuccessToast(i18n.t('UserEditVerify.Send-OTP-Successful'));
       navigation.navigate(Verify as never);
     } catch (error) {
-      showToast(i18n.t('UserEditVerify.Send-OTP-Unsuccessful'));
+      ErrorToast(i18n.t('UserEditVerify.Send-OTP-Unsuccessful'));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -222,16 +258,19 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
     return () => clearInterval(interval);
   }, [countdown]);
 
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const savedTheme = await AsyncStorage.getItem('theme');
-      if (savedTheme) {
-        setIsDark(savedTheme === 'dark');
-      }
-    })();
-  }, []);
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: isDark ? '#000' : '#fff',
+        }}>
+        <ActivityIndicator size="large" color={isDark ? '#fff' : '#000'} />
+      </View>
+    );
+  }
 
   return (
     <MainContainer>
@@ -239,7 +278,7 @@ const Verify: React.FC<VerifyScreenProps & OTPInputProps> = ({
       <View style={isDark ? darkVerify.Container : VerifyCss.Container}>
         <TouchableOpacity
           style={[VerifyCss.Back, {margin: 20}]}
-          onPress={() => navigation.goBack()}>
+          onPress={() => navigation.navigate(SignUp as never)}>
           <Image
             source={
               isDark

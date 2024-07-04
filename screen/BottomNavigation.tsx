@@ -3,7 +3,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import Home from './Home';
 import Wallet from './Wallet';
-import {Image} from 'react-native';
+import {Image, View, ActivityIndicator} from 'react-native';
 import Bank from './Bank';
 import Ewallet from './Ewallet';
 import Expenses from './Expenses';
@@ -14,6 +14,7 @@ const Tab = createMaterialBottomTabNavigator();
 
 function CustomBottomTabNavigator() {
   const [locale, setLocale] = React.useState(i18n.locale);
+  const [loading, setLoading] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -23,14 +24,43 @@ function CustomBottomTabNavigator() {
 
   const [isDark, setIsDark] = useState(false);
 
-  useEffect(() => {
-    (async () => {
+  const loadTheme = async () => {
+    try {
       const savedTheme = await AsyncStorage.getItem('theme');
       if (savedTheme) {
         setIsDark(savedTheme === 'dark');
       }
-    })();
+    } catch (error) {
+      console.error('Failed to load theme', error);
+    }
+  };
+
+  const initialize = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([loadTheme()]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    initialize();
   }, []);
+
+  // if (loading) {
+  //   return (
+  //     <View
+  //       style={{
+  //         flex: 1,
+  //         justifyContent: 'center',
+  //         alignItems: 'center',
+  //         backgroundColor: isDark ? '#000' : '#fff',
+  //       }}>
+  //       <ActivityIndicator size="large" color={isDark ? '#fff' : '#000'} />
+  //     </View>
+  //   );
+  // }
 
   return (
     <Tab.Navigator
@@ -105,7 +135,7 @@ function CustomBottomTabNavigator() {
           ),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Expenses"
         component={Expenses}
         options={{
@@ -121,7 +151,7 @@ function CustomBottomTabNavigator() {
             />
           ),
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 }

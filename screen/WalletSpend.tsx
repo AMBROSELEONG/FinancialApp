@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {css, walletIncomeCss} from '../objects/commonCss';
@@ -17,12 +18,15 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {darkCss, darkWalletIncome} from '../objects/darkCss';
 import i18n from '../language/language';
+import Toast from 'react-native-toast-message';
+import RNFetchBlob from 'rn-fetch-blob';
+import {UrlAccess} from '../objects/url';
 
 const WalletSpend = () => {
   const navigation = useNavigation();
 
   const theme = {
-    roundness: 10, // Set the border radius here
+    roundness: 20, // Set the border radius here
     colors: {
       primary: '#000', // Active outline color
       outline: '#808080', // Outline color
@@ -35,6 +39,22 @@ const WalletSpend = () => {
       primary: '#3490DE', // Active outline color
       outline: '#808080', // Outline color
     },
+  };
+
+  const ErrorToast = (message: any) => {
+    Toast.show({
+      type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
+
+  const SuccessToast = (message: any) => {
+    Toast.show({
+      type: 'success',
+      text1: message,
+      visibilityTime: 3000,
+    });
   };
 
   const [Total, setTotal] = useState('');
@@ -88,14 +108,55 @@ const WalletSpend = () => {
   };
 
   const [isDark, setIsDark] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [userID, setUserId] = useState('');
+  const [Balance, setBalance] = useState(null);
+
+  const fetchData = async (UserID: any) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}Wallet/GetWallet?userID=${UserID}`,
+        {'Content-Type': 'application/json'},
+      );
+      const json = await response.json();
+
+      if (json.success) {
+        setBalance(json.walletData.balance.toFixed(2));
+      } else {
+        ErrorToast(i18n.t('SettingPage.Failed-Fetch-Data'));
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
+    }
+  };
 
   useEffect(() => {
-    (async () => {
-      const savedTheme = await AsyncStorage.getItem('theme');
-      if (savedTheme) {
-        setIsDark(savedTheme === 'dark');
+    const initialize = async () => {
+      setLoading(true);
+
+      try {
+        const [savedTheme, storedUserID] = await Promise.all([
+          AsyncStorage.getItem('theme'),
+          AsyncStorage.getItem('UserID'),
+        ]);
+
+        if (savedTheme) {
+          setIsDark(savedTheme === 'dark');
+        }
+
+        if (storedUserID) {
+          setUserId(storedUserID);
+          await fetchData(storedUserID);
+        }
+      } catch (error) {
+        ErrorToast(i18n.t('SettingPage.Error-Initializing'));
+      } finally {
+        setLoading(false);
       }
-    })();
+    };
+
+    initialize();
   }, []);
 
   const [locale, setLocale] = React.useState(i18n.locale);
@@ -105,6 +166,20 @@ const WalletSpend = () => {
       setLocale(i18n.locale);
     }, []),
   );
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: isDark ? '#000' : '#fff',
+        }}>
+        <ActivityIndicator size="large" color={isDark ? '#fff' : '#000'} />
+      </View>
+    );
+  }
 
   return (
     <MainContainer>
@@ -134,7 +209,7 @@ const WalletSpend = () => {
             </Text>
           </View>
         </View>
-        <View 
+        <View
           style={
             isDark ? darkWalletIncome.container : walletIncomeCss.container
           }>
@@ -146,7 +221,7 @@ const WalletSpend = () => {
           </Text>
           <Text
             style={isDark ? darkWalletIncome.balance : walletIncomeCss.balance}>
-            RM 100
+            RM {Balance}
           </Text>
           <Text style={walletIncomeCss.label}>
             {i18n.t('WalletSpend.Total-Spend')}

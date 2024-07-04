@@ -1,8 +1,15 @@
 {
+  "Error-Load-Page": "Error load the page",
+  "Fail-Load-Language": "Failed to load language",
+  "Fail-Load-Theme": "Failed to load theme",
+  "Fail-Load-Data": "Failed to load data",
+  "Fail-Load-UserID": "Failed to load User Id",
+  "Fail-Load-Token": "Failed to load token",
   "LanguagePage": {
     "Change-Language": "Change Language",
     "Language-Update": "Language Update",
-    "Update": "Language Update to English"
+    "Update": "Language Update to English",
+    "Fail-Save-Language": "Failed to save language"
   },
   "SettingPage": {
     "Setting": "Setting",
@@ -17,7 +24,11 @@
     "Error-Fetch": "Error fetching user data",
     "Enable-Finger-Successful": "Enable Fingerprint successful",
     "Disable-Finger-Successful": "Disable Fingerprint successful",
-    "Darkmode": "Successfully changed the app theme"
+    "Darkmode": "Successfully changed the app theme",
+    "Error-Initializing": "Error initializing",
+    "Fail-Send-Fingerprint": "Failed to send fingerprint status to server",
+    "Unsuccessful-Delete-Key": "Unsuccessful deletion because there were no keys to delete",
+    "Error-Create-Key": "Error creating fingerprint key"
   },
   "EditPage": {
     "Username-Empty": "Username cannot be emtpy",
@@ -90,7 +101,10 @@
     "Or": "Or Sign In with",
     "Dont-Have-Account": "Don't Have an Account?",
     "Sign-Up": "Sign Up",
-    "Successful": "Sign In Successful"
+    "Successful": "Sign In Successful",
+    "Fail-Fetch-Fingerprint": "Failed to fetch fingerprint status",
+    "Fetch-Fingerprint-Error": "Error fetching fingerprint status",
+    "Error-Handle-Fingerprint": "Error to handle fingerprint"
   },
   "SignUp": {
     "Username-Empty": "Username cannot be emtpy",
@@ -151,7 +165,8 @@
     "Confirm-Password-Placeholder": "Please Enter Password Again",
     "Reset": "Reset",
     "Remember": "Remember Password?",
-    "Sign-In": "Sign In"
+    "Sign-In": "Sign In",
+    "Reset-Password-Error": "Reset Password Error"
   },
   "Home": {
     "Failed-Load-Username": "Failed to load username",
@@ -162,7 +177,8 @@
     "Spending": "Spending over the past 7 days",
     "Total-Spending": "Total Spending Today",
     "Increase": "Increase in the past 7 days",
-    "Total-Increase": "Total Increase Today"
+    "Total-Increase": "Total Increase Today",
+    "Fail-Create-Data": "Failed to create data"
   },
   "ThemeChange": {
     "Text": "Processing switching themes"
@@ -202,5 +218,29 @@
     "Bank-Placeholder": "Select the Bank",
     "Date": "Date",
     "Save": "Save"
+  },
+  "Ewallet": {
+    "Ewallet": "E-Wallet"
+  },
+  "EwalletIncome": {
+    "Fill": "Fill in Ewallet income"
+  },
+  "EwalletSpend": {
+    "Fill": "Fill in Ewallet spend"
+  },
+  "Bank": {
+    "Bank": "Bank",
+    "Add-Bank": "Add Bank",
+    "Bank-Name": "Bank Name",
+    "Add-Bank-Placeholder": "Select the Bank",
+    "Initial-Balance": "Initial Balance",
+    "Initial-Balance-Placeholder": "Please Enter Your Initial Balance",
+    "Save": "Save"
+  },
+  "BankIncome": {
+    "Fill": "Fill in bank income"
+  },
+  "BankSpend": {
+    "Fill": "Fill in bank spend"
   }
 }

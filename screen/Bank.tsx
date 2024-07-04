@@ -1,6 +1,10 @@
-import {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import MainContainer from '../components/MainContainer';
-import {useNavigation, DrawerActions} from '@react-navigation/native';
+import {
+  useNavigation,
+  DrawerActions,
+  useFocusEffect,
+} from '@react-navigation/native';
 import {
   KeyboardAvoidingView,
   StatusBar,
@@ -11,12 +15,17 @@ import {
   FlatList,
   Modal,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {bankCss, css} from '../objects/commonCss';
 import {TextInput, HelperText} from 'react-native-paper';
 import {SelectList} from 'react-native-dropdown-select-list';
 import BankDetail from './BankDetail';
+import i18n from '../language/language';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {darkBank, darkCss} from '../objects/darkCss';
+import Toast from 'react-native-toast-message';
 
 const Bank = () => {
   const navigation = useNavigation();
@@ -26,11 +35,35 @@ const Bank = () => {
   const [selectedType, setSelectedType] = useState<string>('');
 
   const theme = {
-    roundness: 10, // Set the border radius here
+    roundness: 10,
     colors: {
-      primary: '#000', // Active outline color
-      outline: '#808080', // Outline color
+      primary: '#000',
+      outline: '#808080',
     },
+  };
+
+  const darkTheme = {
+    roundness: 10,
+    colors: {
+      primary: '#3490DE',
+      outline: '#808080',
+    },
+  };
+
+  const ErrorToast = (message: any) => {
+    Toast.show({
+      type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
+
+  const SuccessToast = (message: any) => {
+    Toast.show({
+      type: 'success',
+      text1: message,
+      visibilityTime: 3000,
+    });
   };
 
   const selectType = [
@@ -56,91 +89,70 @@ const Bank = () => {
       bank: 'Second Item',
       balance: 'RM 200',
     },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      bank: 'Third Item',
-      balance: 'RM 200',
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      bank: 'Four Item',
-      balance: 'RM 200',
-    },
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      bank: 'First Item',
-      balance: 'RM 200',
-    },
-    {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      bank: 'Second Item',
-      balance: 'RM 200',
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      bank: 'Third Item',
-      balance: 'RM 200',
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      bank: 'Four Item',
-      balance: 'RM 200',
-    },
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      bank: 'First Item',
-      balance: 'RM 200',
-    },
-    {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      bank: 'Second Item',
-      balance: 'RM 200',
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      bank: 'Third Item',
-      balance: 'RM 200',
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      bank: 'Four Item',
-      balance: 'RM 200',
-    },
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      bank: 'First Item',
-      balance: 'RM 200',
-    },
-    {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      bank: 'Second Item',
-      balance: 'RM 200',
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      bank: 'Third Item',
-      balance: 'RM 200',
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      bank: 'Four Item',
-      balance: 'RM 250',
-    },
   ];
+
+  const [isDark, setIsDark] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const loadTheme = async () => {
+    try {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('Fail-Load-Theme'));
+    }
+  };
+
+  const initialize = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([loadTheme()]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    initialize();
+  }, []);
+
+  const [locale, setLocale] = React.useState(i18n.locale);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
+  );
 
   type ItemProps = {id: string; bank: string; balance: string};
 
   const Item = ({id, bank, balance}: ItemProps) => (
     <TouchableOpacity
-      style={bankCss.listContainer}
+      style={isDark ? darkBank.listContainer : bankCss.listContainer}
       onPress={() => {
         console.log(id);
         navigation.navigate(BankDetail as never);
       }}>
-      <Text style={bankCss.bank}>{bank}</Text>
+      <Text style={isDark ? darkBank.bank : bankCss.bank}>{bank}</Text>
       <Text style={bankCss.balance}>{balance}</Text>
     </TouchableOpacity>
   );
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: isDark ? '#000' : '#fff',
+        }}>
+        <ActivityIndicator size="large" color={isDark ? '#fff' : '#000'} />
+      </View>
+    );
+  }
 
   return (
     <MainContainer>
@@ -149,28 +161,30 @@ const Bank = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <StatusBar
           animated={true}
-          backgroundColor="#fff"
+          backgroundColor={isDark ? '#000' : '#fff'}
           barStyle={'dark-content'}
         />
-        <View style={css.mainView}>
+        <View style={isDark ? darkCss.mainView : css.mainView}>
           <TouchableOpacity
             style={{paddingLeft: 20}}
             onPress={() => {
               navigation.dispatch(DrawerActions.openDrawer());
             }}>
-            <Ionicons name="menu" size={30} color={'#000'} />
+            <Ionicons name="menu" size={30} color={isDark ? '#fff' : '#000'} />
           </TouchableOpacity>
           <View style={css.HeaderView}>
-            <Text style={css.PageName}>Bank</Text>
+            <Text style={isDark ? darkCss.PageName : css.PageName}>
+              {i18n.t('Bank.Bank')}
+            </Text>
           </View>
         </View>
         <TouchableOpacity
-          style={bankCss.addButton}
+          style={isDark ? darkBank.addButton : bankCss.addButton}
           onPress={() => setModalVisible(!modalVisible)}>
           <Ionicons
             name="add-circle-outline"
             size={40}
-            color={'#000'}
+            color={isDark ? '#fff' : '#000'}
             style={bankCss.addIcon}
           />
         </TouchableOpacity>
@@ -185,34 +199,39 @@ const Bank = () => {
             setModalVisible(!modalVisible);
           }}>
           <View style={bankCss.ModalContainer}>
-            <View style={bankCss.ModalView}>
+            <View style={isDark ? darkBank.ModalView : bankCss.ModalView}>
               <TouchableOpacity
                 style={bankCss.ButtonClose}
                 onPress={() => setModalVisible(!modalVisible)}>
                 <Ionicons name="close" size={30} color={'#999999'} />
               </TouchableOpacity>
-              <Text style={bankCss.ModalTitle}>Add Bank</Text>
-              <Text style={bankCss.label}>Bank Name</Text>
+              <Text style={isDark ? darkBank.ModalTitle : bankCss.ModalTitle}>
+                {i18n.t('Bank.Add-Bank')}
+              </Text>
+              <Text style={bankCss.label}>{i18n.t('Bank.Bank-Name')}</Text>
               <SelectList
                 setSelected={(text: string) => setSelectedType(text)}
                 data={selectType}
                 save="value"
-                boxStyles={bankCss.Input}
-                inputStyles={{color: '#000'}}
-                dropdownStyles={bankCss.Input}
-                dropdownTextStyles={{color: '#000'}}
+                boxStyles={isDark ? darkBank.Input : bankCss.Input}
+                inputStyles={{color: isDark ? '#fff' : '#000'}}
+                dropdownStyles={isDark ? darkBank.Input : bankCss.Input}
+                dropdownTextStyles={{color: isDark ? '#fff' : '#000'}}
                 search={false}
-                placeholder={'Select the Bank'}
+                placeholder={i18n.t('Bank.Add-Bank-Placeholder')}
                 maxHeight={100}
               />
 
-              <Text style={bankCss.label}>Initial Balance</Text>
+              <Text style={bankCss.label}>
+                {i18n.t('Bank.Initial-Balance')}
+              </Text>
               <TextInput
                 mode="outlined"
-                style={bankCss.Input}
-                placeholder="Please Enter Initial Balance"
-                theme={theme}
+                style={isDark ? darkBank.Input : bankCss.Input}
+                placeholder={i18n.t('Bank.Initial-Balance-Placeholder')}
+                theme={isDark ? darkTheme : theme}
                 onChangeText={text => setTotal(text)}
+                textColor={isDark ? '#fff' : '#000'}
               />
               {TotalError !== '' && (
                 <HelperText type="error" style={bankCss.InputError}>
@@ -221,19 +240,21 @@ const Bank = () => {
               )}
 
               <TouchableOpacity style={bankCss.SaveButton}>
-                <Text style={bankCss.SaveText}>Save</Text>
+                <Text style={bankCss.SaveText}>{i18n.t('Bank.Save')}</Text>
               </TouchableOpacity>
             </View>
           </View>
         </Modal>
-        <FlatList
-          data={DATA}
-          renderItem={({item}) => (
-            <Item id={item.id} bank={item.bank} balance={item.balance} />
-          )}
-          keyExtractor={item => item.id}
-          scrollEnabled={true}
-        />
+        <View style={{flex: 1, backgroundColor: isDark ? '#202020' : '#fff'}}>
+          <FlatList
+            data={DATA}
+            renderItem={({item}) => (
+              <Item id={item.id} bank={item.bank} balance={item.balance} />
+            )}
+            keyExtractor={item => item.id}
+            scrollEnabled={true}
+          />
+        </View>
       </KeyboardAvoidingView>
     </MainContainer>
   );

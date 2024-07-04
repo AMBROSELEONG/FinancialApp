@@ -1,6 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import MainContainer from '../components/MainContainer';
-import {useNavigation, DrawerActions} from '@react-navigation/native';
+import {
+  useNavigation,
+  DrawerActions,
+  useFocusEffect,
+} from '@react-navigation/native';
 import {
   KeyboardAvoidingView,
   StatusBar,
@@ -10,6 +14,8 @@ import {
   Platform,
   Image,
   useWindowDimensions,
+  ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {css, walletCss} from '../objects/commonCss';
@@ -18,229 +24,12 @@ import {DataTable} from 'react-native-paper';
 import {ScrollView} from 'react-native-gesture-handler';
 import EWalletIncome from './EWalletIncome';
 import EWalletSpend from './EWalletSpend';
-
-const FirstRoute = () => {
-  const [items] = React.useState([
-    {
-      key: 1,
-      type: 'Cupcake',
-      income: 356,
-      date: '2021-01-01',
-    },
-    {
-      key: 2,
-      type: 'Eclair',
-      income: 262,
-      date: '2021-01-02',
-    },
-    {
-      key: 3,
-      type: 'Frozen yogurt',
-      income: 159,
-      date: '2021-01-03',
-    },
-    {
-      key: 4,
-      type: 'Gingerbread',
-      income: 305,
-      date: '2021-01-04',
-    },
-    {
-      key: 1,
-      type: 'Cupcake',
-      income: 356,
-      date: '2021-01-01',
-    },
-    {
-      key: 2,
-      type: 'Eclair',
-      income: 262,
-      date: '2021-01-02',
-    },
-    {
-      key: 3,
-      type: 'Frozen yogurt',
-      income: 159,
-      date: '2021-01-03',
-    },
-    {
-      key: 4,
-      type: 'Gingerbread',
-      income: 305,
-      date: '2021-01-04',
-    },
-    {
-      key: 1,
-      type: 'Cupcake',
-      income: 356,
-      date: '2021-01-01',
-    },
-    {
-      key: 2,
-      type: 'Eclair',
-      income: 262,
-      date: '2021-01-02',
-    },
-    {
-      key: 3,
-      type: 'Frozen yogurt',
-      income: 159,
-      date: '2021-01-03',
-    },
-    {
-      key: 4,
-      type: 'Gingerbread',
-      income: 305,
-      date: '2021-01-04',
-    },
-  ]);
-
-  return (
-    <View style={walletCss.TabBackground}>
-      <ScrollView>
-        <DataTable>
-          <DataTable.Header>
-            <DataTable.Title>Type</DataTable.Title>
-            <DataTable.Title style={walletCss.cell}>
-              Income (RM)
-            </DataTable.Title>
-            <DataTable.Title style={walletCss.cell}>Date</DataTable.Title>
-          </DataTable.Header>
-
-          {items.map((item, index) => (
-            <DataTable.Row
-              key={item.key}
-              style={
-                index % 2 === 0 ? walletCss.evenRowIncome : walletCss.oddRow
-              }>
-              <DataTable.Cell>{item.type}</DataTable.Cell>
-              <DataTable.Cell style={walletCss.cell}>
-                {item.income}
-              </DataTable.Cell>
-              <DataTable.Cell style={walletCss.cell}>
-                {item.date}
-              </DataTable.Cell>
-            </DataTable.Row>
-          ))}
-        </DataTable>
-      </ScrollView>
-    </View>
-  );
-};
-
-const SecondRoute = () => {
-  const [items] = React.useState([
-    {
-      key: 1,
-      type: 'Cupcake',
-      income: 356,
-      date: '2021-01-01',
-    },
-    {
-      key: 2,
-      type: 'Eclair',
-      income: 262,
-      date: '2021-01-02',
-    },
-    {
-      key: 3,
-      type: 'Frozen yogurt',
-      income: 159,
-      date: '2021-01-03',
-    },
-    {
-      key: 4,
-      type: 'Gingerbread',
-      income: 305,
-      date: '2021-01-04',
-    },
-    {
-      key: 1,
-      type: 'Cupcake',
-      income: 356,
-      date: '2021-01-01',
-    },
-    {
-      key: 2,
-      type: 'Eclair',
-      income: 262,
-      date: '2021-01-02',
-    },
-    {
-      key: 3,
-      type: 'Frozen yogurt',
-      income: 159,
-      date: '2021-01-03',
-    },
-    {
-      key: 4,
-      type: 'Gingerbread',
-      income: 305,
-      date: '2021-01-04',
-    },
-    {
-      key: 1,
-      type: 'Cupcake',
-      income: 356,
-      date: '2021-01-01',
-    },
-    {
-      key: 2,
-      type: 'Eclair',
-      income: 262,
-      date: '2021-01-02',
-    },
-    {
-      key: 3,
-      type: 'Frozen yogurt',
-      income: 159,
-      date: '2021-01-03',
-    },
-    {
-      key: 4,
-      type: 'Gingerbread',
-      income: 305,
-      date: '2021-01-04',
-    },
-  ]);
-
-  return (
-    <View style={walletCss.TabBackground}>
-      <ScrollView>
-        <DataTable>
-          <DataTable.Header>
-            <DataTable.Title>Type</DataTable.Title>
-            <DataTable.Title style={walletCss.cell}>
-              Income (RM)
-            </DataTable.Title>
-            <DataTable.Title style={walletCss.cell}>Date</DataTable.Title>
-          </DataTable.Header>
-
-          {items.map((item, index) => (
-            <DataTable.Row
-              key={item.key}
-              style={
-                index % 2 === 0 ? walletCss.evenRowSpend : walletCss.oddRow
-              }>
-              <DataTable.Cell>{item.type}</DataTable.Cell>
-              <DataTable.Cell style={walletCss.cell}>
-                {item.income}
-              </DataTable.Cell>
-              <DataTable.Cell style={walletCss.cell}>
-                {item.date}
-              </DataTable.Cell>
-            </DataTable.Row>
-          ))}
-        </DataTable>
-      </ScrollView>
-    </View>
-  );
-};
-
-const renderScene = SceneMap({
-  first: FirstRoute,
-  second: SecondRoute,
-});
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import i18n from '../language/language';
+import Toast from 'react-native-toast-message';
+import RNFetchBlob from 'rn-fetch-blob';
+import {UrlAccess} from '../objects/url';
+import {darkWallet} from '../objects/darkCss';
 
 const Ewallet = () => {
   const navigation = useNavigation();
@@ -248,8 +37,8 @@ const Ewallet = () => {
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    {key: 'first', title: 'Income History'},
-    {key: 'second', title: 'Spend History'},
+    {key: 'first', title: i18n.t('Wallet.Income-History')},
+    {key: 'second', title: i18n.t('Wallet.Spend-History')},
   ]);
 
   type Route = {
@@ -260,12 +49,240 @@ const Ewallet = () => {
   const renderTabBar = (props: TabBarProps<Route>) => (
     <TabBar
       {...props}
-      indicatorStyle={{backgroundColor: '#000'}}
+      indicatorStyle={{backgroundColor: isDark ? '#fff' : '#000'}}
       inactiveColor="#999999"
-      style={{backgroundColor: '#fff'}}
-      activeColor="#000"
+      style={{backgroundColor: isDark ? '#202020' : '#fff'}}
+      activeColor={isDark ? '#fff' : '#000'}
     />
   );
+
+  const [isDark, setIsDark] = useState(false);
+  const [locale, setLocale] = React.useState(i18n.locale);
+  const [UserID, setUserId] = useState('');
+  const [Balance, setBalance] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const ErrorToast = (message: any) => {
+    Toast.show({
+      type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
+
+  const SuccessToast = (message: any) => {
+    Toast.show({
+      type: 'success',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
+  );
+
+  const fetchData = async (UserID: any) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}Ewallet/GetEwallet?userID=${UserID}`,
+        {'Content-Type': 'application/json'},
+      );
+      const json = await response.json();
+
+      if (json.success) {
+        setBalance(json.ewalletData.balance.toFixed(2));
+      } else {
+        ErrorToast(i18n.t('SettingPage.Failed-Fetch-Data'));
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
+    }
+  };
+
+  useEffect(() => {
+    const initialize = async () => {
+      setLoading(true);
+
+      try {
+        const [savedTheme, storedUserID] = await Promise.all([
+          AsyncStorage.getItem('theme'),
+          AsyncStorage.getItem('UserID'),
+        ]);
+
+        if (savedTheme) {
+          setIsDark(savedTheme === 'dark');
+        }
+
+        if (storedUserID) {
+          setUserId(storedUserID);
+          await fetchData(storedUserID);
+        }
+      } catch (error) {
+        ErrorToast(i18n.t('SettingPage.Error-Initializing'));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initialize();
+  }, []);
+
+  const FirstRoute = () => {
+    const [items] = React.useState([
+      {
+        key: 1,
+        type: 'Cupcake',
+        income: 356,
+        date: '2021-01-01',
+      },
+      {
+        key: 2,
+        type: 'Eclair',
+        income: 262,
+        date: '2021-01-02',
+      },
+    ]);
+
+    return (
+      <View style={isDark ? darkWallet.TabBackground : walletCss.TabBackground}>
+        <ScrollView>
+          <DataTable>
+            <DataTable.Header>
+              <DataTable.Title textStyle={{color: isDark ? '#fff' : '#000'}}>
+                {i18n.t('Wallet.Type')}
+              </DataTable.Title>
+              <DataTable.Title
+                style={walletCss.cell}
+                textStyle={{color: isDark ? '#fff' : '#000'}}>
+                {i18n.t('Wallet.Income')} (RM)
+              </DataTable.Title>
+              <DataTable.Title
+                style={walletCss.cell}
+                textStyle={{color: isDark ? '#fff' : '#000'}}>
+                {i18n.t('Wallet.Date')}
+              </DataTable.Title>
+            </DataTable.Header>
+
+            {items.map((item, index) => (
+              <DataTable.Row
+                key={item.key}
+                style={
+                  index % 2 === 0
+                    ? walletCss.evenRowIncome
+                    : isDark
+                    ? darkWallet.oddRow
+                    : walletCss.oddRow
+                }>
+                <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
+                  {item.type}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={walletCss.cell}
+                  textStyle={{color: isDark ? '#fff' : '#000'}}>
+                  {item.income}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={walletCss.cell}
+                  textStyle={{color: isDark ? '#fff' : '#000'}}>
+                  {item.date}
+                </DataTable.Cell>
+              </DataTable.Row>
+            ))}
+          </DataTable>
+        </ScrollView>
+      </View>
+    );
+  };
+
+  const SecondRoute = () => {
+    const [items] = React.useState([
+      {
+        key: 1,
+        type: 'Cupcake',
+        income: 356,
+        date: '2021-01-01',
+      },
+      {
+        key: 2,
+        type: 'Eclair',
+        income: 262,
+        date: '2021-01-02',
+      },
+    ]);
+
+    return (
+      <View style={isDark ? darkWallet.TabBackground : walletCss.TabBackground}>
+        <ScrollView>
+          <DataTable>
+            <DataTable.Header>
+              <DataTable.Title textStyle={{color: isDark ? '#fff' : '#000'}}>
+                {i18n.t('Wallet.Type')}
+              </DataTable.Title>
+              <DataTable.Title
+                style={walletCss.cell}
+                textStyle={{color: isDark ? '#fff' : '#000'}}>
+                {i18n.t('Wallet.Income')} (RM)
+              </DataTable.Title>
+              <DataTable.Title
+                style={walletCss.cell}
+                textStyle={{color: isDark ? '#fff' : '#000'}}>
+                {i18n.t('Wallet.Date')}
+              </DataTable.Title>
+            </DataTable.Header>
+
+            {items.map((item, index) => (
+              <DataTable.Row
+                key={item.key}
+                style={
+                  index % 2 === 0
+                    ? walletCss.evenRowSpend
+                    : isDark
+                    ? darkWallet.oddRow
+                    : walletCss.oddRow
+                }>
+                <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
+                  {item.type}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={walletCss.cell}
+                  textStyle={{color: isDark ? '#fff' : '#000'}}>
+                  {item.income}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={walletCss.cell}
+                  textStyle={{color: isDark ? '#fff' : '#000'}}>
+                  {item.date}
+                </DataTable.Cell>
+              </DataTable.Row>
+            ))}
+          </DataTable>
+        </ScrollView>
+      </View>
+    );
+  };
+
+  const renderScene = SceneMap({
+    first: FirstRoute,
+    second: SecondRoute,
+  });
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: isDark ? '#000' : '#fff',
+        }}>
+        <ActivityIndicator size="large" color={isDark ? '#fff' : '#000'} />
+      </View>
+    );
+  }
 
   return (
     <MainContainer>
@@ -274,10 +291,14 @@ const Ewallet = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <StatusBar
           animated={true}
-          backgroundColor="#3490DE"
+          backgroundColor={isDark ? '#000' : '#3490DE'}
           barStyle={'dark-content'}
         />
-        <View style={[css.mainView, {backgroundColor: '#3490DE'}]}>
+        <View
+          style={[
+            css.mainView,
+            {backgroundColor: isDark ? '#000' : '#3490DE'},
+          ]}>
           <TouchableOpacity
             style={{paddingLeft: 20}}
             onPress={() => {
@@ -286,29 +307,52 @@ const Ewallet = () => {
             <Ionicons name="menu" size={30} color={'#fff'} />
           </TouchableOpacity>
           <View style={css.HeaderView}>
-            <Text style={[css.PageName, {color: '#fff'}]}>E-Wallet</Text>
+            <Text style={[css.PageName, {color: '#fff'}]}>{i18n.t('Ewallet.Ewallet')}</Text>
           </View>
         </View>
         <View style={walletCss.container}>
-          <View style={walletCss.header}>
-            <Text style={walletCss.balanceText}>Balance</Text>
-            <Text style={walletCss.balance}>RM 100.00</Text>
-            <View style={walletCss.positionContainer}>
-              <TouchableOpacity style={walletCss.button} onPress={()=> navigation.navigate(EWalletIncome as never)}>
+          <View style={isDark ? darkWallet.header : walletCss.header}>
+            <Text style={walletCss.balanceText}>
+              {i18n.t('Wallet.Balance')}
+            </Text>
+            <Text style={walletCss.balance}>RM {Balance}</Text>
+            <View
+              style={
+                isDark
+                  ? darkWallet.positionContainer
+                  : walletCss.positionContainer
+              }>
+              <TouchableOpacity
+                style={walletCss.button}
+                onPress={() => navigation.navigate(EWalletIncome as never)}>
                 <Image
-                  source={require('../assets/income.png')}
+                  source={
+                    isDark
+                      ? require('../assets/whiteincome.png')
+                      : require('../assets/income.png')
+                  }
                   style={walletCss.icon}></Image>
-                <Text style={walletCss.text}>Income</Text>
+                <Text style={isDark ? darkWallet.text : walletCss.text}>
+                  {i18n.t('Wallet.Income')}
+                </Text>
               </TouchableOpacity>
-              <TouchableOpacity style={walletCss.button} onPress={()=> navigation.navigate(EWalletSpend as never)}>
+              <TouchableOpacity
+                style={walletCss.button}
+                onPress={() => navigation.navigate(EWalletSpend as never)}>
                 <Image
-                  source={require('../assets/spend.png')}
+                  source={
+                    isDark
+                      ? require('../assets/whitespend.png')
+                      : require('../assets/spend.png')
+                  }
                   style={walletCss.icon}></Image>
-                <Text style={walletCss.text}>Spend</Text>
+                <Text style={isDark ? darkWallet.text : walletCss.text}>
+                  {i18n.t('Wallet.Spend')}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
-          <View style={walletCss.body}>
+          <View style={isDark ? darkWallet.body : walletCss.body}>
             <TabView
               navigationState={{index, routes}}
               renderScene={renderScene}

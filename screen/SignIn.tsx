@@ -5,7 +5,6 @@ import {
   Text,
   TouchableOpacity,
   Animated,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Dimensions,
@@ -33,50 +32,33 @@ import {darkSignIn} from '../objects/darkCss';
 const SignIn = () => {
   const navigation = useNavigation();
   const [locale, setLocale] = React.useState(i18n.locale);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setLocale(i18n.locale);
-    }, []),
-  );
-
-  useEffect(() => {
-    fingerPrint();
-  });
-
   const [userId, setUserId] = useState('');
   const [isFingerEnabled, setFingerIsEnabled] = useState(false);
+  const [Email, setEmail] = useState('');
+  const [Password, setPassword] = useState('');
+  const [Invalid, setInvalid] = useState(false);
+  const [hidePass, setHidePass] = useState(true);
+  const [UserID, setUserID] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [Username, setUsername] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [isDark, setIsDark] = useState(false);
 
-  const fingerPrint = async () => {
-    try {
-      const storedUserID = await AsyncStorage.getItem('UserID');
-      if (storedUserID) {
-        setUserId(storedUserID);
-        isEnabledFingerPrint(storedUserID);
-        console.log(userId);
-      }
-    } catch (error) {
-      showToast(i18n.t('SettingPage.Failed-Load-Username'));
-    }
+  const ErrorToast = (message: any) => {
+    Toast.show({
+      type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
   };
 
-  const isEnabledFingerPrint = async (userId: any) => {
-    try {
-      const response = await RNFetchBlob.config({trusty: true}).fetch(
-        'GET',
-        `${UrlAccess.Url}User/GetFingerPrint?userId=${userId}`,
-        {'Content-Type': 'application/json'},
-      );
-
-      const data = await response.json();
-      if (data.success) {
-        setFingerIsEnabled(data.userData.fingerPrint);
-      } else {
-        showToast('Failed to fetch fingerprint status');
-      }
-    } catch (error) {
-      showToast('Error fetching fingerprint status');
-    }
+  const SuccessToast = (message: any) => {
+    Toast.show({
+      type: 'success',
+      text1: message,
+      visibilityTime: 3000,
+    });
   };
 
   const theme = {
@@ -95,14 +77,6 @@ const SignIn = () => {
     },
   };
 
-  const showToast = (message: any) => {
-    Toast.show({
-      type: 'error',
-      text1: message,
-      visibilityTime: 3000,
-    });
-  };
-
   const Anim = useRef(new Animated.Value(100)).current;
   const Anim1 = useRef(new Animated.Value(110)).current;
   const Anim2 = useRef(new Animated.Value(120)).current;
@@ -111,13 +85,59 @@ const SignIn = () => {
   const Anim5 = useRef(new Animated.Value(150)).current;
   const Anim6 = useRef(new Animated.Value(160)).current;
 
-  useEffect(() => {
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
+  );
+
+  const loadTheme = async () => {
+    try {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('Fail-Load-Theme'));
+    }
+  };
+
+  const loadFingerPrint = async () => {
+    try {
+      const storedUserID = await AsyncStorage.getItem('UserID');
+      if (storedUserID) {
+        setUserId(storedUserID);
+        await isEnabledFingerPrint(storedUserID);
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('Fail-Load-UserID'));
+    }
+  };
+
+  const isEnabledFingerPrint = async (userId: any) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}User/GetFingerPrint?userId=${userId}`,
+        {'Content-Type': 'application/json'},
+      );
+
+      const data = await response.json();
+      if (data.success) {
+        setFingerIsEnabled(data.userData.fingerPrint);
+      } else {
+        ErrorToast(i18n.t('SignIn.Fail-Fetch-Fingerprint'));
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('SignIn.Fetch-Fingerprint-Error'));
+    }
+  };
+
+  const initialize = async () => {
+    setLoading(true);
+    await Promise.all([loadTheme(), loadFingerPrint()]);
     Animated.parallel([
-      Animated.timing(Anim, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: true,
-      }),
+      Animated.timing(Anim, {toValue: 0, duration: 500, useNativeDriver: true}),
       Animated.timing(Anim1, {
         toValue: 0,
         duration: 550,
@@ -148,61 +168,55 @@ const SignIn = () => {
         duration: 800,
         useNativeDriver: true,
       }),
-    ]).start();
-  }, [Anim, Anim1, Anim2, Anim3, Anim4, Anim5, Anim6]);
+    ]).start(() => {
+      setLoading(false);
+    });
+  };
 
-  const [Email, setEmail] = useState('');
-  const [Password, setPassword] = useState('');
-  const [Invalid, setInvalid] = useState(false);
-  const [hidePass, setHidePass] = useState(true);
-  const [UserID, setUserID] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [Username, setUsername] = useState('');
-  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    initialize();
+  }, []);
 
   const SignIn = async () => {
     setLoading(true);
     try {
-      RNFetchBlob.config({trusty: true})
-        .fetch(
-          'POST',
-          UrlAccess.Url + 'User/SignIn',
-          {'Content-Type': 'application/json'},
-          JSON.stringify({
-            email: Email,
-            password: Password,
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'POST',
+        `${UrlAccess.Url}User/SignIn`,
+        {'Content-Type': 'application/json'},
+        JSON.stringify({
+          email: Email,
+          password: Password,
+        }),
+      );
+      const json = await response.json();
+      if (json.success) {
+        const {userID, userName} = json;
+        setUserID(userID);
+        setUsername(userName);
+        await AsyncStorage.setItem('UserID', userID.toString());
+        await AsyncStorage.setItem('UserName', userName);
+        await AsyncStorage.setItem('Email', Email);
+        await AsyncStorage.setItem('Password', Password);
+        SuccessToast(i18n.t('SignIn.Successful'));
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: 'CustomDrawer'}],
           }),
-        )
-        .then(response => response.json())
-        .then(json => {
-          if (json.success) {
-            const {userID, userName} = json;
-            setUserID(userID);
-            setUsername(userName);
-            AsyncStorage.setItem('UserID', userID.toString());
-            AsyncStorage.setItem('UserName', userName);
-            AsyncStorage.setItem('Email', Email);
-            AsyncStorage.setItem('Password', Password);
-            setLoading(false);
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{name: 'CustomDrawer'}],
-              }),
-            );
-          } else {
-            setInvalid(true);
-            setLoading(false);
-          }
-        });
+        );
+      } else {
+        setInvalid(true);
+      }
     } catch (error) {
-      showToast(i18n.t('SignIn.Sign-In-Error'));
+      ErrorToast(i18n.t('SignIn.Sign-In-Error'));
+    } finally {
       setLoading(false);
     }
   };
 
   const Verify = () => {
+    setLoading(true);
     let valid = true;
 
     if (Email.trim() === '') {
@@ -221,25 +235,26 @@ const SignIn = () => {
 
     if (valid) {
       AsyncStorage.setItem('Email', Email);
-      setLoading(true);
       SignIn();
+      setLoading(false);
+    } else {
+      setLoading(false);
     }
   };
 
   const rnBiometrics = new ReactNativeBiometrics();
   const handleFingerprint = async () => {
     try {
-      rnBiometrics
-        .simplePrompt({promptMessage: 'Sign In'})
-        .then(resultObject => {
-          const {success} = resultObject;
-          if (success) {
-            setLoading(true);
-            getUserData(userId);
-          }
-        });
+      const resultObject = await rnBiometrics.simplePrompt({
+        promptMessage: 'Sign In',
+      });
+      const {success} = resultObject;
+      if (success) {
+        setLoading(true);
+        await getUserData(userId);
+      }
     } catch (error) {
-      showToast(error);
+      ErrorToast(i18n.t("SignIn.Error-Handle-Fingerprint"));
     }
   };
 
@@ -255,13 +270,12 @@ const SignIn = () => {
       if (data.success) {
         const email = data.userData.email;
         const password = data.userData.password;
-        autoSignIn(email, password);
-        setLoading(false);
+        await autoSignIn(email, password);
       } else {
-        showToast('Failed to fetch user data');
+        ErrorToast(i18n.t("Fail-Load-Data"));
       }
     } catch (error) {
-      showToast(error);
+      ErrorToast(i18n.t("Fail-Load-Data"));
     } finally {
       setLoading(false);
     }
@@ -290,7 +304,7 @@ const SignIn = () => {
             AsyncStorage.setItem('UserName', userName);
             AsyncStorage.setItem('Email', Email);
             AsyncStorage.setItem('Password', Password);
-            showToast(i18n.t('SignIn.Successful'));
+            SuccessToast(i18n.t('SignIn.Successful'));
             navigation.dispatch(
               CommonActions.reset({
                 index: 0,
@@ -302,20 +316,25 @@ const SignIn = () => {
           }
         });
     } catch (error) {
-      showToast(i18n.t('SignIn.Sign-In-Error'));
+      ErrorToast(i18n.t('SignIn.Sign-In-Error'));
+    } finally {
+      setLoading(false);
     }
   };
 
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const savedTheme = await AsyncStorage.getItem('theme');
-      if (savedTheme) {
-        setIsDark(savedTheme === 'dark');
-      }
-    })();
-  }, []);
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: isDark ? '#000' : '#fff',
+        }}>
+        <ActivityIndicator size="large" color={isDark ? '#fff' : '#000'} />
+      </View>
+    );
+  }
 
   return (
     <MainContainer>
@@ -323,128 +342,121 @@ const SignIn = () => {
         style={{flex: 1}}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <StatusBar backgroundColor={isDark ? '#000' : '#fff'} />
-        {loading ? (
-          <View
-            style={{
-              flex: 1,
-              marginVertical: (Dimensions.get('screen').height / 100) * 50,
-              backgroundColor: isDark ? '#000' : '#fff',
-            }}>
-            <ActivityIndicator size={80} color={isDark ? '#fff' : '#000000'} />
-          </View>
-        ) : (
-          <View style={isDark ? darkSignIn.container : SignInCss.container}>
-            <Animated.View style={{transform: [{translateY: Anim}]}}>
-              <Image
-                style={SignInCss.Logo}
-                source={require('../assets/Logo.png')}
-              />
-            </Animated.View>
+        <View style={isDark ? darkSignIn.container : SignInCss.container}>
+          <Animated.View style={{transform: [{translateY: Anim}]}}>
+            <Image
+              style={SignInCss.Logo}
+              source={require('../assets/Logo.png')}
+            />
+          </Animated.View>
 
-            <Animated.View style={{transform: [{translateY: Anim1}]}}>
-              <Text style={isDark ? darkSignIn.Title : SignInCss.Title}>
-                {i18n.t('SignIn.Sign-In')}
-              </Text>
-              <Text style={isDark ? darkSignIn.Content : SignInCss.Content}>
-                {i18n.t('SignIn.Credentials')}
-              </Text>
-            </Animated.View>
+          <Animated.View style={{transform: [{translateY: Anim1}]}}>
+            <Text style={isDark ? darkSignIn.Title : SignInCss.Title}>
+              {i18n.t('SignIn.Sign-In')}
+            </Text>
+            <Text style={isDark ? darkSignIn.Content : SignInCss.Content}>
+              {i18n.t('SignIn.Credentials')}
+            </Text>
+          </Animated.View>
 
-            <Animated.View style={{transform: [{translateY: Anim2}]}}>
-              <TextInput
-                label={i18n.t('SignIn.Email')}
-                mode="outlined"
-                style={isDark? darkSignIn.Input : SignInCss.Input}
-                placeholder={i18n.t('SignIn.Email-Placeholder')}
-                theme={isDark ? darkTheme : theme}
-                onChangeText={text => setEmail(text)}
-                textColor={isDark ? '#fff' : '#000'}
-              />
-              {emailError !== '' && (
-                <HelperText type="error" style={SignInCss.InputError}>
-                  {emailError}
-                </HelperText>
-              )}
-            </Animated.View>
+          <Animated.View style={{transform: [{translateY: Anim2}]}}>
+            <TextInput
+              label={i18n.t('SignIn.Email')}
+              mode="outlined"
+              style={isDark ? darkSignIn.Input : SignInCss.Input}
+              placeholder={i18n.t('SignIn.Email-Placeholder')}
+              theme={isDark ? darkTheme : theme}
+              onChangeText={text => setEmail(text)}
+              textColor={isDark ? '#fff' : '#000'}
+            />
+            {emailError !== '' && (
+              <HelperText type="error" style={SignInCss.InputError}>
+                {emailError}
+              </HelperText>
+            )}
+          </Animated.View>
 
-            <Animated.View style={{transform: [{translateY: Anim3}]}}>
-              <TextInput
-                label={i18n.t('SignIn.Password')}
-                mode="outlined"
-                style={isDark? darkSignIn.Input : SignInCss.Input}
-                placeholder={i18n.t('SignIn.Password-Placeholder')}
-                theme={isDark ? darkTheme : theme}
-                onChangeText={text => setPassword(text)}
-                autoCapitalize="none"
-                secureTextEntry={hidePass ? true : false}
-                textColor={isDark ? '#fff' : '#000'}
-                right={
-                  <TextInput.Icon
-                    icon={hidePass ? 'eye-off' : 'eye'}
-                    onPress={() => setHidePass(!hidePass)}
-                  />
-                }
-              />
-              {passwordError !== '' && (
-                <HelperText type="error" style={SignInCss.InputError}>
-                  {passwordError}
-                </HelperText>
-              )}
-              {Invalid == true && (
-                <HelperText type="error" style={SignInCss.InputError}>
-                  {i18n.t('SignIn.Invalid')}
-                </HelperText>
-              )}
-
-              <Text
-                style={SignInCss.Forgot}
-                onPress={() => navigation.navigate(ForgotPassword as never)}>
-                {i18n.t('SignIn.Forgot')}
-              </Text>
-            </Animated.View>
-            <Animated.View style={{transform: [{translateY: Anim4}]}}>
-              <TouchableOpacity
-                style={SignInCss.LoginButton}
-                onPress={() => Verify()}>
-                <Text style={SignInCss.BtnText}>{i18n.t('SignIn.Sign')}</Text>
-              </TouchableOpacity>
-            </Animated.View>
-
-            {isFingerEnabled ? (
-              <View>
-                <Animated.View style={{transform: [{translateY: Anim5}]}}>
-                  <View style={SignInCss.Other}>
-                    <View style={SignInCss.Line}></View>
-                    <Text style={SignInCss.Or}>{i18n.t('SignIn.Or')}</Text>
-                    <View style={SignInCss.Line}></View>
-                  </View>
-                </Animated.View>
-
-                <Animated.View style={{transform: [{translateY: Anim6}]}}>
-                  <TouchableOpacity
-                    style={SignInCss.Finger}
-                    onPress={() => handleFingerprint()}>
-                    <Image
-                      style={SignInCss.Finger}
-                      source={isDark ? require('../assets/whitefingerprint.png'):require('../assets/fingerprint.png')}
-                    />
-                  </TouchableOpacity>
-                </Animated.View>
-              </View>
-            ) : (
-              <View></View>
+          <Animated.View style={{transform: [{translateY: Anim3}]}}>
+            <TextInput
+              label={i18n.t('SignIn.Password')}
+              mode="outlined"
+              style={isDark ? darkSignIn.Input : SignInCss.Input}
+              placeholder={i18n.t('SignIn.Password-Placeholder')}
+              theme={isDark ? darkTheme : theme}
+              onChangeText={text => setPassword(text)}
+              autoCapitalize="none"
+              secureTextEntry={hidePass ? true : false}
+              textColor={isDark ? '#fff' : '#000'}
+              right={
+                <TextInput.Icon
+                  icon={hidePass ? 'eye-off' : 'eye'}
+                  onPress={() => setHidePass(!hidePass)}
+                />
+              }
+            />
+            {passwordError !== '' && (
+              <HelperText type="error" style={SignInCss.InputError}>
+                {passwordError}
+              </HelperText>
+            )}
+            {Invalid == true && (
+              <HelperText type="error" style={SignInCss.InputError}>
+                {i18n.t('SignIn.Invalid')}
+              </HelperText>
             )}
 
-            <Text style={isDark ? darkSignIn.SignUp : SignInCss.SignUp}>
-              {i18n.t('SignIn.Dont-Have-Account')}
-              <Text
-                style={{color: '#3490DE'}}
-                onPress={() => navigation.navigate(SignUp as never)}>
-                {i18n.t('SignIn.Sign-Up')}
-              </Text>
+            <Text
+              style={SignInCss.Forgot}
+              onPress={() => navigation.navigate(ForgotPassword as never)}>
+              {i18n.t('SignIn.Forgot')}
             </Text>
-          </View>
-        )}
+          </Animated.View>
+          <Animated.View style={{transform: [{translateY: Anim4}]}}>
+            <TouchableOpacity
+              style={SignInCss.LoginButton}
+              onPress={() => Verify()}>
+              <Text style={SignInCss.BtnText}>{i18n.t('SignIn.Sign')}</Text>
+            </TouchableOpacity>
+          </Animated.View>
+
+          {isFingerEnabled ? (
+            <View>
+              <Animated.View style={{transform: [{translateY: Anim5}]}}>
+                <View style={SignInCss.Other}>
+                  <View style={SignInCss.Line}></View>
+                  <Text style={SignInCss.Or}>{i18n.t('SignIn.Or')}</Text>
+                  <View style={SignInCss.Line}></View>
+                </View>
+              </Animated.View>
+
+              <Animated.View style={{transform: [{translateY: Anim6}]}}>
+                <TouchableOpacity
+                  style={SignInCss.Finger}
+                  onPress={() => handleFingerprint()}>
+                  <Image
+                    style={SignInCss.Finger}
+                    source={
+                      isDark
+                        ? require('../assets/whitefingerprint.png')
+                        : require('../assets/fingerprint.png')
+                    }
+                  />
+                </TouchableOpacity>
+              </Animated.View>
+            </View>
+          ) : (
+            <View></View>
+          )}
+
+          <Text style={isDark ? darkSignIn.SignUp : SignInCss.SignUp}>
+            {i18n.t('SignIn.Dont-Have-Account')}
+            <Text
+              style={{color: '#3490DE'}}
+              onPress={() => navigation.navigate(SignUp as never)}>
+              {i18n.t('SignIn.Sign-Up')}
+            </Text>
+          </Text>
+        </View>
       </KeyboardAvoidingView>
     </MainContainer>
   );

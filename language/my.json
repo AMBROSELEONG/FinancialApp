@@ -1,8 +1,16 @@
 {
+  "Error-Load-Page": "Ralat memuatkan halaman",
+  "Fail-Load-Language": "Gagal memuatkan bahasa",
+  "Fail-Load-Theme": "Gagal memuatkan tema",
+  "Fail-Load-Data": "Gagal memuatkan data",
+  "Fail-Load-UserID": "Gagal memuatkan ID pengguna",
+  "Fail-Load-Token": "Gagal memuatkan token",
+
   "LanguagePage": {
     "Change-Language": "Tukar Bahasa",
     "Language-Update": "Kemas Kini Bahasa",
-    "Update": "Bahasa dikemas kini kepada Bahasa Melayu"
+    "Update": "Kemas Kini Bahasa ke Bahasa Inggeris",
+    "Fail-Save-Language": "Gagal menyimpan bahasa"
   },
   "SettingPage": {
     "Setting": "Tetapan",
@@ -11,64 +19,68 @@
     "Preferences": "Keutamaan",
     "Language": "Bahasa",
     "Dark-Mode": "Mod Gelap",
-    "Finger-Print": "Dayakan pengecaman cap jari",
+    "Finger-Print": "Dayakan Cap Jari",
     "Failed-Load-Username": "Gagal memuatkan nama pengguna",
     "Failed-Fetch-Data": "Gagal mendapatkan data pengguna",
     "Error-Fetch": "Ralat mendapatkan data pengguna",
-    "Enable-Finger-Successful": "Dayakan Cap Jari berjaya",
-    "Disable-Finger-Successful": "Lumpuhkan Cap Jari berjaya",
-    "Darkmode": "Berjaya menukar tema apl"
+    "Enable-Finger-Successful": "Berjaya mendayakan cap jari",
+    "Disable-Finger-Successful": "Berjaya menyahdayakan cap jari",
+    "Darkmode": "Berjaya menukar tema aplikasi",
+    "Error-Initializing": "Ralat memulakan",
+    "Fail-Send-Fingerprint": "Gagal menghantar status cap jari ke pelayan",
+    "Unsuccessful-Delete-Key": "Penghapusan tidak berjaya kerana tiada kunci untuk dihapuskan",
+    "Error-Create-Key": "Ralat membuat kunci cap jari"
   },
   "EditPage": {
     "Username-Empty": "Nama pengguna tidak boleh kosong",
-    "Username-Duplication": "Nama pengguna sudah diambil",
-    "Email-Empty": "Emel tidak boleh kosong",
-    "Email-Format": "Format emel tidak sah",
-    "Email-Duplication": "Emel sudah diambil",
+    "Username-Duplication": "Nama pengguna telah diambil",
+    "Email-Empty": "E-mel tidak boleh kosong",
+    "Email-Format": "Format e-mel tidak sah",
+    "Emial-Duplication": "E-mel telah diambil",
     "Password-Empty": "Kata laluan tidak boleh kosong",
     "Password-Format": "Kata laluan mesti mengandungi huruf besar dan kecil, nombor, dan simbol",
-    "Password-Match": "Kata laluan tidak sepadan dengan kata laluan pengesahan",
+    "Password-Match": "Tidak sepadan dengan kata laluan pengesahan",
     "Edit-Profile": "Edit Profil",
     "User-Info": "Maklumat Pengguna",
     "Username": "Nama Pengguna",
-    "Username-Placeholder": "Sila masukkan nama pengguna anda",
-    "Email": "Emel",
-    "Email-Placeholder": "Sila masukkan emel anda",
+    "Username-Placeholder": "Sila Masukkan Nama Pengguna Anda",
+    "Email": "E-mel",
+    "Email-Placeholder": "Sila Masukkan E-mel Anda",
     "Password": "Kata Laluan",
-    "Password-Placeholder": "Sila masukkan kata laluan anda",
+    "Password-Placeholder": "Sila Masukkan Kata Laluan Anda",
     "Confirm-Password": "Sahkan Kata Laluan",
-    "Confirm-Password-Placeholder": "Sila masukkan kata laluan sekali lagi",
+    "Confirm-Password-Placeholder": "Sila Masukkan Kata Laluan Sekali Lagi",
     "Save-Change": "Simpan Perubahan"
   },
   "UserEditVerify": {
-    "Not-Correct": "Kod pengesahan anda tidak betul",
-    "Verify-Unsuccessful": "Pengesahan gagal",
-    "Invalid-Input": "Input tidak sah",
-    "Failed-Load-Email": "Gagal memuatkan e-mel",
+    "Not-Correct": "Kod Pengesahan Anda tidak betul",
+    "Verify-Unsuccessful": "Pengesahan Tidak Berjaya",
+    "Invalid-Input": "Input Tidak Sah",
+    "Failed-Load-Email": "Gagal memuatkan E-mel",
     "Data-Insert-Successful": "Data berjaya dimasukkan",
-    "Data-Insert-Unsuccessful": "Data tidak berjaya dimasukkan",
-    "Send-OTP-Successful": "OTP berjaya dihantar",
-    "Send-OTP-Unsuccessful": "OTP tidak berjaya dihantar",
+    "Data-Insert-Unsuccessful": "Data gagal dimasukkan",
+    "Send-OTP-Successful": "Hantar OTP Berjaya",
+    "Send-OTP-Unsuccessful": "Hantar OTP Gagal",
     "Verification": "Pengesahan",
-    "Send-To": "Kod dihantar kepada",
-    "Please-Enter": "Sila masukkan kod pengesahan",
-    "Seconds-Remaining": "saat tinggal",
+    "Send-To": "Kod dihantar ke",
+    "Please-Enter": "Sila Masukkan Kod Pengesahan",
+    "Seconds-Remaining": "saat yang tinggal",
     "Resend": "Hantar semula kod",
-    "Verify": "SAHKAN",
+    "Verify": "SAH",
     "Edit-Data-Successful": "Edit Data Berjaya",
     "Save-Data": "Simpan Data"
   },
   "CustomDrawer": {
     "Home": "Laman Utama",
     "Setting": "Tetapan",
-    "Logout": "Log keluar"
+    "Logout": "Log Keluar"
   },
   "BottomNavigation": {
     "Home": "Laman Utama",
     "Wallet": "Dompet",
     "Bank": "Bank",
     "E-Wallet": "Dompet Elektronik",
-    "Expenses": "Caj Tetap"
+    "Expenses": "Perbelanjaan"
   },
   "Welcome": {
     "Login": "LOG MASUK",
@@ -79,37 +91,40 @@
     "Email-Empty": "E-mel tidak boleh kosong",
     "Password-Empty": "Kata laluan tidak boleh kosong",
     "Sign-In": "Log Masuk",
-    "Credentials": "Masukkan kelayakan anda untuk log masuk",
+    "Credentials": "Masukkan maklumat anda untuk log masuk",
     "Email": "E-mel",
     "Email-Placeholder": "Sila Masukkan E-mel Anda",
-    "Password": "Kata laluan",
+    "Password": "Kata Laluan",
     "Password-Placeholder": "Sila Masukkan Kata Laluan Anda",
     "Invalid": "Nama pengguna atau kata laluan tidak sah",
     "Forgot": "Lupa Kata Laluan",
     "Sign": "LOG MASUK",
-    "Or": "Atau Log Masuk dengan",
+    "Or": "Atau Log Masuk Dengan",
     "Dont-Have-Account": "Tidak Mempunyai Akaun?",
     "Sign-Up": "Daftar",
-    "Successful": "Log Masuk Berjaya"
+    "Successful": "Log Masuk Berjaya",
+    "Fail-Fetch-Fingerprint": "Gagal mendapatkan status cap jari",
+    "Fetch-Fingerprint-Error": "Ralat mendapatkan status cap jari",
+    "Error-Handle-Fingerprint": "Ralat mengendalikan cap jari"
   },
   "SignUp": {
     "Username-Empty": "Nama pengguna tidak boleh kosong",
-    "Username-Duplication": "Nama pengguna sudah diambil",
+    "Username-Duplication": "Nama pengguna telah diambil",
     "Email-Empty": "E-mel tidak boleh kosong",
     "Email-Format": "Format e-mel tidak sah",
-    "Email-Duplication": "E-mel sudah diambil",
+    "Email-Duplication": "E-mel telah diambil",
     "Password-Empty": "Kata laluan tidak boleh kosong",
     "Password-Format": "Kata laluan mesti mengandungi huruf besar dan kecil, nombor, dan simbol",
-    "Password-Match": "Kata laluan tidak sepadan dengan pengesahan kata laluan",
-    "Send-OTP-Successful": "OTP berjaya dihantar",
-    "Send-OTP-Unsuccessful": "OTP tidak berjaya dihantar",
+    "Password-Match": "Tidak sepadan dengan kata laluan pengesahan",
+    "Send-OTP-Successful": "Hantar OTP Berjaya",
+    "Send-OTP-Unsuccessful": "Hantar OTP Gagal",
     "Sign-Up": "Daftar",
-    "Credentials": "Masukkan kelayakan anda untuk mendaftar",
-    "Username": "Nama pengguna",
+    "Credentials": "Masukkan maklumat anda untuk mendaftar",
+    "Username": "Nama Pengguna",
     "Username-Placeholder": "Sila Masukkan Nama Pengguna Anda",
     "Email": "E-mel",
     "Email-Placeholder": "Sila Masukkan E-mel Anda",
-    "Password": "Kata laluan",
+    "Password": "Kata Laluan",
     "Password-Placeholder": "Sila Masukkan Kata Laluan Anda",
     "Confirm-Password": "Sahkan Kata Laluan",
     "Confirm-Password-Placeholder": "Sila Masukkan Kata Laluan Sekali Lagi",
@@ -125,10 +140,10 @@
   "ForgotPassword": {
     "Email-Empty": "E-mel tidak boleh kosong",
     "Email-Find": "Tidak dapat mencari e-mel",
-    "Send-OTP-Successful": "OTP berjaya dihantar",
-    "Send-OTP-Unsuccessful": "OTP tidak berjaya dihantar",
+    "Send-OTP-Successful": "Hantar OTP Berjaya",
+    "Send-OTP-Unsuccessful": "Hantar OTP Gagal",
     "Forgot-Password": "Lupa Kata Laluan",
-    "Credentials": "Masukkan kelayakan anda untuk mengesahkan",
+    "Credentials": "Masukkan maklumat anda untuk mengesahkan",
     "Email": "E-mel",
     "Email-Placeholder": "Sila Masukkan E-mel Anda",
     "Send": "HANTAR",
@@ -137,21 +152,22 @@
   },
   "ResetPassword": {
     "Error": "Ralat Mendapatkan E-mel",
-    "Failed-Load-Email": "Gagal Memuatkan E-mel",
+    "Failed-Load-Email": "Gagal memuatkan e-mel",
     "Password-Empty": "Kata laluan tidak boleh kosong",
-    "Password-Format": "Kata laluan mesti mengandungi huruf besar, huruf kecil, nombor, dan simbol",
-    "Password-Match": "Tiada padanan dengan kata laluan pengesahan",
-    "Password-Successful": "Berjaya menetapkan semula kata laluan",
-    "Reset-Successful": "Kata laluan anda telah berjaya ditetapkan semula! Sila pergi ke log masuk untuk menguji kata laluan baru anda",
+    "Password-Format": "Kata laluan mesti mengandungi huruf besar dan kecil, nombor, dan simbol",
+    "Password-Match": "Tidak sepadan dengan kata laluan pengesahan",
+    "Password-Successful": "Penetapan Semula Kata Laluan Berjaya",
+    "Reset-Successful": "Penetapan Semula Kata Laluan Anda Berjaya! Sila pergi ke log masuk untuk menguji kata laluan baru anda",
     "Reset-Password": "Tetapkan Semula Kata Laluan",
     "Enter-Password": "Masukkan kata laluan baru anda",
-    "Password": "Kata laluan",
-    "Password-Placeholder": "Sila masukkan kata laluan anda",
+    "Password": "Kata Laluan",
+    "Password-Placeholder": "Sila Masukkan Kata Laluan Anda",
     "Confirm-Password": "Sahkan Kata Laluan",
-    "Confirm-Password-Placeholder": "Sila masukkan kata laluan sekali lagi",
+    "Confirm-Password-Placeholder": "Sila Masukkan Kata Laluan Sekali Lagi",
     "Reset": "Tetapkan Semula",
     "Remember": "Ingat Kata Laluan?",
-    "Sign-In": "Log Masuk"
+    "Sign-In": "Log Masuk",
+    "Reset-Password-Error": "Ralat Tetapkan Semula Kata Laluan"
   },
   "Home": {
     "Failed-Load-Username": "Gagal memuatkan nama pengguna",
@@ -159,13 +175,14 @@
     "Error-Fetch": "Ralat mendapatkan data pengguna",
     "Home": "Laman Utama",
     "Welcome-Back": "Selamat Kembali",
-    "Spending": "Perbelanjaan dalam 7 hari yang lalu",
+    "Spending": "Perbelanjaan selama 7 hari yang lepas",
     "Total-Spending": "Jumlah Perbelanjaan Hari Ini",
-    "Increase": "Pendapatan dalam 7 hari yang lalu",
-    "Total-Increase": "Jumlah Pendapatan Hari Ini"
+    "Increase": "Peningkatan selama 7 hari yang lepas",
+    "Total-Increase": "Jumlah Peningkatan Hari Ini",
+    "Fail-Create-Data": "Gagal membuat data"
   },
   "ThemeChange": {
-    "Text": "Sedang Menukar tema..."
+    "Text": "Memproses menukar tema"
   },
   "Wallet": {
     "Wallet": "Dompet",
@@ -178,7 +195,7 @@
     "Date": "Tarikh"
   },
   "WalletIncome": {
-    "Income": "Pendapatan",
+    "Income": "PENDAPATAN",
     "Fill": "Isi pendapatan dompet",
     "Balance": "Baki Semasa",
     "Total-Income": "Jumlah Pendapatan",
@@ -191,16 +208,40 @@
     "Save": "Simpan"
   },
   "WalletSpend": {
-    "Spend": "Perbelanjaan",
+    "Spend": "PERBELANJAAN",
     "Fill": "Isi perbelanjaan dompet",
     "Balance": "Baki Semasa",
     "Total-Spend": "Jumlah Perbelanjaan",
     "Spend-Placeholder": "Sila Masukkan Jumlah Perbelanjaan Anda",
     "Spend-Type": "Jenis Perbelanjaan",
-    "Type-Placeholder": "Pilih Jenis Sumber Perbelanjaan",
+    "Type-Placeholder": "Pilih Jenis Perbelanjaan",
     "Bank": "Pilih Bank",
     "Bank-Placeholder": "Pilih Bank",
     "Date": "Tarikh",
     "Save": "Simpan"
+  },
+  "Ewallet": {
+    "Ewallet": "Dompet Elektronik"
+  },
+  "EwalletIncome": {
+    "Fill": "Isi pendapatan dompet elektronik"
+  },
+  "EwalletSpend": {
+    "Fill": "Isi perbelanjaan dompet elektronik"
+  },
+  "Bank": {
+    "Bank": "Bank",
+    "Add-Bank": "Tambah Bank",
+    "Bank-Name": "Nama Bank",
+    "Add-Bank-Placeholder": "Pilih Bank",
+    "Initial-Balance": "Baki Permulaan",
+    "Initial-Balance-Placeholder": "Sila Masukkan Baki Permulaan Anda",
+    "Save": "Simpan"
+  },
+  "BankIncome": {
+    "Fill": "Isi pendapatan bank"
+  },
+  "BankSpend": {
+    "Fill": "Isi perbelanjaan bank"
   }
 }

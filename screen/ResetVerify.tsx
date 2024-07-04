@@ -7,7 +7,7 @@ import {
   TextInput,
   NativeSyntheticEvent,
   TextInputKeyPressEventData,
-  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import MainContainer from '../components/MainContainer';
 import {VerifyCss} from '../objects/commonCss';
@@ -40,9 +40,17 @@ const ResetVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
   onChange,
   navigation,
 }) => {
-  const showToast = (message: any) => {
+  const ErrorToast = (message: any) => {
     Toast.show({
       type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
+
+  const SuccessToast = (message: any) => {
+    Toast.show({
+      type: 'success',
       text1: message,
       visibilityTime: 3000,
     });
@@ -114,31 +122,54 @@ const ResetVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
               AsyncStorage.setItem('Email', Email);
               navigation.navigate(ResetPassword as never);
             } else {
-              showToast(i18n.t('UserEditVerify.Not-Correct'));
+              ErrorToast(i18n.t('UserEditVerify.Not-Correct'));
             }
           });
       } catch (error) {
-        showToast(i18n.t('UserEditVerify.Verify-Unsuccessful'));
+        ErrorToast(i18n.t('UserEditVerify.Verify-Unsuccessful'));
       }
     } else {
-      showToast(i18n.t('UserEditVerify.Invalid-Input'));
+      ErrorToast(i18n.t('UserEditVerify.Invalid-Input'));
     }
   };
 
   const [Email, setEmail] = useState('');
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const storedEmail = await AsyncStorage.getItem('Email');
-        if (storedEmail !== null) {
-          setEmail(storedEmail);
-        }
-      } catch (error) {
-        showToast(i18n.t('UserEditVerify.Failed-Load-Email'));
-      }
-    };
+  const [loading, setLoading] = useState(false);
+  const [isDark, setIsDark] = useState(false);
 
-    getData();
+  const getData = async () => {
+    try {
+      const storedEmail = await AsyncStorage.getItem('Email');
+      if (storedEmail !== null) {
+        setEmail(storedEmail);
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('UserEditVerify.Failed-Load-Email'));
+    }
+  };
+
+  const loadTheme = async () => {
+    try {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('Fail-Load-Theme'));
+    }
+  };
+
+  const initialize = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([loadTheme(), getData()]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    initialize();
   }, []);
 
   const resend = () => {
@@ -151,11 +182,11 @@ const ResetVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
           email: Email,
         }),
       );
-      showToast(i18n.t('UserEditVerify.Send-OTP-Successful'));
+      SuccessToast(i18n.t('UserEditVerify.Send-OTP-Successful'));
       AsyncStorage.setItem('Email', Email);
       navigation.navigate(ResetVerify as never);
     } catch (error) {
-      showToast(i18n.t('UserEditVerify.Send-OTP-Unsuccessful'));
+      ErrorToast(i18n.t('UserEditVerify.Send-OTP-Unsuccessful'));
     }
   };
 
@@ -181,16 +212,19 @@ const ResetVerify: React.FC<VerifyScreenProps & OTPInputProps> = ({
     return () => clearInterval(interval);
   }, [countdown]);
 
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const savedTheme = await AsyncStorage.getItem('theme');
-      if (savedTheme) {
-        setIsDark(savedTheme === 'dark');
-      }
-    })();
-  }, []);
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: isDark ? '#000' : '#fff',
+        }}>
+        <ActivityIndicator size="large" color={isDark ? '#fff' : '#000'} />
+      </View>
+    );
+  }
 
   return (
     <MainContainer>

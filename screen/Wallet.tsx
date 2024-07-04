@@ -14,6 +14,8 @@ import {
   Platform,
   Image,
   useWindowDimensions,
+  Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {css, walletCss} from '../objects/commonCss';
@@ -25,303 +27,9 @@ import WalletSpend from './WalletSpend';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {darkWallet} from '../objects/darkCss';
 import i18n from '../language/language';
-
-const FirstRoute = () => {
-  const [items] = React.useState([
-    {
-      key: 1,
-      type: 'Cupcake',
-      income: 356,
-      date: '2021-01-01',
-    },
-    {
-      key: 2,
-      type: 'Eclair',
-      income: 262,
-      date: '2021-01-02',
-    },
-    {
-      key: 3,
-      type: 'Frozen yogurt',
-      income: 159,
-      date: '2021-01-03',
-    },
-    {
-      key: 4,
-      type: 'Gingerbread',
-      income: 305,
-      date: '2021-01-04',
-    },
-    {
-      key: 1,
-      type: 'Cupcake',
-      income: 356,
-      date: '2021-01-01',
-    },
-    {
-      key: 2,
-      type: 'Eclair',
-      income: 262,
-      date: '2021-01-02',
-    },
-    {
-      key: 3,
-      type: 'Frozen yogurt',
-      income: 159,
-      date: '2021-01-03',
-    },
-    {
-      key: 4,
-      type: 'Gingerbread',
-      income: 305,
-      date: '2021-01-04',
-    },
-    {
-      key: 1,
-      type: 'Cupcake',
-      income: 356,
-      date: '2021-01-01',
-    },
-    {
-      key: 2,
-      type: 'Eclair',
-      income: 262,
-      date: '2021-01-02',
-    },
-    {
-      key: 3,
-      type: 'Frozen yogurt',
-      income: 159,
-      date: '2021-01-03',
-    },
-    {
-      key: 4,
-      type: 'Gingerbread',
-      income: 305,
-      date: '2021-01-04',
-    },
-  ]);
-
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const savedTheme = await AsyncStorage.getItem('theme');
-      if (savedTheme) {
-        setIsDark(savedTheme === 'dark');
-      }
-    })();
-  }, []);
-
-  const [locale, setLocale] = React.useState(i18n.locale);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setLocale(i18n.locale);
-    }, []),
-  );
-
-  return (
-    <View style={isDark ? darkWallet.TabBackground : walletCss.TabBackground}>
-      <ScrollView>
-        <DataTable>
-          <DataTable.Header>
-            <DataTable.Title textStyle={{color: isDark ? '#fff' : '#000'}}>
-              {i18n.t('Wallet.Type')}
-            </DataTable.Title>
-            <DataTable.Title
-              style={walletCss.cell}
-              textStyle={{color: isDark ? '#fff' : '#000'}}>
-              {i18n.t('Wallet.Income')} (RM)
-            </DataTable.Title>
-            <DataTable.Title
-              style={walletCss.cell}
-              textStyle={{color: isDark ? '#fff' : '#000'}}>
-              {i18n.t('Wallet.Date')}
-            </DataTable.Title>
-          </DataTable.Header>
-
-          {items.map((item, index) => (
-            <DataTable.Row
-              key={item.key}
-              style={
-                index % 2 === 0
-                  ? walletCss.evenRowIncome
-                  : isDark
-                  ? darkWallet.oddRow
-                  : walletCss.oddRow
-              }>
-              <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
-                {item.type}
-              </DataTable.Cell>
-              <DataTable.Cell
-                style={walletCss.cell}
-                textStyle={{color: isDark ? '#fff' : '#000'}}>
-                {item.income}
-              </DataTable.Cell>
-              <DataTable.Cell
-                style={walletCss.cell}
-                textStyle={{color: isDark ? '#fff' : '#000'}}>
-                {item.date}
-              </DataTable.Cell>
-            </DataTable.Row>
-          ))}
-        </DataTable>
-      </ScrollView>
-    </View>
-  );
-};
-
-const SecondRoute = () => {
-  const [items] = React.useState([
-    {
-      key: 1,
-      type: 'Cupcake',
-      income: 356,
-      date: '2021-01-01',
-    },
-    {
-      key: 2,
-      type: 'Eclair',
-      income: 262,
-      date: '2021-01-02',
-    },
-    {
-      key: 3,
-      type: 'Frozen yogurt',
-      income: 159,
-      date: '2021-01-03',
-    },
-    {
-      key: 4,
-      type: 'Gingerbread',
-      income: 305,
-      date: '2021-01-04',
-    },
-    {
-      key: 1,
-      type: 'Cupcake',
-      income: 356,
-      date: '2021-01-01',
-    },
-    {
-      key: 2,
-      type: 'Eclair',
-      income: 262,
-      date: '2021-01-02',
-    },
-    {
-      key: 3,
-      type: 'Frozen yogurt',
-      income: 159,
-      date: '2021-01-03',
-    },
-    {
-      key: 4,
-      type: 'Gingerbread',
-      income: 305,
-      date: '2021-01-04',
-    },
-    {
-      key: 1,
-      type: 'Cupcake',
-      income: 356,
-      date: '2021-01-01',
-    },
-    {
-      key: 2,
-      type: 'Eclair',
-      income: 262,
-      date: '2021-01-02',
-    },
-    {
-      key: 3,
-      type: 'Frozen yogurt',
-      income: 159,
-      date: '2021-01-03',
-    },
-    {
-      key: 4,
-      type: 'Gingerbread',
-      income: 305,
-      date: '2021-01-04',
-    },
-  ]);
-
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const savedTheme = await AsyncStorage.getItem('theme');
-      if (savedTheme) {
-        setIsDark(savedTheme === 'dark');
-      }
-    })();
-  }, []);
-
-  const [locale, setLocale] = React.useState(i18n.locale);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setLocale(i18n.locale);
-    }, []),
-  );
-
-  return (
-    <View style={isDark ? darkWallet.TabBackground : walletCss.TabBackground}>
-      <ScrollView>
-        <DataTable>
-          <DataTable.Header>
-            <DataTable.Title textStyle={{color: isDark ? '#fff' : '#000'}}>
-              {i18n.t('Wallet.Type')}
-            </DataTable.Title>
-            <DataTable.Title
-              style={walletCss.cell}
-              textStyle={{color: isDark ? '#fff' : '#000'}}>
-              {i18n.t('Wallet.Income')} (RM)
-            </DataTable.Title>
-            <DataTable.Title
-              style={walletCss.cell}
-              textStyle={{color: isDark ? '#fff' : '#000'}}>
-              {i18n.t('Wallet.Date')}
-            </DataTable.Title>
-          </DataTable.Header>
-
-          {items.map((item, index) => (
-            <DataTable.Row
-              key={item.key}
-              style={
-                index % 2 === 0
-                  ? walletCss.evenRowSpend
-                  : isDark
-                  ? darkWallet.oddRow
-                  : walletCss.oddRow
-              }>
-              <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
-                {item.type}
-              </DataTable.Cell>
-              <DataTable.Cell
-                style={walletCss.cell}
-                textStyle={{color: isDark ? '#fff' : '#000'}}>
-                {item.income}
-              </DataTable.Cell>
-              <DataTable.Cell
-                style={walletCss.cell}
-                textStyle={{color: isDark ? '#fff' : '#000'}}>
-                {item.date}
-              </DataTable.Cell>
-            </DataTable.Row>
-          ))}
-        </DataTable>
-      </ScrollView>
-    </View>
-  );
-};
-
-const renderScene = SceneMap({
-  first: FirstRoute,
-  second: SecondRoute,
-});
+import Toast from 'react-native-toast-message';
+import RNFetchBlob from 'rn-fetch-blob';
+import {UrlAccess} from '../objects/url';
 
 const Wallet = () => {
   const navigation = useNavigation();
@@ -343,29 +51,238 @@ const Wallet = () => {
       {...props}
       indicatorStyle={{backgroundColor: isDark ? '#fff' : '#000'}}
       inactiveColor="#999999"
-      style={{backgroundColor: isDark ? '#000' : '#fff'}}
+      style={{backgroundColor: isDark ? '#202020' : '#fff'}}
       activeColor={isDark ? '#fff' : '#000'}
     />
   );
 
   const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const savedTheme = await AsyncStorage.getItem('theme');
-      if (savedTheme) {
-        setIsDark(savedTheme === 'dark');
-      }
-    })();
-  }, []);
-
   const [locale, setLocale] = React.useState(i18n.locale);
+  const [loading, setLoading] = useState(false);
+  const [UserID, setUserId] = useState('');
+  const [Balance, setBalance] = useState(null);
+
+  const ErrorToast = (message: any) => {
+    Toast.show({
+      type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
+
+  const SuccessToast = (message: any) => {
+    Toast.show({
+      type: 'success',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
 
   useFocusEffect(
     React.useCallback(() => {
       setLocale(i18n.locale);
     }, []),
   );
+
+  const fetchData = async (UserID: any) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}Wallet/GetWallet?userID=${UserID}`,
+        {'Content-Type': 'application/json'},
+      );
+      const json = await response.json();
+
+      if (json.success) {
+        setBalance(json.walletData.balance.toFixed(2));
+      } else {
+        ErrorToast(i18n.t('SettingPage.Failed-Fetch-Data'));
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
+    }
+  };
+
+  useEffect(() => {
+    const initialize = async () => {
+      setLoading(true);
+
+      try {
+        const [savedTheme, storedUserID] = await Promise.all([
+          AsyncStorage.getItem('theme'),
+          AsyncStorage.getItem('UserID'),
+        ]);
+
+        if (savedTheme) {
+          setIsDark(savedTheme === 'dark');
+        }
+
+        if (storedUserID) {
+          setUserId(storedUserID);
+          await fetchData(storedUserID);
+        }
+      } catch (error) {
+        ErrorToast(i18n.t('SettingPage.Error-Initializing'));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initialize();
+  }, []);
+
+  const FirstRoute = () => {
+    const [items] = React.useState([
+      {
+        key: 1,
+        type: 'Cupcake',
+        income: 356,
+        date: '2021-01-01',
+      },
+      {
+        key: 2,
+        type: 'Eclair',
+        income: 262,
+        date: '2021-01-02',
+      },
+    ]);
+
+    return (
+      <View style={isDark ? darkWallet.TabBackground : walletCss.TabBackground}>
+        <ScrollView>
+          <DataTable>
+            <DataTable.Header>
+              <DataTable.Title textStyle={{color: isDark ? '#fff' : '#000'}}>
+                {i18n.t('Wallet.Type')}
+              </DataTable.Title>
+              <DataTable.Title
+                style={walletCss.cell}
+                textStyle={{color: isDark ? '#fff' : '#000'}}>
+                {i18n.t('Wallet.Income')} (RM)
+              </DataTable.Title>
+              <DataTable.Title
+                style={walletCss.cell}
+                textStyle={{color: isDark ? '#fff' : '#000'}}>
+                {i18n.t('Wallet.Date')}
+              </DataTable.Title>
+            </DataTable.Header>
+
+            {items.map((item, index) => (
+              <DataTable.Row
+                key={item.key}
+                style={
+                  index % 2 === 0
+                    ? walletCss.evenRowIncome
+                    : isDark
+                    ? darkWallet.oddRow
+                    : walletCss.oddRow
+                }>
+                <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
+                  {item.type}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={walletCss.cell}
+                  textStyle={{color: isDark ? '#fff' : '#000'}}>
+                  {item.income}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={walletCss.cell}
+                  textStyle={{color: isDark ? '#fff' : '#000'}}>
+                  {item.date}
+                </DataTable.Cell>
+              </DataTable.Row>
+            ))}
+          </DataTable>
+        </ScrollView>
+      </View>
+    );
+  };
+
+  const SecondRoute = () => {
+    const [items] = React.useState([
+      {
+        key: 1,
+        type: 'Cupcake',
+        income: 356,
+        date: '2021-01-01',
+      },
+      {
+        key: 2,
+        type: 'Eclair',
+        income: 262,
+        date: '2021-01-02',
+      },
+    ]);
+
+    return (
+      <View style={isDark ? darkWallet.TabBackground : walletCss.TabBackground}>
+        <ScrollView>
+          <DataTable>
+            <DataTable.Header>
+              <DataTable.Title textStyle={{color: isDark ? '#fff' : '#000'}}>
+                {i18n.t('Wallet.Type')}
+              </DataTable.Title>
+              <DataTable.Title
+                style={walletCss.cell}
+                textStyle={{color: isDark ? '#fff' : '#000'}}>
+                {i18n.t('Wallet.Income')} (RM)
+              </DataTable.Title>
+              <DataTable.Title
+                style={walletCss.cell}
+                textStyle={{color: isDark ? '#fff' : '#000'}}>
+                {i18n.t('Wallet.Date')}
+              </DataTable.Title>
+            </DataTable.Header>
+
+            {items.map((item, index) => (
+              <DataTable.Row
+                key={item.key}
+                style={
+                  index % 2 === 0
+                    ? walletCss.evenRowSpend
+                    : isDark
+                    ? darkWallet.oddRow
+                    : walletCss.oddRow
+                }>
+                <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
+                  {item.type}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={walletCss.cell}
+                  textStyle={{color: isDark ? '#fff' : '#000'}}>
+                  {item.income}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={walletCss.cell}
+                  textStyle={{color: isDark ? '#fff' : '#000'}}>
+                  {item.date}
+                </DataTable.Cell>
+              </DataTable.Row>
+            ))}
+          </DataTable>
+        </ScrollView>
+      </View>
+    );
+  };
+
+  const renderScene = SceneMap({
+    first: FirstRoute,
+    second: SecondRoute,
+  });
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: isDark ? '#000' : '#fff',
+        }}>
+        <ActivityIndicator size="large" color={isDark ? '#fff' : '#000'} />
+      </View>
+    );
+  }
 
   return (
     <MainContainer>
@@ -400,7 +317,7 @@ const Wallet = () => {
             <Text style={walletCss.balanceText}>
               {i18n.t('Wallet.Balance')}
             </Text>
-            <Text style={walletCss.balance}>RM 100.00</Text>
+            <Text style={walletCss.balance}>RM {Balance}</Text>
             <View
               style={
                 isDark

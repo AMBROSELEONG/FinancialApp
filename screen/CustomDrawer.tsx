@@ -11,7 +11,14 @@ import {
   useFocusEffect,
 } from '@react-navigation/native';
 import React, {useCallback, useEffect, useState} from 'react';
-import {Dimensions, Image, Text, View, BackHandler} from 'react-native';
+import {
+  Dimensions,
+  Image,
+  Text,
+  View,
+  BackHandler,
+  ActivityIndicator,
+} from 'react-native';
 import {customCss} from '../objects/commonCss';
 import Setting from './Setting';
 import CustomBottomTabNavigator from './BottomNavigation';
@@ -20,12 +27,12 @@ import i18n from '../language/language';
 import {darkCustom} from '../objects/darkCss';
 
 const Drawer = createDrawerNavigator();
-const STORAGE_KEY = '@app_language';
 
 function CustomDrawerContent(props: any) {
   const navigation = useNavigation();
   const [loggedOut, setLoggedOut] = React.useState(false);
   const [locale, setLocale] = React.useState(i18n.locale);
+  const [loading, setLoading] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -48,15 +55,29 @@ function CustomDrawerContent(props: any) {
 
   const [isDark, setIsDark] = useState(false);
 
-  useEffect(() => {
-    (async () => {
+  const loadTheme = async () => {
+    try {
       const savedTheme = await AsyncStorage.getItem('theme');
       if (savedTheme) {
         setIsDark(savedTheme === 'dark');
       }
-    })();
-  }, []);
+    } catch (error) {
+      console.error('Failed to load theme', error);
+    }
+  };
 
+  const initialize = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([loadTheme()]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    initialize();
+  }, []);
   return (
     <View
       style={{
@@ -128,14 +149,30 @@ export function CustomDrawer() {
   );
 
   const [isDark, setIsDark] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    (async () => {
+  const loadTheme = async () => {
+    try {
       const savedTheme = await AsyncStorage.getItem('theme');
       if (savedTheme) {
         setIsDark(savedTheme === 'dark');
       }
-    })();
+    } catch (error) {
+      console.error('Failed to load theme', error);
+    }
+  };
+
+  const initialize = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([loadTheme()]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    initialize();
   }, []);
 
   return (

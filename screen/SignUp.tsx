@@ -8,7 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Dimensions,
-  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import MainContainer from '../components/MainContainer';
 import {SignInCss} from '../objects/commonCss';
@@ -25,29 +25,61 @@ import {darkSignIn} from '../objects/darkCss';
 
 const SignUp = () => {
   const navigation = useNavigation();
-
   const [locale, setLocale] = React.useState(i18n.locale);
+  const [Username, setUsername] = useState('');
+  const [Email, setEmail] = useState('');
+  const [Password, setPassword] = useState('');
+  const [ConfirmPassword, setConfirmPassword] = useState('');
+  const [usernameError, setUsernameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [hidePass, setHidePass] = useState(true);
+  const [UserNameDuplication, setUserNameDuplication] = useState(false);
+  const [EmailDuplication, setEmailDuplication] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setLocale(i18n.locale);
-    }, []),
-  );
+  const ErrorToast = (message: any) => {
+    Toast.show({
+      type: 'error',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
+
+  const SuccessToast = (message: any) => {
+    Toast.show({
+      type: 'success',
+      text1: message,
+      visibilityTime: 3000,
+    });
+  };
 
   const theme = {
-    roundness: 20, // Set the border radius here
+    roundness: 20,
     colors: {
-      primary: '#000', // Active outline color
-      outline: '#808080', // Outline color
+      primary: '#000',
+      outline: '#808080',
     },
   };
 
   const darkTheme = {
-    roundness: 20, // Set the border radius here
+    roundness: 20,
     colors: {
-      primary: '#3490DE', // Active outline color
-      outline: '#808080', // Outline color
+      primary: '#3490DE',
+      outline: '#808080',
     },
+  };
+
+  const checkEmailFormat = (Email: any) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(Email);
+  };
+
+  const checkPasswordFormat = (Password: any) => {
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
+    return passwordRegex.test(Password);
   };
 
   const Anim = useRef(new Animated.Value(100)).current;
@@ -58,13 +90,28 @@ const SignUp = () => {
   const Anim5 = useRef(new Animated.Value(150)).current;
   const Anim6 = useRef(new Animated.Value(160)).current;
 
-  useEffect(() => {
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocale(i18n.locale);
+    }, []),
+  );
+
+  const loadTheme = async () => {
+    try {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('Fail-Load-Theme'));
+    }
+  };
+
+  const initialize = async () => {
+    setLoading(true);
+    await Promise.all([loadTheme()]);
     Animated.parallel([
-      Animated.timing(Anim, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: true,
-      }),
+      Animated.timing(Anim, {toValue: 0, duration: 500, useNativeDriver: true}),
       Animated.timing(Anim1, {
         toValue: 0,
         duration: 550,
@@ -95,76 +142,42 @@ const SignUp = () => {
         duration: 800,
         useNativeDriver: true,
       }),
-    ]).start();
-  }, [Anim, Anim1, Anim2, Anim3, Anim4, Anim5, Anim6]);
-
-  const [Username, setUsername] = useState('');
-  const [Email, setEmail] = useState('');
-  const [Password, setPassword] = useState('');
-  const [ConfirmPassword, setConfirmPassword] = useState('');
-  const [usernameError, setUsernameError] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [hidePass, setHidePass] = useState(true);
-  const [UserNameDuplication, setUserNameDuplication] = useState(false);
-  const [EmailDuplication, setEmailDuplication] = useState(false);
-
-  const checkEmailFormat = (Email: any) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(Email);
+    ]).start(() => {
+      setLoading(false);
+    });
   };
 
-  const checkPasswordFormat = (Password: any) => {
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
-    return passwordRegex.test(Password);
-  };
+  useEffect(() => {
+    initialize();
+  }, []);
 
-  const checkUserNameDuplication = (Username: any) => {
+  const checkUserNameDuplication = async (Username: any) => {
     try {
-      RNFetchBlob.config({trusty: true})
-        .fetch(
-          'POST',
-          UrlAccess.Url + 'User/CheckUserName',
-          {'Content-Type': 'application/json'},
-          JSON.stringify({
-            userName: Username,
-          }),
-        )
-        .then(response => response.json())
-        .then(json => {
-          if (json && json.success) {
-            setUserNameDuplication(true);
-          } else {
-            setUserNameDuplication(false);
-          }
-        });
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'POST',
+        `${UrlAccess.Url}User/CheckUserName`,
+        {'Content-Type': 'application/json'},
+        JSON.stringify({userName: Username}),
+      );
+      const json = await response.json();
+      setUserNameDuplication(json.success);
     } catch (error) {
-      return error;
+      ErrorToast(i18n.t('Fail-Load-Data'));
     }
   };
 
-  const checkEmailDuplication = (Email: any) => {
+  const checkEmailDuplication = async (Email: any) => {
     try {
-      RNFetchBlob.config({trusty: true})
-        .fetch(
-          'POST',
-          UrlAccess.Url + 'User/CheckEmail',
-          {'Content-Type': 'application/json'},
-          JSON.stringify({
-            email: Email,
-          }),
-        )
-        .then(response => response.json())
-        .then(json => {
-          if (json && json.success) {
-            setEmailDuplication(true);
-          } else {
-            setEmailDuplication(false);
-          }
-        });
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'POST',
+        `${UrlAccess.Url}User/CheckEmail`,
+        {'Content-Type': 'application/json'},
+        JSON.stringify({email: Email}),
+      );
+      const json = await response.json();
+      setEmailDuplication(json.success);
     } catch (error) {
-      return error;
+      ErrorToast(i18n.t('Fail-Load-Data'));
     }
   };
 
@@ -178,79 +191,87 @@ const SignUp = () => {
   }, [Username, Email]);
 
   const Verify = async () => {
-    let valid = true;
+    setLoading(true);
+    try {
+      let valid = true;
 
-    if (Username.trim() === '') {
-      setUsernameError(i18n.t('SignUp.Username-Empty'));
-      valid = false;
-    } else {
-      if (UserNameDuplication === false) {
-        setUsernameError(i18n.t('SignUp.Username-Duplication'));
+      if (Username.trim() === '') {
+        setUsernameError(i18n.t('SignUp.Username-Empty'));
         valid = false;
       } else {
-        setUsernameError('');
+        if (UserNameDuplication === false) {
+          setUsernameError(i18n.t('SignUp.Username-Duplication'));
+          valid = false;
+        } else {
+          setUsernameError('');
+        }
       }
-    }
 
-    if (Email.trim() === '') {
-      setEmailError(i18n.t('SignUp.Email-Empty'));
-      valid = false;
-    } else if (!checkEmailFormat(Email)) {
-      setEmailError(i18n.t('SignUp.Email-Format'));
-      valid = false;
-    } else {
-      if (EmailDuplication === false) {
-        setEmailError(i18n.t('SignUp.Email-Duplication'));
+      if (Email.trim() === '') {
+        setEmailError(i18n.t('SignUp.Email-Empty'));
+        valid = false;
+      } else if (!checkEmailFormat(Email)) {
+        setEmailError(i18n.t('SignUp.Email-Format'));
         valid = false;
       } else {
-        setEmailError('');
+        if (EmailDuplication === false) {
+          setEmailError(i18n.t('SignUp.Email-Duplication'));
+          valid = false;
+        } else {
+          setEmailError('');
+        }
       }
-    }
 
-    if (Password.trim() === '') {
-      setPasswordError(i18n.t('SignUp.Password-Empty'));
-      valid = false;
-    } else if (!checkPasswordFormat(Password)) {
-      setPasswordError(i18n.t('SignUp.Password-Format'));
-      valid = false;
-    } else if (Password !== ConfirmPassword) {
-      setPasswordError(i18n.t('SignUp.Password-Match'));
-      valid = false;
-    } else {
-      setPasswordError('');
-    }
-
-    if (valid) {
-      AsyncStorage.setItem('Email', Email);
-      AsyncStorage.setItem('UserName', Username);
-      AsyncStorage.setItem('Password', Password);
-      try {
-        RNFetchBlob.config({trusty: true}).fetch(
-          'POST',
-          UrlAccess.Url + 'OTP/SendOTP',
-          {'Content-Type': 'application/json'},
-          JSON.stringify({
-            email: Email,
-          }),
-        );
-        Alert.prompt(i18n.t('SignUp.Send-OTP-Successful'));
-        navigation.navigate(Verify as never);
-      } catch (error) {
-        Alert.prompt(i18n.t('SignUp.Send-OTP-Unsuccessful'));
+      if (Password.trim() === '') {
+        setPasswordError(i18n.t('SignUp.Password-Empty'));
+        valid = false;
+      } else if (!checkPasswordFormat(Password)) {
+        setPasswordError(i18n.t('SignUp.Password-Format'));
+        valid = false;
+      } else if (Password !== ConfirmPassword) {
+        setPasswordError(i18n.t('SignUp.Password-Match'));
+        valid = false;
+      } else {
+        setPasswordError('');
       }
+
+      if (valid) {
+        await AsyncStorage.multiSet([
+          ['Email', Email],
+          ['UserName', Username],
+          ['Password', Password],
+        ]);
+        try {
+          await RNFetchBlob.config({trusty: true}).fetch(
+            'POST',
+            `${UrlAccess.Url}OTP/SendOTP`,
+            {'Content-Type': 'application/json'},
+            JSON.stringify({email: Email}),
+          );
+          SuccessToast(i18n.t('SignUp.Send-OTP-Successful'));
+          navigation.navigate(Verify as never);
+        } catch (error) {
+          ErrorToast(i18n.t('SignUp.Send-OTP-Unsuccessful'));
+        }
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const savedTheme = await AsyncStorage.getItem('theme');
-      if (savedTheme) {
-        setIsDark(savedTheme === 'dark');
-      }
-    })();
-  }, []);
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: isDark ? '#000' : '#fff',
+        }}>
+        <ActivityIndicator size="large" color={isDark ? '#fff' : '#000'} />
+      </View>
+    );
+  }
 
   return (
     <MainContainer>
@@ -284,6 +305,7 @@ const SignUp = () => {
               theme={isDark ? darkTheme : theme}
               onChangeText={text => setUsername(text)}
               textColor={isDark ? '#fff' : '#000'}
+              value={Username}
             />
             {usernameError !== '' && (
               <HelperText type="error" style={SignInCss.InputError}>
@@ -301,6 +323,7 @@ const SignUp = () => {
               theme={isDark ? darkTheme : theme}
               onChangeText={text => setEmail(text)}
               textColor={isDark ? '#fff' : '#000'}
+              value={Email}
             />
             {emailError !== '' && (
               <HelperText type="error" style={SignInCss.InputError}>
@@ -320,6 +343,7 @@ const SignUp = () => {
               autoCapitalize="none"
               secureTextEntry={hidePass ? true : false}
               textColor={isDark ? '#fff' : '#000'}
+              value={Password}
               right={
                 <TextInput.Icon
                   icon={hidePass ? 'eye-off' : 'eye'}
