@@ -79,17 +79,6 @@ const UserEdit = () => {
     }, []),
   );
 
-  const fetchUsername = async () => {
-    try {
-      const storedUserID = await AsyncStorage.getItem('UserID');
-      if (storedUserID !== null) {
-        setUserId(storedUserID);
-      }
-    } catch (error) {
-      ErrorToast(i18n.t('SettingPage.Failed-Load-Username'));
-    }
-  };
-
   const fetchData = async (userId: any) => {
     try {
       const response = await RNFetchBlob.config({trusty: true}).fetch(

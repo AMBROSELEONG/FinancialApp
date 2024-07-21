@@ -5,7 +5,6 @@
   "Fail-Load-Data": "加载数据失败",
   "Fail-Load-UserID": "加载用户ID失败",
   "Fail-Load-Token": "加载令牌失败",
-
   "LanguagePage": {
     "Change-Language": "更改语言",
     "Language-Update": "语言更新",
@@ -177,8 +176,8 @@
     "Welcome-Back": "欢迎回来",
     "Spending": "过去7天的支出",
     "Total-Spending": "今天的总支出",
-    "Increase": "过去7天的增长",
-    "Total-Increase": "今天的总增长",
+    "Increase": "过去7天的收入",
+    "Total-Increase": "今天的总收入",
     "Fail-Create-Data": "创建数据失败"
   },
   "ThemeChange": {
@@ -205,7 +204,13 @@
     "Bank": "选择银行",
     "Bank-Placeholder": "选择银行",
     "Date": "日期",
-    "Save": "保存"
+    "Save": "保存",
+    "Type-Empty": "收入类型不能为空",
+    "Bank-Empty": "银行不能为空",
+    "Success": "添加收入成功",
+    "Fail": "添加收入失败",
+    "Alert": "发生错误",
+    "Alert-Text": "您从银行转入钱包的总金额大于银行现有余额。因此，银行没有足够的余额转入您的钱包。请仔细确认您的收入。"
   },
   "WalletSpend": {
     "Spend": "支出",
@@ -218,7 +223,11 @@
     "Bank": "选择银行",
     "Bank-Placeholder": "选择银行",
     "Date": "日期",
-    "Save": "保存"
+    "Save": "保存",
+    "Type-Empty": "花费类型不能为空",
+    "Success": "添加花费成功",
+    "Fail": "添加花费失败",
+    "Total-Exceeds-Balance": "总金额超过可用余额"
   },
   "Ewallet": {
     "Ewallet": "电子钱包"
@@ -236,12 +245,55 @@
     "Add-Bank-Placeholder": "选择银行",
     "Initial-Balance": "初始余额",
     "Initial-Balance-Placeholder": "请输入您的初始余额",
-    "Save": "保存"
+    "Save": "保存",
+    "AddSuccess": "添加银行成功",
+    "AddFailed": "添加银行失败",
+    "Total-Empty": "总额不能为空",
+    "Total-Invalid": "总额无效",
+    "Bank-Empty": "请选择银行",
+    "Delete-Bank-Success": "删除银行成功",
+    "Delete-Bank-Failed": "删除银行失败",
+    "Warning": "警告",
+    "Alert": "此操作无法撤销。您确定要删除此银行账户吗？"
   },
   "BankIncome": {
     "Fill": "填写银行收入"
   },
   "BankSpend": {
     "Fill": "填写银行支出"
+  },
+  "IncomeType": {
+    "Type1": "工资/薪水",
+    "Type2": "奖金",
+    "Type3": "投资收入",
+    "Type4": "利息收入",
+    "Type5": "租金收入",
+    "Type6": "自雇收入",
+    "Type7": "礼物",
+    "Type8": "银行转账",
+    "Type9": "其他收入",
+    "Type10": "钱包收入",
+    "Type11": "电子钱包收入"
+  },
+  "SpendType": {
+    "Type1": "住房",
+    "Type2": "交通",
+    "Type3": "食物",
+    "Type4": "公用事业",
+    "Type5": "保险",
+    "Type6": "医疗保健",
+    "Type7": "娱乐",
+    "Type8": "个人护理",
+    "Type9": "教育",
+    "Type10": "债务还款",
+    "Type11": "储蓄",
+    "Type12": "存入银行",
+    "Type13": "其他支出",
+    "Type14": "钱包转入",
+    "Type15": "电子钱包转入"
+  },
+  "BankDetail": {
+    "Total": "银行总余额",
+    "Bank-List": "银行列表"
   }
 }

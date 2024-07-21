@@ -84,7 +84,7 @@ export const SignInCss = StyleSheet.create({
     width: '80%',
     alignSelf: 'center',
     borderRadius: 20,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   InputError: {
     width: '80%',
@@ -321,80 +321,115 @@ export const customCss = StyleSheet.create({
 });
 
 export const homeCss = StyleSheet.create({
-  container: {
-    flex: 1,
+  linear: {
     flexDirection: 'column',
-    backgroundColor: '#fff',
+    paddingBottom: 67,
   },
-  welcome: {
-    color: '#000',
-    fontWeight: 'bold',
-    fontSize: 20,
-    marginLeft: (Dimensions.get('screen').width / 100) * 6,
-  },
-  user: {
-    color: '#3490DE',
-    fontWeight: 'bold',
-    fontSize: 26,
-    marginLeft: (Dimensions.get('screen').width / 100) * 6,
-  },
-  dateContainer: {
-    width: (Dimensions.get('screen').width / 100) * 60,
-    height: (Dimensions.get('screen').width / 100) * 10,
-    borderRadius: 30,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    elevation: 5,
-    backgroundColor: '#fff',
-    alignSelf: 'center',
-    marginTop: 20,
-  },
-  date: {
-    color: '#8D8D8D',
+  welcomeText: {
     fontSize: 18,
-    textAlign: 'center',
-    lineHeight: (Dimensions.get('screen').width / 100) * 10,
+    color: '#fff',
     fontWeight: 'bold',
+    marginLeft: 22,
   },
-  spendContainer: {
-    width: (Dimensions.get('screen').width / 100) * 95,
-    height: (Dimensions.get('screen').width / 100) * 90,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    elevation: 5,
-    alignSelf: 'center',
-    marginTop: 20,
-    padding: 5,
-  },
-  spend: {
-    color: '#000',
-    textAlign: 'center',
+  userText: {
+    fontSize: 30,
+    color: '#fff',
     fontWeight: 'bold',
-    fontSize: 15,
+    marginLeft: 22,
   },
-  chartContainer: {
+  Image: {
+    position: 'absolute',
+    bottom: 30,
+    right: 20,
+  },
+  lowerContainer: {
+    position: 'absolute',
     width: '100%',
-    marginTop: 10,
+    height: (Dimensions.get('screen').height / 100) * 65,
+    bottom: 0,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    padding: 25,
   },
-  xAxisLabel: {
-    color: '#000',
-  },
-  totalText: {
-    color: '#000',
-    fontSize: 16,
+  title: {
+    fontSize: 18,
     fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 10,
+    marginBottom: 20,
   },
-  total: {
-    color: '#3490DE',
-    textAlign: 'center',
-    fontSize: 25,
+  overviewContainer: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  overviewBox: {
+    flex: 1,
+    height: (Dimensions.get('screen').height / 100) * 18,
+    borderRadius: 30,
+    position: 'relative',
+    padding: 15,
+    marginBottom: 20,
+  },
+  overviewText: {
+    fontSize: 14,
+  },
+  overviewBalance: {
+    fontSize: 20,
     fontWeight: 'bold',
-    marginTop: 10,
+  },
+  imageIcon: {
+    width: 50,
+    height: 50,
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+  },
+  balanceContainer: {
+    flex: 1,
+    height: (Dimensions.get('screen').height / 100) * 17,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    padding: 15,
+    paddingHorizontal: 30,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+  },
+  circle: {
+    width: 60,
+    height: 60,
+    borderRadius: 50,
+    justifyContent: 'center',
+  },
+  imageHome: {
+    width: 30,
+    height: 30,
+    alignSelf: 'center',
+  },
+  balanceText: {
+    fontSize: 14,
+    color: '#999999',
+    textAlign: 'center',
+    marginTop: 5,
+  },
+  balance: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  progressContainer: {
+    flexDirection: 'row',
+    height: 10,
+    width: '100%',
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginBottom: 20,
+    width: '100%'
+  },
+  progressItem: {
+    height: '100%',
+  },
+  barContainer: {
+    flex: 1,
+    padding: 10,
+    borderRadius: 10,
+    marginBottom: 20
   },
 });
 
@@ -560,7 +595,7 @@ export const userEditCss = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
     marginTop: (Dimensions.get('screen').height / 100) * 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   Button: {
     width: (Dimensions.get('screen').width / 100) * 80,
@@ -803,9 +838,72 @@ export const bankCss = StyleSheet.create({
   },
   listContainer: {
     width: '95%',
-    height: (Dimensions.get('screen').width / 100) * 20,
+    flexDirection: 'row',
+    padding: 10,
+    marginVertical: 5,
+  },
+  bank: {
+    color: '#000',
+    fontSize: 16,
+  },
+  balance: {
+    color: '#000',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  percent: {
+    color: '#999999',
+    fontSize: 16,
+  },
+  upperContainer: {
+    width: '90%',
+    height: (Dimensions.get('screen').height / 100) * 20,
+    marginVertical: '2%',
+    marginHorizontal: '5%',
+    borderRadius: 30,
+    flexDirection: 'row',
+    padding: 20,
+    paddingVertical: (Dimensions.get('screen').height / 100) * 5,
+  },
+  leftContent: {
+    flex: 5,
+  },
+  rightContent: {
+    flex: 1,
+  },
+  TotalBalance: {
+    fontSize: 14,
+    color: '#fff',
+  },
+  Balance: {
+    fontSize: 28,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  ProgressBar: {
+    width: '90%',
+    backgroundColor: '#4299BE',
+    borderRadius: 10,
+    height: (Dimensions.get('screen').width / 100) * 2,
+    marginVertical: '5%',
+  },
+  Image: {
+    width: (Dimensions.get('screen').width / 100) * 8,
+    height: (Dimensions.get('screen').width / 100) * 8,
+    marginVertical: (Dimensions.get('screen').width / 100) * 2,
+  },
+  List: {
+    color: '#999999',
+    marginLeft: '5%',
+    marginTop: '5%',
+  },
+  bottomContainer: {
+    width: '90%',
+    height: (Dimensions.get('screen').height / 100) * 40,
+    marginVertical: '2%',
+    marginHorizontal: '5%',
+    borderRadius: 10,
     backgroundColor: '#fff',
-    alignSelf: 'center',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -814,22 +912,9 @@ export const bankCss = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 10,
-    marginVertical: 10,
-    flexDirection: 'row',
-    paddingHorizontal: 30,
   },
-  bank: {
-    color: '#000',
-    fontSize: 20,
-    flex: 1,
-    fontWeight: 'bold',
-    lineHeight: (Dimensions.get('screen').width / 100) * 20,
-  },
-  balance: {
-    color: '#3490DE',
-    fontSize: 20,
-    flex: 1,
-    fontWeight: 'bold',
-    lineHeight: (Dimensions.get('screen').width / 100) * 20,
+  BankImage: {
+    width: (Dimensions.get('screen').width / 100) * 10,
+    height: (Dimensions.get('screen').width / 100) * 10,
   },
 });

@@ -15,7 +15,6 @@ import {
   Image,
   useWindowDimensions,
   ActivityIndicator,
-  Dimensions,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {css, walletCss} from '../objects/commonCss';
@@ -30,6 +29,24 @@ import Toast from 'react-native-toast-message';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
 import {darkWallet} from '../objects/darkCss';
+
+interface EwalletIncomeType {
+  ewalletIncomeID: number;
+  ewalletID: number;
+  userID: number;
+  amount: number;
+  type: string;
+  date: string;
+}
+
+interface EwalletSpendType {
+  ewalletSpendID: number;
+  ewalletID: number;
+  userID: number;
+  amount: number;
+  type: string;
+  date: string;
+}
 
 const Ewallet = () => {
   const navigation = useNavigation();
@@ -58,9 +75,12 @@ const Ewallet = () => {
 
   const [isDark, setIsDark] = useState(false);
   const [locale, setLocale] = React.useState(i18n.locale);
+  const [loading, setLoading] = useState(false);
   const [UserID, setUserId] = useState('');
   const [Balance, setBalance] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [WalletID, setWalletID] = useState(null);
+  const [items, setItems] = useState<EwalletIncomeType[]>([]);
+  const [spendItems, setSpendItems] = useState<EwalletSpendType[]>([]);
 
   const ErrorToast = (message: any) => {
     Toast.show({
@@ -81,6 +101,7 @@ const Ewallet = () => {
   useFocusEffect(
     React.useCallback(() => {
       setLocale(i18n.locale);
+      initialize();
     }, []),
   );
 
@@ -92,9 +113,12 @@ const Ewallet = () => {
         {'Content-Type': 'application/json'},
       );
       const json = await response.json();
-
       if (json.success) {
         setBalance(json.ewalletData.balance.toFixed(2));
+        AsyncStorage.setItem(
+          'EwalletID',
+          json.ewalletData.ewalletID.toString(),
+        );
       } else {
         ErrorToast(i18n.t('SettingPage.Failed-Fetch-Data'));
       }
@@ -103,50 +127,93 @@ const Ewallet = () => {
     }
   };
 
-  useEffect(() => {
-    const initialize = async () => {
-      setLoading(true);
+  const fetchIncome = async (UserID: any) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}EwalletIncome/GetIncome?userId=${UserID}`,
+        {'Content-Type': 'application/json'},
+      );
+      const json = await response.json();
+      setItems(json.data);
+    } catch (error) {
+      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
+    }
+  };
 
-      try {
-        const [savedTheme, storedUserID] = await Promise.all([
-          AsyncStorage.getItem('theme'),
-          AsyncStorage.getItem('UserID'),
-        ]);
+  const fetchSpend = async (UserID: any) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}EwalletSpend/GetSpend?userId=${UserID}`,
+        {'Content-Type': 'application/json'},
+      );
+      const json = await response.json();
+      setSpendItems(json.data);
+    } catch (error) {
+      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
+    }
+  };
 
-        if (savedTheme) {
-          setIsDark(savedTheme === 'dark');
-        }
+  const initialize = async () => {
+    setLoading(true);
 
-        if (storedUserID) {
-          setUserId(storedUserID);
-          await fetchData(storedUserID);
-        }
-      } catch (error) {
-        ErrorToast(i18n.t('SettingPage.Error-Initializing'));
-      } finally {
-        setLoading(false);
+    try {
+      const [savedTheme, storedUserID] = await Promise.all([
+        AsyncStorage.getItem('theme'),
+        AsyncStorage.getItem('UserID'),
+      ]);
+
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
       }
-    };
 
+      if (storedUserID) {
+        setUserId(storedUserID);
+        await fetchData(storedUserID);
+        await fetchIncome(storedUserID);
+        await fetchSpend(storedUserID);
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('SettingPage.Error-Initializing'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     initialize();
   }, []);
 
-  const FirstRoute = () => {
-    const [items] = React.useState([
-      {
-        key: 1,
-        type: 'Cupcake',
-        income: 356,
-        date: '2021-01-01',
-      },
-      {
-        key: 2,
-        type: 'Eclair',
-        income: 262,
-        date: '2021-01-02',
-      },
-    ]);
+  const typeMap: Record<string, string> = {
+    '1': i18n.t('IncomeType.Type1'),
+    '2': i18n.t('IncomeType.Type2'),
+    '3': i18n.t('IncomeType.Type3'),
+    '4': i18n.t('IncomeType.Type4'),
+    '5': i18n.t('IncomeType.Type5'),
+    '6': i18n.t('IncomeType.Type6'),
+    '7': i18n.t('IncomeType.Type7'),
+    '8': i18n.t('IncomeType.Type8'),
+    '9': i18n.t('IncomeType.Type9'),
+  };
 
+  const typeMapSpend: Record<string, string> = {
+    '1': i18n.t('SpendType.Type1'),
+    '2': i18n.t('SpendType.Type2'),
+    '3': i18n.t('SpendType.Type3'),
+    '4': i18n.t('SpendType.Type4'),
+    '5': i18n.t('SpendType.Type5'),
+    '6': i18n.t('SpendType.Type6'),
+    '7': i18n.t('SpendType.Type7'),
+    '8': i18n.t('SpendType.Type8'),
+    '9': i18n.t('SpendType.Type9'),
+    '10': i18n.t('SpendType.Type10'),
+    '11': i18n.t('SpendType.Type11'),
+    '12': i18n.t('SpendType.Type12'),
+    '13': i18n.t('SpendType.Type13'),
+  };
+
+  const FirstRoute = () => {
     return (
       <View style={isDark ? darkWallet.TabBackground : walletCss.TabBackground}>
         <ScrollView>
@@ -167,31 +234,39 @@ const Ewallet = () => {
               </DataTable.Title>
             </DataTable.Header>
 
-            {items.map((item, index) => (
-              <DataTable.Row
-                key={item.key}
-                style={
-                  index % 2 === 0
-                    ? walletCss.evenRowIncome
-                    : isDark
-                    ? darkWallet.oddRow
-                    : walletCss.oddRow
-                }>
+            {items && items.length > 0 ? (
+              items.map((item, index) => (
+                <DataTable.Row
+                  key={item.ewalletIncomeID}
+                  style={
+                    index % 2 === 0
+                      ? walletCss.evenRowIncome
+                      : isDark
+                      ? darkWallet.oddRow
+                      : walletCss.oddRow
+                  }>
+                  <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
+                    {typeMap[item.type] || item.type}
+                  </DataTable.Cell>
+                  <DataTable.Cell
+                    style={walletCss.cell}
+                    textStyle={{color: isDark ? '#fff' : '#000'}}>
+                    {item.amount.toFixed(2)}
+                  </DataTable.Cell>
+                  <DataTable.Cell
+                    style={walletCss.cell}
+                    textStyle={{color: isDark ? '#fff' : '#000'}}>
+                    {item.date}
+                  </DataTable.Cell>
+                </DataTable.Row>
+              ))
+            ) : (
+              <DataTable.Row>
                 <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
-                  {item.type}
-                </DataTable.Cell>
-                <DataTable.Cell
-                  style={walletCss.cell}
-                  textStyle={{color: isDark ? '#fff' : '#000'}}>
-                  {item.income}
-                </DataTable.Cell>
-                <DataTable.Cell
-                  style={walletCss.cell}
-                  textStyle={{color: isDark ? '#fff' : '#000'}}>
-                  {item.date}
+                  No data available
                 </DataTable.Cell>
               </DataTable.Row>
-            ))}
+            )}
           </DataTable>
         </ScrollView>
       </View>
@@ -199,21 +274,6 @@ const Ewallet = () => {
   };
 
   const SecondRoute = () => {
-    const [items] = React.useState([
-      {
-        key: 1,
-        type: 'Cupcake',
-        income: 356,
-        date: '2021-01-01',
-      },
-      {
-        key: 2,
-        type: 'Eclair',
-        income: 262,
-        date: '2021-01-02',
-      },
-    ]);
-
     return (
       <View style={isDark ? darkWallet.TabBackground : walletCss.TabBackground}>
         <ScrollView>
@@ -234,31 +294,39 @@ const Ewallet = () => {
               </DataTable.Title>
             </DataTable.Header>
 
-            {items.map((item, index) => (
-              <DataTable.Row
-                key={item.key}
-                style={
-                  index % 2 === 0
-                    ? walletCss.evenRowSpend
-                    : isDark
-                    ? darkWallet.oddRow
-                    : walletCss.oddRow
-                }>
+            {spendItems && spendItems.length > 0 ? (
+              spendItems.map((spendItems, index) => (
+                <DataTable.Row
+                  key={spendItems.ewalletSpendID}
+                  style={
+                    index % 2 === 0
+                      ? walletCss.evenRowSpend
+                      : isDark
+                      ? darkWallet.oddRow
+                      : walletCss.oddRow
+                  }>
+                  <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
+                    {typeMapSpend[spendItems.type] || spendItems.type}
+                  </DataTable.Cell>
+                  <DataTable.Cell
+                    style={walletCss.cell}
+                    textStyle={{color: isDark ? '#fff' : '#000'}}>
+                    {spendItems.amount.toFixed(2)}
+                  </DataTable.Cell>
+                  <DataTable.Cell
+                    style={walletCss.cell}
+                    textStyle={{color: isDark ? '#fff' : '#000'}}>
+                    {spendItems.date}
+                  </DataTable.Cell>
+                </DataTable.Row>
+              ))
+            ) : (
+              <DataTable.Row>
                 <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
-                  {item.type}
-                </DataTable.Cell>
-                <DataTable.Cell
-                  style={walletCss.cell}
-                  textStyle={{color: isDark ? '#fff' : '#000'}}>
-                  {item.income}
-                </DataTable.Cell>
-                <DataTable.Cell
-                  style={walletCss.cell}
-                  textStyle={{color: isDark ? '#fff' : '#000'}}>
-                  {item.date}
+                  No data available
                 </DataTable.Cell>
               </DataTable.Row>
-            ))}
+            )}
           </DataTable>
         </ScrollView>
       </View>
@@ -307,7 +375,9 @@ const Ewallet = () => {
             <Ionicons name="menu" size={30} color={'#fff'} />
           </TouchableOpacity>
           <View style={css.HeaderView}>
-            <Text style={[css.PageName, {color: '#fff'}]}>{i18n.t('Ewallet.Ewallet')}</Text>
+            <Text style={[css.PageName, {color: '#fff'}]}>
+              {i18n.t('Ewallet.Ewallet')}
+            </Text>
           </View>
         </View>
         <View style={walletCss.container}>

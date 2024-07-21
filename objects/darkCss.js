@@ -418,9 +418,11 @@ export const darkBank = StyleSheet.create({
   },
   bank: {
     color: '#fff',
+    fontSize: 16,
+  },
+  balance: {
+    color: '#fff',
     fontSize: 20,
-    flex: 1,
     fontWeight: 'bold',
-    lineHeight: (Dimensions.get('screen').width / 100) * 20,
   },
 });

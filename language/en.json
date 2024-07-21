@@ -204,7 +204,13 @@
     "Bank": "Select Bank",
     "Bank-Placeholder": "Select the Bank",
     "Date": "Date",
-    "Save": "Save"
+    "Save": "Save",
+    "Type-Empty": "Income Type cannot be empty",
+    "Bank-Empty": "Bank cannot be empty",
+    "Success": "Add Income Successful",
+    "Fail": "Add Income Failed",
+    "Alert": "An Error Occurred",
+    "Alert-Text": "The total amount you transferred from the bank to your wallet is greater than the existing balance in the bank. As a result, the bank does not have enough balance to transfer to your wallet. Please confirm your income carefully."
   },
   "WalletSpend": {
     "Spend": "SPEND",
@@ -217,7 +223,11 @@
     "Bank": "Select Bank",
     "Bank-Placeholder": "Select the Bank",
     "Date": "Date",
-    "Save": "Save"
+    "Save": "Save",
+    "Type-Empty": "Spend Type cannot be empty",
+    "Success": "Add Spend Successful",
+    "Fail": "Add Spend Failed",
+    "Total-Exceeds-Balance": "Total exceeds available balance"
   },
   "Ewallet": {
     "Ewallet": "E-Wallet"
@@ -235,12 +245,55 @@
     "Add-Bank-Placeholder": "Select the Bank",
     "Initial-Balance": "Initial Balance",
     "Initial-Balance-Placeholder": "Please Enter Your Initial Balance",
-    "Save": "Save"
+    "Save": "Save",
+    "AddSuccess": "Add Bank Successful",
+    "AddFailed": "Add Bank Failed",
+    "Total-Empty": "Total cannot be empty",
+    "Total-Invalid": "Total is invalid",
+    "Bank-Empty": "Select Bank cannot be empty",
+    "Delete-Bank-Success": "Delete Bank Successful",
+    "Delete-Bank-Failed": "Delete Bank Failed",
+    "Warning": "Warning",
+    "Alert": "This action cannot be undone. Are you sure you want to delete this bank account?"
   },
   "BankIncome": {
     "Fill": "Fill in bank income"
   },
   "BankSpend": {
     "Fill": "Fill in bank spend"
+  },
+  "IncomeType": {
+    "Type1": "Wages/Salary",
+    "Type2": "Bonuses",
+    "Type3": "Investment Income",
+    "Type4": "Interest Income",
+    "Type5": "Rental Income",
+    "Type6": "Self-Employment Income",
+    "Type7": "Gifts",
+    "Type8": "Bank Transfer",
+    "Type9": "Other Income",
+    "Type10": "Wallet Income",
+    "Type11": "Ewallet Income"
+  },
+  "SpendType": {
+    "Type1": "Housing",
+    "Type2": "Transportation",
+    "Type3": "Food",
+    "Type4": "Utilities",
+    "Type5": "Insurance",
+    "Type6": "Healthcare",
+    "Type7": "Entertainment",
+    "Type8": "Personal Care",
+    "Type9": "Education",
+    "Type10": "Debt Repayment",
+    "Type11": "Savings",
+    "Type12": "Save In Bank",
+    "Type13": "Other Expenses",
+    "Type14": "Wallet Transfer",
+    "Type15": "Ewallet Transfer"
+  },
+  "BankDetail": {
+    "Total": "Total Bank Balance",
+    "Bank-List": "Bank List"
   }
 }

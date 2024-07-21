@@ -22,6 +22,11 @@ import Toast from 'react-native-toast-message';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
 
+type Bank = {
+  bankID: number;
+  bankName: string;
+};
+
 const WalletSpend = () => {
   const navigation = useNavigation();
 
@@ -60,31 +65,27 @@ const WalletSpend = () => {
   const [Total, setTotal] = useState('');
   const [TotalError, setTotalError] = useState('');
   const [selectedType, setSelectedType] = useState<string>('');
+  const [selectBank, setSelectBank] = useState<{key: string; value: string}[]>(
+    [],
+  );
   const [selectedBank, setSelectedBank] = useState<string>('');
+  const [SelectTypeError, setSelectTypeError] = useState('');
+  const [SelectBankError, setSelectBankError] = useState('');
 
   const selectType = [
-    {key: '1', value: 'Housing'},
-    {key: '2', value: 'Transportation'},
-    {key: '3', value: 'Food'},
-    {key: '4', value: 'Entertainment'},
-    {key: '5', value: 'Medical'},
-    {key: '6', value: 'Education'},
-    {key: '7', value: 'Clothing'},
-    {key: '8', value: 'Insurance'},
-    {key: '9', value: 'Save In Bank'},
-    {key: '10', value: 'Other'},
-  ];
-
-  const selectBank = [
-    {key: '1', value: 'Public Bank'},
-    {key: '2', value: 'Hong Leong Bank'},
-    {key: '3', value: 'AmBank'},
-    {key: '4', value: 'Bank Islam'},
-    {key: '5', value: 'Rental Income'},
-    {key: '6', value: 'Self-Employment Income'},
-    {key: '7', value: 'Gifts'},
-    {key: '8', value: 'Bank Transfer'},
-    {key: '9', value: 'Other Income'},
+    {key: '1', value: i18n.t('SpendType.Type1')},
+    {key: '2', value: i18n.t('SpendType.Type2')},
+    {key: '3', value: i18n.t('SpendType.Type3')},
+    {key: '4', value: i18n.t('SpendType.Type4')},
+    {key: '5', value: i18n.t('SpendType.Type5')},
+    {key: '6', value: i18n.t('SpendType.Type6')},
+    {key: '7', value: i18n.t('SpendType.Type7')},
+    {key: '8', value: i18n.t('SpendType.Type8')},
+    {key: '9', value: i18n.t('SpendType.Type9')},
+    {key: '10', value: i18n.t('SpendType.Type10')},
+    {key: '11', value: i18n.t('SpendType.Type11')},
+    {key: '12', value: i18n.t('SpendType.Type12')},
+    {key: '13', value: i18n.t('SpendType.Type13')},
   ];
 
   const [date, setDate] = useState(new Date());
@@ -110,7 +111,8 @@ const WalletSpend = () => {
   const [isDark, setIsDark] = useState(false);
   const [loading, setLoading] = useState(false);
   const [userID, setUserId] = useState('');
-  const [Balance, setBalance] = useState(null);
+  const [Balance, setBalance] = useState('');
+  const [walletID, setWalletID] = useState('');
 
   const fetchData = async (UserID: any) => {
     try {
@@ -131,31 +133,63 @@ const WalletSpend = () => {
     }
   };
 
-  useEffect(() => {
-    const initialize = async () => {
-      setLoading(true);
+  const fetchBankData = async (
+    userId: string,
+    setSelectBank: React.Dispatch<
+      React.SetStateAction<{key: string; value: string}[]>
+    >,
+  ) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}Bank/GetBanks?userId=${userId}`,
+        {'Content-Type': 'application/json'},
+      );
+      const result = await response.json();
 
-      try {
-        const [savedTheme, storedUserID] = await Promise.all([
-          AsyncStorage.getItem('theme'),
-          AsyncStorage.getItem('UserID'),
-        ]);
-
-        if (savedTheme) {
-          setIsDark(savedTheme === 'dark');
-        }
-
-        if (storedUserID) {
-          setUserId(storedUserID);
-          await fetchData(storedUserID);
-        }
-      } catch (error) {
-        ErrorToast(i18n.t('SettingPage.Error-Initializing'));
-      } finally {
-        setLoading(false);
+      if (result.success) {
+        const banks = result.data.map((bank: Bank) => ({
+          key: bank.bankID,
+          value: bank.bankName,
+        }));
+        setSelectBank(banks)  ;
       }
-    };
+    } catch (error) {
+      ErrorToast('error' + error);
+    }
+  };
 
+  const initialize = async () => {
+    setLoading(true);
+
+    try {
+      const [savedTheme, storedUserID, walletID] = await Promise.all([
+        AsyncStorage.getItem('theme'),
+        AsyncStorage.getItem('UserID'),
+        AsyncStorage.getItem('WalletID'),
+      ]);
+
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+
+      if (storedUserID) {
+        setUserId(storedUserID);
+        await fetchData(storedUserID);
+        await fetchBankData(storedUserID, setSelectBank);
+      }
+
+      if (walletID) {
+        setWalletID(walletID);
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('SettingPage.Error-Initializing'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     initialize();
   }, []);
 
@@ -164,8 +198,142 @@ const WalletSpend = () => {
   useFocusEffect(
     React.useCallback(() => {
       setLocale(i18n.locale);
+      setTotal('');
+      setSelectedType('');
+      setSelectedBank('');
     }, []),
   );
+
+  const validateNormal = async () => {
+    let isValid = true;
+    const amount = parseFloat(Total);
+    const balance = parseFloat(Balance);
+    if (!amount) {
+      setTotalError(i18n.t('Bank.Total-Empty'));
+      isValid = false;
+    } else if (isNaN(amount) || amount <= 0) {
+      setTotalError(i18n.t('Bank.Total-Invalid'));
+      isValid = false;
+    } else if (amount >= balance) {
+      setTotalError(i18n.t('WalletSpend.Total-Exceeds-Balance'));
+      isValid = false;
+    } else {
+      setTotalError('');
+    }
+
+    if (!selectedType) {
+      setSelectTypeError(i18n.t('WalletSpend.Type-Empty'));
+      isValid = false;
+    } else {
+      setSelectTypeError('');
+    }
+
+    if (isValid) {
+      setLoading(true);
+      const formattedDate = date.toISOString().split('T')[0];
+      if (userID && walletID && amount && selectedType && formattedDate) {
+        try {
+          await RNFetchBlob.config({trusty: true})
+            .fetch(
+              'POST',
+              `${UrlAccess.Url}WalletSpend/AddSpend`,
+              {'Content-Type': 'application/json'},
+              JSON.stringify({
+                walletID: walletID,
+                userID: userID,
+                amount: amount,
+                type: selectedType,
+                date: formattedDate,
+              }),
+            )
+            .then(response => response.json())
+            .then(json => {
+              if (json && json.success) {
+                SuccessToast(i18n.t('WalletSpend.Success'));
+                initialize();
+              } else {
+                ErrorToast(i18n.t('WalletSpend.Fail'));
+              }
+            });
+        } catch (error) {
+          ErrorToast(error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    }
+  };
+
+  const validateBank = async () => {
+    let isValid = true;
+    const amount = parseFloat(Total);
+    const balance = parseFloat(Balance);
+    if (!amount) {
+      setTotalError(i18n.t('Bank.Total-Empty'));
+      isValid = false;
+    } else if (isNaN(amount) || amount <= 0) {
+      setTotalError(i18n.t('Bank.Total-Invalid'));
+      isValid = false;
+    } else if (amount >= balance) {
+      setTotalError(i18n.t('WalletSpend.Total-Exceeds-Balance'));
+      isValid = false;
+    } else {
+      setTotalError('');
+    }
+
+    if (!selectedType) {
+      setSelectTypeError(i18n.t('WalletSpend.Type-Empty'));
+      isValid = false;
+    } else {
+      setSelectTypeError('');
+    }
+
+    if (!selectedBank) {
+      setSelectBankError(i18n.t('WalletIncome.Bank-Empty'));
+      isValid = false;
+    }
+
+    if (isValid) {
+      setLoading(true);
+      const formattedDate = date.toISOString().split('T')[0];
+      if (
+        userID &&
+        walletID &&
+        amount &&
+        selectedType &&
+        formattedDate &&
+        selectedBank
+      ) {
+        try {
+          await RNFetchBlob.config({trusty: true})
+            .fetch(
+              'POST',
+              `${UrlAccess.Url}WalletSpend/AddSpendWithBank`,
+              {'Content-Type': 'application/json'},
+              JSON.stringify({
+                walletID: walletID,
+                userID: userID,
+                bankID: selectedBank,
+                amount: amount,
+                type: selectedType,
+                date: formattedDate,
+              }),
+            )
+            .then(response => response.json())
+            .then(json => {
+              if (json && json.success) {
+                SuccessToast(i18n.t('WalletSpend.Success'));
+                initialize();
+              } else {
+                ErrorToast(i18n.t('WalletSpend.Fail'));
+              }
+            });
+        } finally {
+          setLoading(false);
+        }
+      }
+    }
+  };
 
   if (loading) {
     return (
@@ -233,6 +401,7 @@ const WalletSpend = () => {
             theme={isDark ? darkTheme : theme}
             onChangeText={text => setTotal(text)}
             textColor={isDark ? '#fff' : '#000'}
+            keyboardType="numeric"
           />
           {TotalError !== '' && (
             <HelperText type="error" style={walletIncomeCss.InputError}>
@@ -246,7 +415,7 @@ const WalletSpend = () => {
           <SelectList
             setSelected={(text: string) => setSelectedType(text)}
             data={selectType}
-            save="value"
+            save="key"
             boxStyles={isDark ? darkWalletIncome.Input : walletIncomeCss.Input}
             inputStyles={{color: isDark ? '#fff' : '#000'}}
             dropdownStyles={
@@ -256,7 +425,12 @@ const WalletSpend = () => {
             search={false}
             placeholder={i18n.t('WalletSpend.Type-Placeholder')}
           />
-          {selectedType === 'Save In Bank' && (
+          {SelectTypeError !== '' && (
+            <HelperText type="error" style={walletIncomeCss.InputError}>
+              {SelectTypeError}
+            </HelperText>
+          )}
+          {selectedType === '12' && (
             <View>
               <Text style={walletIncomeCss.label}>
                 {i18n.t('WalletSpend.Bank')}
@@ -264,7 +438,7 @@ const WalletSpend = () => {
               <SelectList
                 setSelected={(text: string) => setSelectedBank(text)}
                 data={selectBank}
-                save="value"
+                save="key"
                 boxStyles={
                   isDark ? darkWalletIncome.Input : walletIncomeCss.Input
                 }
@@ -276,6 +450,11 @@ const WalletSpend = () => {
                 search={false}
                 placeholder={i18n.t('WalletSpend.Bank-Placeholder')}
               />
+              {SelectBankError !== '' && (
+                <HelperText type="error" style={walletIncomeCss.InputError}>
+                  {SelectBankError}
+                </HelperText>
+              )}
             </View>
           )}
 
@@ -299,8 +478,14 @@ const WalletSpend = () => {
               onChange={onChange}
             />
           )}
-
-          <TouchableOpacity style={walletIncomeCss.Button}>
+  
+          <TouchableOpacity
+            style={walletIncomeCss.Button}
+            onPress={() =>
+              selectedType === '12'
+                ? validateBank()
+                : validateNormal()
+            }>
             <Text style={walletIncomeCss.ButtonText}>
               {i18n.t('WalletSpend.Save')}
             </Text>

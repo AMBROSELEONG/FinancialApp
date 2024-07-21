@@ -19,6 +19,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {darkCss, darkWalletIncome} from '../objects/darkCss';
 import i18n from '../language/language';
 import Toast from 'react-native-toast-message';
+import RNFetchBlob from 'rn-fetch-blob';
+import {UrlAccess} from '../objects/url';
 
 const BankSpend = () => {
   const navigation = useNavigation();
@@ -58,31 +60,20 @@ const BankSpend = () => {
   const [Total, setTotal] = useState('');
   const [TotalError, setTotalError] = useState('');
   const [selectedType, setSelectedType] = useState<string>('');
-  const [selectedBank, setSelectedBank] = useState<string>('');
+  const [SelectTypeError, setSelectTypeError] = useState('');
 
   const selectType = [
-    {key: '1', value: 'Housing'},
-    {key: '2', value: 'Transportation'},
-    {key: '3', value: 'Food'},
-    {key: '4', value: 'Entertainment'},
-    {key: '5', value: 'Medical'},
-    {key: '6', value: 'Education'},
-    {key: '7', value: 'Clothing'},
-    {key: '8', value: 'Insurance'},
-    {key: '9', value: 'Save In Bank'},
-    {key: '10', value: 'Other'},
-  ];
-
-  const selectBank = [
-    {key: '1', value: 'Public Bank'},
-    {key: '2', value: 'Hong Leong Bank'},
-    {key: '3', value: 'AmBank'},
-    {key: '4', value: 'Bank Islam'},
-    {key: '5', value: 'Rental Income'},
-    {key: '6', value: 'Self-Employment Income'},
-    {key: '7', value: 'Gifts'},
-    {key: '8', value: 'Bank Transfer'},
-    {key: '9', value: 'Other Income'},
+    {key: '1', value: i18n.t('SpendType.Type1')},
+    {key: '2', value: i18n.t('SpendType.Type2')},
+    {key: '3', value: i18n.t('SpendType.Type3')},
+    {key: '4', value: i18n.t('SpendType.Type4')},
+    {key: '5', value: i18n.t('SpendType.Type5')},
+    {key: '6', value: i18n.t('SpendType.Type6')},
+    {key: '7', value: i18n.t('SpendType.Type7')},
+    {key: '8', value: i18n.t('SpendType.Type8')},
+    {key: '9', value: i18n.t('SpendType.Type9')},
+    {key: '10', value: i18n.t('SpendType.Type10')},
+    {key: '13', value: i18n.t('SpendType.Type13')},
   ];
 
   const [date, setDate] = useState(new Date());
@@ -107,22 +98,51 @@ const BankSpend = () => {
 
   const [isDark, setIsDark] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [userID, setUserId] = useState('');
+  const [Balance, setBalance] = useState(null);
+  const [bankID, setBankID] = useState('');
 
-  const loadTheme = async () => {
+  const fetchData = async (bankId: string) => {
     try {
-      const savedTheme = await AsyncStorage.getItem('theme');
-      if (savedTheme) {
-        setIsDark(savedTheme === 'dark');
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}Bank/GetBanksByBankID?bankId=${bankId}`,
+        {'Content-Type': 'application/json'},
+      );
+
+      const json = await response.json();
+
+      if (json.success) {
+        setBalance(json.data.amount.toFixed(2));
+      } else {
+        ErrorToast(i18n.t('SettingPage.Failed-Fetch-Data'));
       }
     } catch (error) {
-      ErrorToast(i18n.t('Fail-Load-Theme'));
+      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
     }
   };
 
   const initialize = async () => {
     setLoading(true);
     try {
-      await Promise.all([loadTheme()]);
+      const [savedTheme, storedBankID, storedUserID] = await Promise.all([
+        AsyncStorage.getItem('theme'),
+        AsyncStorage.getItem('BankID'),
+        AsyncStorage.getItem('UserID'),
+      ]);
+
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+
+      if (storedBankID) {
+        setBankID(storedBankID);
+        await fetchData(storedBankID);
+      }
+
+      if (storedUserID) {
+        setUserId(storedUserID);
+      }
     } finally {
       setLoading(false);
     }
@@ -137,8 +157,67 @@ const BankSpend = () => {
   useFocusEffect(
     React.useCallback(() => {
       setLocale(i18n.locale);
+      setTotal('');
+      setSelectedType('');
     }, []),
   );
+
+  const validateNormal = async () => {
+    let isValid = true;
+    const amount = parseFloat(Total);
+
+    if (!amount) {
+      setTotalError(i18n.t('Bank.Total-Empty'));
+      isValid = false;
+    } else if (isNaN(amount) || amount <= 0) {
+      setTotalError(i18n.t('Bank.Total-Invalid'));
+      isValid = false;
+    } else {
+      setTotalError('');
+    }
+
+    if (!selectedType) {
+      setSelectTypeError(i18n.t('WalletIncome.Type-Empty'));
+      isValid = false;
+    } else {
+      setSelectTypeError('');
+    }
+
+    if (isValid) {
+      setLoading(true);
+      const formattedDate = date.toISOString().split('T')[0];
+      if (bankID && userID && amount && selectedType && formattedDate) {
+        try {
+          await RNFetchBlob.config({trusty: true})
+            .fetch(
+              'POST',
+              `${UrlAccess.Url}BankSpend/AddSpend`,
+              {'Content-Type': 'application/json'},
+              JSON.stringify({
+                bankID: bankID,
+                userID: userID,
+                amount: amount,
+                type: selectedType,
+                date: formattedDate,
+              }),
+            )
+            .then(response => response.json())
+            .then(json => {
+              if (json && json.success) {
+                SuccessToast(i18n.t('WalletSpend.Success'));
+                initialize();
+              } else {
+                ErrorToast(i18n.t('WalletSpend.Fail'));
+              }
+            });
+        } catch (error) {
+          ErrorToast(error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    }
+  };
 
   if (loading) {
     return (
@@ -194,7 +273,7 @@ const BankSpend = () => {
           </Text>
           <Text
             style={isDark ? darkWalletIncome.balance : walletIncomeCss.balance}>
-            RM 100
+            {Balance}
           </Text>
           <Text style={walletIncomeCss.label}>
             {i18n.t('WalletSpend.Total-Spend')}
@@ -206,6 +285,7 @@ const BankSpend = () => {
             theme={isDark ? darkTheme : theme}
             onChangeText={text => setTotal(text)}
             textColor={isDark ? '#fff' : '#000'}
+            keyboardType="numeric"
           />
           {TotalError !== '' && (
             <HelperText type="error" style={walletIncomeCss.InputError}>
@@ -219,7 +299,7 @@ const BankSpend = () => {
           <SelectList
             setSelected={(text: string) => setSelectedType(text)}
             data={selectType}
-            save="value"
+            save="key"
             boxStyles={isDark ? darkWalletIncome.Input : walletIncomeCss.Input}
             inputStyles={{color: isDark ? '#fff' : '#000'}}
             dropdownStyles={
@@ -229,27 +309,10 @@ const BankSpend = () => {
             search={false}
             placeholder={i18n.t('WalletSpend.Type-Placeholder')}
           />
-          {selectedType === 'Save In Bank' && (
-            <View>
-              <Text style={walletIncomeCss.label}>
-                {i18n.t('WalletSpend.Bank')}
-              </Text>
-              <SelectList
-                setSelected={(text: string) => setSelectedBank(text)}
-                data={selectBank}
-                save="value"
-                boxStyles={
-                  isDark ? darkWalletIncome.Input : walletIncomeCss.Input
-                }
-                inputStyles={{color: isDark ? '#fff' : '#000'}}
-                dropdownStyles={
-                  isDark ? darkWalletIncome.Input : walletIncomeCss.Input
-                }
-                dropdownTextStyles={{color: isDark ? '#fff' : '#000'}}
-                search={false}
-                placeholder={i18n.t('WalletSpend.Bank-Placeholder')}
-              />
-            </View>
+          {SelectTypeError !== '' && (
+            <HelperText type="error" style={walletIncomeCss.InputError}>
+              {SelectTypeError}
+            </HelperText>
           )}
 
           <Text style={walletIncomeCss.label}>
@@ -273,7 +336,9 @@ const BankSpend = () => {
             />
           )}
 
-          <TouchableOpacity style={walletIncomeCss.Button}>
+          <TouchableOpacity
+            style={walletIncomeCss.Button}
+            onPress={() => validateNormal()}>
             <Text style={walletIncomeCss.ButtonText}>
               {i18n.t('WalletSpend.Save')}
             </Text>

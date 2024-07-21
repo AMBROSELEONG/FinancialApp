@@ -16,8 +16,11 @@ import {
   useWindowDimensions,
   ScrollView,
   ActivityIndicator,
+  BackHandler,
+  Alert,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {css, walletCss} from '../objects/commonCss';
 import {TabBar, TabView, SceneMap, TabBarProps} from 'react-native-tab-view';
 import {DataTable} from 'react-native-paper';
@@ -27,6 +30,26 @@ import i18n from '../language/language';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {darkWallet} from '../objects/darkCss';
+import RNFetchBlob from 'rn-fetch-blob';
+import {UrlAccess} from '../objects/url';
+
+interface BankIncomeType {
+  bankIncomeID: number;
+  bankID: number;
+  userID: number;
+  amount: number;
+  type: string;
+  date: string;
+}
+
+interface BankSpendType {
+  bankSpendID: number;
+  bankID: number;
+  userID: number;
+  amount: number;
+  type: string;
+  date: string;
+}
 
 const BankDetail = () => {
   const navigation = useNavigation();
@@ -56,8 +79,12 @@ const BankDetail = () => {
   const [isDark, setIsDark] = useState(false);
   const [locale, setLocale] = React.useState(i18n.locale);
   const [UserID, setUserId] = useState('');
+  const [bankName, setBankName] = useState('');
   const [Balance, setBalance] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [bankID, setBankID] = useState('');
+  const [incomeItems, setIncomeItems] = useState<BankIncomeType[]>([]);
+  const [spendItems, setSpendItems] = useState<BankSpendType[]>([]);
 
   const ErrorToast = (message: any) => {
     Toast.show({
@@ -78,53 +105,176 @@ const BankDetail = () => {
   useFocusEffect(
     React.useCallback(() => {
       setLocale(i18n.locale);
-    }, []),
+      initialize();
+      const onBackPress = () => {
+        AsyncStorage.removeItem('BankID');
+        navigation.goBack();
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      };
+    }, [navigation]),
   );
 
-  useEffect(() => {
-    const initialize = async () => {
-      setLoading(true);
+  const handleDelete = () => {
+    Alert.alert(
+      i18n.t('Bank.Warning'),
+      i18n.t('Bank.Alert'),
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {text: 'OK', onPress: () => deleteData()},
+      ],
+      {cancelable: false},
+    );
+  };
 
-      try {
-        const [savedTheme] = await Promise.all([
-          AsyncStorage.getItem('theme'),
-          // AsyncStorage.getItem('UserID'),
-        ]);
+  const deleteData = async () => {
+    setLoading(true);
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'DELETE',
+        `${UrlAccess.Url}Bank/DeleteBank?bankId=${bankID}`,
+        {'Content-Type': 'application/json'},
+      );
 
-        if (savedTheme) {
-          setIsDark(savedTheme === 'dark');
-        }
+      const json = await response.json();
 
-        // if (storedUserID) {
-        //   setUserId(storedUserID);
-        //   await fetchData(storedUserID);
-        // }
-      } catch (error) {
-        ErrorToast(i18n.t('SettingPage.Error-Initializing'));
-      } finally {
-        setLoading(false);
+      if (json.success) {
+        SuccessToast(i18n.t('Bank.Delete-Bank-Success'));
+        navigation.goBack();
+      } else {
+        ErrorToast(i18n.t('Bank.Delete-Bank-Failed'));
       }
-    };
+    } catch (error) {
+      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const fetchData = async (bankId: string) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}Bank/GetBanksByBankID?bankId=${bankId}`,
+        {'Content-Type': 'application/json'},
+      );
+
+      const json = await response.json();
+
+      if (json.success) {
+        setBankName(json.data.bankName);
+        setBalance(json.data.amount.toFixed(2));
+      } else {
+        ErrorToast(i18n.t('SettingPage.Failed-Fetch-Data'));
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
+    }
+  };
+
+  const fetchIncome = async (bankId: string) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}BankIncome/GetIncome?bankId=${bankId}`,
+        {'Content-Type': 'application/json'},
+      );
+      const json = await response.json();
+      setIncomeItems(json.data);
+    } catch (error) {
+      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
+    }
+  };
+
+  const fetchSpend = async (bankId: string) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}BankSpend/GetSpend?bankId=${bankId}`,
+        {'Content-Type': 'application/json'},
+      );
+      const json = await response.json();
+      setSpendItems(json.data);
+    } catch (error) {
+      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
+    }
+  };
+
+  const initialize = async () => {
+    setLoading(true);
+
+    try {
+      const [savedTheme, storedBankID, storedUserID] = await Promise.all([
+        AsyncStorage.getItem('theme'),
+        AsyncStorage.getItem('BankID'),
+        AsyncStorage.getItem('UserID'),
+      ]);
+
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+
+      if (storedBankID) {
+        setBankID(storedBankID);
+        await fetchData(storedBankID);
+        await fetchIncome(storedBankID);
+        await fetchSpend(storedBankID);
+      }
+
+      if (storedUserID) {
+        setUserId(storedUserID);
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('SettingPage.Error-Initializing'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     initialize();
   }, []);
 
-  const FirstRoute = () => {
-    const [items] = React.useState([
-      {
-        key: 1,
-        type: 'Cupcake',
-        income: 356,
-        date: '2021-01-01',
-      },
-      {
-        key: 2,
-        type: 'Eclair',
-        income: 262,
-        date: '2021-01-02',
-      },
-    ]);
+  const typeMap: Record<string, string> = {
+    '1': i18n.t('IncomeType.Type1'),
+    '2': i18n.t('IncomeType.Type2'),
+    '3': i18n.t('IncomeType.Type3'),
+    '4': i18n.t('IncomeType.Type4'),
+    '5': i18n.t('IncomeType.Type5'),
+    '6': i18n.t('IncomeType.Type6'),
+    '7': i18n.t('IncomeType.Type7'),
+    '10': i18n.t('IncomeType.Type10'),
+    '11': i18n.t('IncomeType.Type11'),
+    '9': i18n.t('IncomeType.Type9'),
+  };
 
+  const typeMapSpend: Record<string, string> = {
+    '1': i18n.t('SpendType.Type1'),
+    '2': i18n.t('SpendType.Type2'),
+    '3': i18n.t('SpendType.Type3'),
+    '4': i18n.t('SpendType.Type4'),
+    '5': i18n.t('SpendType.Type5'),
+    '6': i18n.t('SpendType.Type6'),
+    '7': i18n.t('SpendType.Type7'),
+    '8': i18n.t('SpendType.Type8'),
+    '9': i18n.t('SpendType.Type9'),
+    '10': i18n.t('SpendType.Type10'),
+    '11': i18n.t('SpendType.Type11'),
+    '12': i18n.t('SpendType.Type12'),
+    '13': i18n.t('SpendType.Type13'),
+    '14': i18n.t('SpendType.Type14'),
+    '15': i18n.t('SpendType.Type15'),
+  };
+
+  const FirstRoute = () => {
     return (
       <View style={isDark ? darkWallet.TabBackground : walletCss.TabBackground}>
         <ScrollView>
@@ -145,31 +295,39 @@ const BankDetail = () => {
               </DataTable.Title>
             </DataTable.Header>
 
-            {items.map((item, index) => (
-              <DataTable.Row
-                key={item.key}
-                style={
-                  index % 2 === 0
-                    ? walletCss.evenRowIncome
-                    : isDark
-                    ? darkWallet.oddRow
-                    : walletCss.oddRow
-                }>
+            {incomeItems && incomeItems.length > 0 ? (
+              incomeItems.map((item, index) => (
+                <DataTable.Row
+                  key={item.bankIncomeID}
+                  style={
+                    index % 2 === 0
+                      ? walletCss.evenRowIncome
+                      : isDark
+                      ? darkWallet.oddRow
+                      : walletCss.oddRow
+                  }>
+                  <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
+                    {typeMap[item.type] || item.type}
+                  </DataTable.Cell>
+                  <DataTable.Cell
+                    style={walletCss.cell}
+                    textStyle={{color: isDark ? '#fff' : '#000'}}>
+                    {item.amount.toFixed(2)}
+                  </DataTable.Cell>
+                  <DataTable.Cell
+                    style={walletCss.cell}
+                    textStyle={{color: isDark ? '#fff' : '#000'}}>
+                    {item.date}
+                  </DataTable.Cell>
+                </DataTable.Row>
+              ))
+            ) : (
+              <DataTable.Row>
                 <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
-                  {item.type}
-                </DataTable.Cell>
-                <DataTable.Cell
-                  style={walletCss.cell}
-                  textStyle={{color: isDark ? '#fff' : '#000'}}>
-                  {item.income}
-                </DataTable.Cell>
-                <DataTable.Cell
-                  style={walletCss.cell}
-                  textStyle={{color: isDark ? '#fff' : '#000'}}>
-                  {item.date}
+                  No data available
                 </DataTable.Cell>
               </DataTable.Row>
-            ))}
+            )}
           </DataTable>
         </ScrollView>
       </View>
@@ -177,21 +335,6 @@ const BankDetail = () => {
   };
 
   const SecondRoute = () => {
-    const [items] = React.useState([
-      {
-        key: 1,
-        type: 'Cupcake',
-        income: 356,
-        date: '2021-01-01',
-      },
-      {
-        key: 2,
-        type: 'Eclair',
-        income: 262,
-        date: '2021-01-02',
-      },
-    ]);
-
     return (
       <View style={isDark ? darkWallet.TabBackground : walletCss.TabBackground}>
         <ScrollView>
@@ -212,31 +355,39 @@ const BankDetail = () => {
               </DataTable.Title>
             </DataTable.Header>
 
-            {items.map((item, index) => (
-              <DataTable.Row
-                key={item.key}
-                style={
-                  index % 2 === 0
-                    ? walletCss.evenRowSpend
-                    : isDark
-                    ? darkWallet.oddRow
-                    : walletCss.oddRow
-                }>
+            {spendItems && spendItems.length > 0 ? (
+              spendItems.map((item, index) => (
+                <DataTable.Row
+                  key={item.bankSpendID}
+                  style={
+                    index % 2 === 0
+                      ? walletCss.evenRowSpend
+                      : isDark
+                      ? darkWallet.oddRow
+                      : walletCss.oddRow
+                  }>
+                  <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
+                    {typeMapSpend[item.type] || item.type}
+                  </DataTable.Cell>
+                  <DataTable.Cell
+                    style={walletCss.cell}
+                    textStyle={{color: isDark ? '#fff' : '#000'}}>
+                    {item.amount.toFixed(2)}
+                  </DataTable.Cell>
+                  <DataTable.Cell
+                    style={walletCss.cell}
+                    textStyle={{color: isDark ? '#fff' : '#000'}}>
+                    {item.date}
+                  </DataTable.Cell>
+                </DataTable.Row>
+              ))
+            ) : (
+              <DataTable.Row>
                 <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
-                  {item.type}
-                </DataTable.Cell>
-                <DataTable.Cell
-                  style={walletCss.cell}
-                  textStyle={{color: isDark ? '#fff' : '#000'}}>
-                  {item.income}
-                </DataTable.Cell>
-                <DataTable.Cell
-                  style={walletCss.cell}
-                  textStyle={{color: isDark ? '#fff' : '#000'}}>
-                  {item.date}
+                  No data available
                 </DataTable.Cell>
               </DataTable.Row>
-            ))}
+            )}
           </DataTable>
         </ScrollView>
       </View>
@@ -280,20 +431,27 @@ const BankDetail = () => {
           <TouchableOpacity
             style={{paddingLeft: 20}}
             onPress={() => {
-              navigation.goBack();
+              navigation.goBack(), AsyncStorage.removeItem('BankID');
             }}>
             <Ionicons name="arrow-back" size={30} color={'#fff'} />
           </TouchableOpacity>
-          <View style={css.HeaderView}>
-            <Text style={[css.PageName, {color: '#fff'}]}>Bank</Text>
+          <View style={[css.HeaderView, {marginRight: 0}]}>
+            <Text style={[css.PageName, {color: '#fff'}]}>
+              {bankName.substring(0, 20)}
+            </Text>
           </View>
+          <TouchableOpacity
+            style={{paddingLeft: 20, marginRight: 20}}
+            onPress={() => handleDelete()}>
+            <MaterialCommunityIcons name="delete" size={30} color={'#fff'} />
+          </TouchableOpacity>
         </View>
         <View style={walletCss.container}>
           <View style={isDark ? darkWallet.header : walletCss.header}>
             <Text style={walletCss.balanceText}>
               {i18n.t('Wallet.Balance')}
             </Text>
-            <Text style={walletCss.balance}>RM 100.00</Text>
+            <Text style={walletCss.balance}>RM {Balance}</Text>
             <View
               style={
                 isDark

@@ -4,7 +4,6 @@ import {
   useNavigation,
   DrawerActions,
   useFocusEffect,
-  useIsFocused,
 } from '@react-navigation/native';
 import {
   KeyboardAvoidingView,
@@ -13,30 +12,83 @@ import {
   Text,
   TouchableOpacity,
   Platform,
-  Dimensions,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {css, homeCss} from '../objects/commonCss';
-import {ScrollView} from 'react-native-gesture-handler';
+import {HoverEffect, ScrollView} from 'react-native-gesture-handler';
 import {LineChart} from 'react-native-gifted-charts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
 import i18n from '../language/language';
 import Toast from 'react-native-toast-message';
-import {darkCss, darkHome} from '../objects/darkCss';
+import {darkCss} from '../objects/darkCss';
+import LinearGradient from 'react-native-linear-gradient';
+
+interface SpendData {
+  date: string;
+  totalSpend: number;
+}
+
+interface ChartData {
+  value: number;
+  label: string;
+}
+
+interface IncomeData {
+  date: string;
+  totalSpend: number;
+}
+
+interface DataItem {
+  value: number;
+  color: string;
+}
+
+interface StackedProgressBarProps {
+  data: DataItem[];
+}
+
+const StackedProgressBar: React.FC<StackedProgressBarProps> = ({data}) => {
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+  return (
+    <View style={homeCss.progressContainer}>
+      {data.map((item, index) => (
+        <View
+          key={index}
+          style={[
+            homeCss.progressItem,
+            {
+              width: `${(item.value / total) * 100}%`,
+              backgroundColor: item.color,
+            },
+          ]}
+        />
+      ))}
+    </View>
+  );
+};
 
 const Home = () => {
   const navigation = useNavigation();
-  const [currentDate, setCurrentDate] = useState('');
   const [UserName, setUsername] = useState('');
   const [userId, setUserId] = useState('');
   const [loading, setLoading] = useState(false);
-  const isFocused = useIsFocused();
   const [locale, setLocale] = React.useState(i18n.locale);
   const [token, setToken] = useState('');
   const [isDark, setIsDark] = useState(false);
+  const [spend, setSpend] = useState(0);
+  const [income, setIncome] = useState(0);
+  const [spendData, setSpendData] = useState<ChartData[]>([]);
+  const [incomeData, setIncomeData] = useState<ChartData[]>([]);
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [bankBalance, setBankBalance] = useState(0);
+  const [ewalletBalance, setEwalletBalance] = useState(0);
+  const [percentWallet, setPercentWallet] = useState(0);
+  const [percentBank, setPercentBank] = useState(0);
+  const [percentEwallet, setPercentEwallet] = useState(0);
 
   const ErrorToast = (message: any) => {
     Toast.show({
@@ -57,41 +109,55 @@ const Home = () => {
   useFocusEffect(
     React.useCallback(() => {
       setLocale(i18n.locale);
+      initialize();
     }, []),
   );
 
-  useEffect(() => {
-    const initialize = async () => {
-      setLoading(true);
+  const initialize = async () => {
+    setLoading(true);
 
-      try {
-        const [storedUserID, storedToken, savedTheme] = await Promise.all([
-          AsyncStorage.getItem('UserID'),
-          AsyncStorage.getItem('Token'),
-          AsyncStorage.getItem('theme'),
-        ]);
+    try {
+      const [storedUserID, storedToken, savedTheme] = await Promise.all([
+        AsyncStorage.getItem('UserID'),
+        AsyncStorage.getItem('Token'),
+        AsyncStorage.getItem('theme'),
+      ]);
 
-        if (storedUserID) {
-          setUserId(storedUserID);
-          await fetchData(storedUserID);
-          await updateToken(storedUserID, storedToken);
-          await CreateWallet(storedUserID);
-          await CreateEwallet(storedUserID);
-        }
-
-        if (storedToken) {
-          setToken(storedToken);
-        }
-
-        if (savedTheme) {
-          setIsDark(savedTheme === 'dark');
-        }
-      } finally {
-        setLoading(false);
+      if (storedUserID) {
+        setUserId(storedUserID);
+        await fetchData(storedUserID);
+        await updateToken(storedUserID, storedToken);
+        await CreateWallet(storedUserID);
+        await CreateEwallet(storedUserID);
+        await fetchSpend(storedUserID);
+        await fetchSpendData(storedUserID);
+        await fetchIncome(storedUserID);
+        await fetchIncomeData(storedUserID);
+        await fetchTotalBalance(storedUserID);
       }
-    };
+
+      if (storedToken) {
+        setToken(storedToken);
+      }
+
+      if (savedTheme) {
+        setIsDark(savedTheme === 'dark');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     initialize();
-  }, [userId, token]);
+  }, []);
+
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${month}-${day}`;
+  };
 
   const fetchData = async (userId: any) => {
     try {
@@ -108,6 +174,94 @@ const Home = () => {
         setLoading(false);
       } else {
         ErrorToast(i18n.t('Home.Failed-Fetch'));
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('Home.Error-Fetch'));
+    }
+  };
+
+  const fetchSpend = async (userId: any) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}DataAnalysis/TotalSpend?userId=${userId}`,
+        {'Content-Type': 'application/json'},
+      );
+
+      const json = await response.json();
+
+      if (json.success) {
+        setSpend(json.data);
+        setLoading(false);
+      } else {
+        ErrorToast(i18n.t('Home.Failed-Fetch'));
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('Home.Error-Fetch'));
+    }
+  };
+
+  const fetchSpendData = async (userId: any) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}DataAnalysis/WeeklySpend?userId=${userId}`,
+        {'Content-Type': 'application/json'},
+      );
+      const result = await response.json();
+
+      if (result.success) {
+        const resultData: ChartData[] = result.data.map((item: SpendData) => {
+          return {
+            value: item.totalSpend,
+            label: formatDate(item.date),
+          };
+        });
+        setSpendData(resultData);
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('Home.Error-Fetch'));
+    }
+  };
+
+  const fetchIncome = async (userId: any) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}DataAnalysis/TotalIncome?userId=${userId}`,
+        {'Content-Type': 'application/json'},
+      );
+
+      const json = await response.json();
+
+      if (json.success) {
+        setIncome(json.data);
+        setLoading(false);
+      } else {
+        ErrorToast(i18n.t('Home.Failed-Fetch'));
+      }
+    } catch (error) {
+      ErrorToast(i18n.t('Home.Error-Fetch'));
+    }
+  };
+
+  const fetchIncomeData = async (userId: any) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}DataAnalysis/WeeklyIncome?userId=${userId}`,
+        {'Content-Type': 'application/json'},
+      );
+      const result = await response.json();
+
+      if (result.success) {
+        const resultData: ChartData[] = result.data.map((item: IncomeData) => {
+          return {
+            value: item.totalSpend,
+            label: formatDate(item.date),
+          };
+        });
+        setIncomeData(resultData);
       }
     } catch (error) {
       ErrorToast(i18n.t('Home.Error-Fetch'));
@@ -160,46 +314,34 @@ const Home = () => {
     }
   };
 
-  useEffect(() => {
-    const updateDate = () => {
-      const date = new Date();
-      const day = date.getDate();
-      const monthNames = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December',
-      ];
-      const month = monthNames[date.getMonth()];
-      const year = date.getFullYear();
-      setCurrentDate(`${day} ${month} ${year}`);
-    };
+  const fetchTotalBalance = async (userId: string) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}DataAnalysis/GetPercentage?userID=${userId}`,
+        {'Content-Type': 'application/json'},
+      );
 
-    updateDate();
-    const interval = setInterval(updateDate, 24 * 60 * 60 * 1000);
+      const result = await response.json();
 
-    return () => clearInterval(interval);
-  }, []);
+      if (result.success) {
+        setBankBalance(result.total.bankBalance.toFixed(2));
+        setEwalletBalance(result.total.ewalletBalance.toFixed(2));
+        setWalletBalance(result.total.walletBalance.toFixed(2));
+        setPercentWallet(result.total.walletPercentage);
+        setPercentBank(result.total.bankPercentage);
+        setPercentEwallet(result.total.ewalletPercentage);
+      }
+    } catch (error) {
+      ErrorToast(error);
+    }
+  };
 
-  const data = [
-    {value: 50, label: '9/6'},
-    {value: 30, label: '8/6'},
-    {value: 70, label: '7/6'},
-    {value: 40, label: '6/6'},
-    {value: 90, label: '5/6'},
-    {value: 20, label: '4/6'},
-    {value: 60, label: '3/6'},
+  const data: DataItem[] = [
+    {value: percentWallet, color: '#8BA758'},
+    {value: percentBank, color: '#B8D8EA'},
+    {value: percentEwallet, color: '#F6B7C6'},
   ];
-  const screenWidth = (Dimensions.get('window').width / 100) * 70;
-  const screenHeight = (Dimensions.get('window').width / 100) * 50;
 
   if (loading) {
     return (
@@ -214,6 +356,7 @@ const Home = () => {
       </View>
     );
   }
+  
   return (
     <MainContainer>
       <KeyboardAvoidingView
@@ -221,98 +364,197 @@ const Home = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <StatusBar
           animated={true}
-          backgroundColor={isDark ? '#000' : '#fff'}
+          backgroundColor={isDark ? '#000' : '#1C4E78'}
           barStyle={'dark-content'}
         />
-        <ScrollView>
-          <View style={isDark ? darkCss.mainView : css.mainView}>
+        <LinearGradient
+          start={{x: 0, y: 0}}
+          end={{x: 0, y: 1}}
+          colors={isDark ? ['#000', '#000'] : ['#1C4E78', '#3490DE']}
+          style={homeCss.linear}>
+          <View style={[css.mainView, {backgroundColor: 'transparent'}]}>
             <TouchableOpacity
               style={{paddingLeft: 20}}
               onPress={() => {
                 navigation.dispatch(DrawerActions.openDrawer());
               }}>
-              <Ionicons
-                name="menu"
-                size={30}
-                color={isDark ? '#fff' : '#000'}
-              />
+              <Ionicons name="menu" size={30} color={'#fff'} />
             </TouchableOpacity>
             <View style={css.HeaderView}>
-              <Text style={isDark ? darkCss.PageName : css.PageName}>
-                {i18n.t('Home.Home')}
-              </Text>
+              <Text style={[darkCss.PageName, {}]}>{i18n.t('Home.Home')}</Text>
             </View>
           </View>
-          <View style={isDark ? darkHome.container : homeCss.container}>
-            <Text style={isDark ? darkHome.welcome : homeCss.welcome}>
-              {i18n.t('Home.Welcome-Back')}
+          <View style={{position: 'relative'}}>
+            <Text style={homeCss.welcomeText}>Welcome Back</Text>
+            <Text style={homeCss.userText}>{UserName}</Text>
+          </View>
+          {isDark ? null : (
+            <Image
+              source={require('../assets/growth.png')}
+              style={homeCss.Image}
+            />
+          )}
+        </LinearGradient>
+        <View
+          style={[
+            homeCss.lowerContainer,
+            {backgroundColor: isDark ? '#202020' : '#F5F5F5'},
+          ]}>
+          <ScrollView>
+            <Text style={[homeCss.title, {color: isDark ? '#fff' : '#000'}]}>
+              Financial Overview
             </Text>
-            <Text style={homeCss.user}>{UserName}</Text>
-            <View
-              style={isDark ? darkHome.dateContainer : homeCss.dateContainer}>
-              <Text style={isDark ? darkHome.date : homeCss.date}>
-                {currentDate}
-              </Text>
-            </View>
-            <View
-              style={isDark ? darkHome.spendContainer : homeCss.spendContainer}>
-              <Text style={isDark ? darkHome.spend : homeCss.spend}>
-                {i18n.t('Home.Spending')}
-              </Text>
-              <View style={homeCss.chartContainer}>
-                <LineChart
-                  data={data}
-                  width={screenWidth}
-                  height={screenHeight}
-                  color="#1E90FF"
-                  thickness={1}
-                  hideDataPoints={false}
-                  dataPointsColor="#FF6347"
-                  showVerticalLines={true}
-                  verticalLinesColor="#E0E0E0"
-                  showValuesAsDataPointsText
-                  xAxisLabelTextStyle={
-                    isDark ? darkHome.xAxisLabel : homeCss.xAxisLabel
-                  }
+            <View style={homeCss.overviewContainer}>
+              <View
+                style={[
+                  homeCss.overviewBox,
+                  {marginRight: 10, backgroundColor: '#538DB3'},
+                ]}>
+                <Text style={[homeCss.overviewText, {color: '#fff'}]}>
+                  Income Today
+                </Text>
+                <Text style={[homeCss.overviewBalance, {color: '#fff'}]}>
+                  RM {income.toFixed(2)}
+                </Text>
+                <Image
+                  source={require('../assets/inflation.png')}
+                  style={homeCss.imageIcon}
                 />
               </View>
-              <Text style={isDark ? darkHome.totalText : homeCss.totalText}>
-                {i18n.t('Home.Total-Spending')}
-              </Text>
-              <Text style={homeCss.total}>RM 150.00</Text>
+              <View
+                style={[
+                  homeCss.overviewBox,
+                  {marginLeft: 10, backgroundColor: '#B8D8EA'},
+                ]}>
+                <Text style={[homeCss.overviewText, {color: '#000'}]}>
+                  Spend Today
+                </Text>
+                <Text style={[homeCss.overviewBalance, {color: '#000'}]}>
+                  RM {spend.toFixed(2)}
+                </Text>
+                <Image
+                  source={require('../assets/expense.png')}
+                  style={homeCss.imageIcon}
+                />
+              </View>
             </View>
+            <Text style={[homeCss.title, {color: isDark ? '#fff' : '#000'}]}>
+              Balance Overview
+            </Text>
             <View
               style={[
-                isDark ? darkHome.spendContainer : homeCss.spendContainer,
-                {marginBottom: 30},
+                homeCss.balanceContainer,
+                {backgroundColor: isDark ? '#2D2D2D' : '#fff'},
               ]}>
-              <Text style={isDark ? darkHome.spend : homeCss.spend}>
-                {i18n.t('Home.Increase')}
-              </Text>
-              <View style={homeCss.chartContainer}>
-                <LineChart
-                  data={data}
-                  width={screenWidth}
-                  height={screenHeight}
-                  color="#1E90FF"
-                  thickness={1}
-                  hideDataPoints={false}
-                  dataPointsColor="#FF6347"
-                  showVerticalLines={true}
-                  verticalLinesColor="#E0E0E0"
-                  showValuesAsDataPointsText
-                  xAxisLabelTextStyle={
-                    isDark ? darkHome.xAxisLabel : homeCss.xAxisLabel
-                  }
-                />
+              <View>
+                <View
+                  style={[
+                    homeCss.circle,
+                    {backgroundColor: isDark ? '#404040' : '#F0F0F0'},
+                  ]}>
+                  <Image
+                    source={require('../assets/walletHome.png')}
+                    style={homeCss.imageHome}
+                  />
+                </View>
+                <Text style={homeCss.balanceText}>Wallet</Text>
+                <Text
+                  style={[homeCss.balance, {color: isDark ? '#fff' : '#000'}]}>
+                  {walletBalance}
+                </Text>
               </View>
-              <Text style={isDark ? darkHome.totalText : homeCss.totalText}>
-                {i18n.t('Home.Total-Increase')}
-              </Text>
-              <Text style={homeCss.total}>RM 150.00</Text>
+              <View>
+                <View
+                  style={[
+                    homeCss.circle,
+                    {backgroundColor: isDark ? '#404040' : '#F0F0F0'},
+                  ]}>
+                  <Image
+                    source={require('../assets/bankHome.png')}
+                    style={homeCss.imageHome}
+                  />
+                </View>
+                <Text style={homeCss.balanceText}>Bank</Text>
+                <Text
+                  style={[homeCss.balance, {color: isDark ? '#fff' : '#000'}]}>
+                  {bankBalance}
+                </Text>
+              </View>
+              <View>
+                <View
+                  style={[
+                    homeCss.circle,
+                    {backgroundColor: isDark ? '#404040' : '#F0F0F0'},
+                  ]}>
+                  <Image
+                    source={require('../assets/ewalletHome.png')}
+                    style={homeCss.imageHome}
+                  />
+                </View>
+                <Text style={homeCss.balanceText}>Ewallet</Text>
+                <Text
+                  style={[homeCss.balance, {color: isDark ? '#fff' : '#000'}]}>
+                  {ewalletBalance}
+                </Text>
+              </View>
             </View>
-          </View>
-        </ScrollView>
+            <StackedProgressBar data={data} />
+            <Text style={[homeCss.title, {color: isDark ? '#fff' : '#000'}]}>
+              Weekly Income
+            </Text>
+            <View
+              style={[
+                homeCss.barContainer,
+                {backgroundColor: isDark ? '#2D2D2D' : '#fff'},
+              ]}>
+              <LineChart
+                areaChart
+                hideDataPoints
+                hideRules
+                isAnimated
+                animationDuration={1200}
+                startFillColor="#B8D8EA"
+                startOpacity={1}
+                endOpacity={0.3}
+                data={incomeData}
+                thickness={5}
+                yAxisColor="#B8D8EA"
+                xAxisColor="#B8D8EA"
+                color="#B8D8EA"
+                yAxisTextStyle={{color: isDark ? 'fff' : '#000'}}
+                xAxisLabelTextStyle={{color: isDark ? 'fff' : '#000'}}
+                curved
+              />
+            </View>
+            <Text style={[homeCss.title, {color: isDark ? '#fff' : '#000'}]}>
+              Weekly Spend
+            </Text>
+            <View
+              style={[
+                homeCss.barContainer,
+                {backgroundColor: isDark ? '#2D2D2D' : '#fff'},
+              ]}>
+              <LineChart
+                areaChart
+                hideDataPoints
+                hideRules
+                isAnimated
+                animationDuration={1200}
+                startFillColor="#B8D8EA"
+                startOpacity={1}
+                endOpacity={0.3}
+                data={spendData}
+                thickness={5}
+                yAxisColor="#B8D8EA"
+                xAxisColor="#B8D8EA"
+                color="#B8D8EA"
+                yAxisTextStyle={{color: isDark ? 'fff' : '#000'}}
+                xAxisLabelTextStyle={{color: isDark ? 'fff' : '#000'}}
+                curved
+              />
+            </View>
+          </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </MainContainer>
   );

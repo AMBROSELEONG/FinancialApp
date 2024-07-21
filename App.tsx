@@ -2,7 +2,7 @@ import React, {useEffect, useState, useRef} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {LogBox, SafeAreaView} from 'react-native';
-import {PaperProvider} from 'react-native-paper';
+import {PaperProvider, ProgressBar} from 'react-native-paper';
 import Welcome from './screen/Welcome';
 import whiteTheme from './objects/commonCss';
 import darkTheme from './objects/darkCss';

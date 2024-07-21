@@ -5,7 +5,6 @@
   "Fail-Load-Data": "Gagal memuatkan data",
   "Fail-Load-UserID": "Gagal memuatkan ID pengguna",
   "Fail-Load-Token": "Gagal memuatkan token",
-
   "LanguagePage": {
     "Change-Language": "Tukar Bahasa",
     "Language-Update": "Kemas Kini Bahasa",
@@ -205,7 +204,13 @@
     "Bank": "Pilih Bank",
     "Bank-Placeholder": "Pilih Bank",
     "Date": "Tarikh",
-    "Save": "Simpan"
+    "Save": "Simpan",
+    "Type-Empty": "Jenis pendapatan tidak boleh kosong",
+    "Bank-Empty": "Bank tidak boleh kosong",
+    "Success": "Tambah Pendapatan Berjaya",
+    "Fail": "Tambah Pendapatan Gagal",
+    "Alert": "Ralat Berlaku",
+    "Alert-Text": "Jumlah jumlah yang anda pindahkan daripada bank ke dompet anda adalah lebih besar daripada baki sedia ada di bank. Akibatnya, bank tidak mempunyai baki yang mencukupi untuk dipindahkan ke dompet anda. Sila sahkan pendapatan anda dengan teliti ."
   },
   "WalletSpend": {
     "Spend": "PERBELANJAAN",
@@ -218,7 +223,11 @@
     "Bank": "Pilih Bank",
     "Bank-Placeholder": "Pilih Bank",
     "Date": "Tarikh",
-    "Save": "Simpan"
+    "Save": "Simpan",
+    "Type-Empty": "Jenis Perbelanjaan tidak boleh kosong",
+    "Success": "Tambah Perbelanjaan Berjaya",
+    "Fail": "Tambah Perbelanjaan Gagal",
+    "Total-Exceeds-Balance": "Jumlah melebihi baki yang ada"
   },
   "Ewallet": {
     "Ewallet": "Dompet Elektronik"
@@ -236,12 +245,55 @@
     "Add-Bank-Placeholder": "Pilih Bank",
     "Initial-Balance": "Baki Permulaan",
     "Initial-Balance-Placeholder": "Sila Masukkan Baki Permulaan Anda",
-    "Save": "Simpan"
+    "Save": "Simpan",
+    "AddSuccess": "Tambah Bank Berjaya",
+    "AddFailed": "Tambah Bank Gagal",
+    "Total-Empty": "Jumlah tidak boleh kosong",
+    "Total-Invalid": "Jumlah tidak sah",
+    "Bank-Empty": "Pilih Bank tidak boleh kosong",
+    "Delete-Bank-Success": "Padam Bank Berjaya",
+    "Delete-Bank-Failed": "Padam Bank Gagal",
+    "Warning": "Amaran",
+    "Alert": "Tindakan ini tidak boleh dibatalkan. Adakah anda pasti mahu memadam akaun bank ini?"
   },
   "BankIncome": {
     "Fill": "Isi pendapatan bank"
   },
   "BankSpend": {
     "Fill": "Isi perbelanjaan bank"
+  },
+  "IncomeType": {
+    "Type1": "Gaji",
+    "Type2": "Bonus",
+    "Type3": "Pendapatan Pelaburan",
+    "Type4": "Pendapatan Faedah",
+    "Type5": "Pendapatan Sewa",
+    "Type6": "Pendapatan Bekerja Sendiri",
+    "Type7": "Hadiah",
+    "Type8": "Pemindahan Bank",
+    "Type9": "Pendapatan Lain",
+    "Type10": "Pendapatan Dompet",
+    "Type11": "Pendapatan Ewallet"
+  },
+  "SpendType": {
+    "Type1": "Perumahan",
+    "Type2": "Pengangkutan",
+    "Type3": "Makanan",
+    "Type4": "Utiliti",
+    "Type5": "Insurans",
+    "Type6": "Penjagaan Kesihatan",
+    "Type7": "Hiburan",
+    "Type8": "Penjagaan Diri",
+    "Type9": "Pendidikan",
+    "Type10": "Pembayaran Hutang",
+    "Type11": "Simpanan",
+    "Type12": "Simpan di Bank",
+    "Type13": "Perbelanjaan Lain",
+    "Type14": "Pemindahan Dompet",
+    "Type15": "Pemindahan Ewallet"
+  },
+  "BankDetail": {
+    "Total": "Jumlah Baki Bank",
+    "Bank-List": "Senarai Bank"
   }
 }
