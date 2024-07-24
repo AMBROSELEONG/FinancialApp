@@ -40,6 +40,9 @@ import Toast from 'react-native-toast-message';
 import {ThemeProvider} from './objects/ThemeProvider';
 import ThemeChange from './screen/ThemeChange';
 import messaging from '@react-native-firebase/messaging';
+import WalletHistory from './screen/WalletHistory';
+import EwalletHistory from './screen/EwalletHistory';
+import BankHistory from './screen/BankHistory';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
@@ -129,13 +132,16 @@ function App(): JSX.Element {
                 <Stack.Screen name="Wallet" component={Wallet} />
                 <Stack.Screen name="WalletIncome" component={WalletIncome} />
                 <Stack.Screen name="WalletSpend" component={WalletSpend} />
+                <Stack.Screen name="WalletHistory" component={WalletHistory} />
                 <Stack.Screen name="Bank" component={Bank} />
                 <Stack.Screen name="BankDetail" component={BankDetail} />
                 <Stack.Screen name="BankIncome" component={BankIncome} />
                 <Stack.Screen name="BankSpend" component={BankSpend} />
+                <Stack.Screen name="BankHistory" component={BankHistory} />
                 <Stack.Screen name="Ewallet" component={Ewallet} />
                 <Stack.Screen name="EWalletIncome" component={EWalletIncome} />
                 <Stack.Screen name="EWalletSpend" component={EWalletSpend} />
+                <Stack.Screen name="EwalletHistory" component={EwalletHistory} />
                 <Stack.Screen name="Expenses" component={Expenses} />
                 <Stack.Screen name="Language" component={Language} />
                 <Stack.Screen name="UserEdit" component={UserEdit} />

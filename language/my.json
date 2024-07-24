@@ -171,14 +171,16 @@
   "Home": {
     "Failed-Load-Username": "Gagal memuatkan nama pengguna",
     "Failed-Fetch": "Gagal mendapatkan data pengguna",
-    "Error-Fetch": "Ralat mendapatkan data pengguna",
+    "Error-Fetch": "Ralat semasa mendapatkan data pengguna",
     "Home": "Laman Utama",
     "Welcome-Back": "Selamat Kembali",
-    "Spending": "Perbelanjaan selama 7 hari yang lepas",
-    "Total-Spending": "Jumlah Perbelanjaan Hari Ini",
-    "Increase": "Peningkatan selama 7 hari yang lepas",
-    "Total-Increase": "Jumlah Peningkatan Hari Ini",
-    "Fail-Create-Data": "Gagal membuat data"
+    "Financial-Overview": "Gambaran Kewangan",
+    "Income-Today": "Pendapatan Hari Ini",
+    "Spend-Today": "Perbelanjaan Hari Ini",
+    "Balance-Overview": "Gambaran Baki",
+    "Weekly-Income": "Pendapatan Mingguan",
+    "Weekly-Spend": "Perbelanjaan Mingguan",
+    "Fail-Create-Data": "Gagal mencipta data"
   },
   "ThemeChange": {
     "Text": "Memproses menukar tema"
@@ -188,6 +190,15 @@
     "Balance": "Baki",
     "Income": "Pendapatan",
     "Spend": "Perbelanjaan",
+    "History": "Sejarah",
+    "Detail": "Butiran",
+    "Assets": "daripada Jumlah Aset",
+    "Highest-Income": "Jenis Pendapatan Mingguan Tertinggi",
+    "Income-Comes": "pendapatan anda datang dari",
+    "Highest-Spend": "Jenis Perbelanjaan Mingguan Tertinggi",
+    "Spend-Comes": "perbelanjaan anda datang dari",
+    "Weekly-Income": "Pendapatan Mingguan",
+    "Weekly-Spend": "Perbelanjaan Mingguan",
     "Income-History": "Sejarah Pendapatan",
     "Spend-History": "Sejarah Perbelanjaan",
     "Type": "Jenis",
@@ -270,7 +281,7 @@
     "Type5": "Pendapatan Sewa",
     "Type6": "Pendapatan Bekerja Sendiri",
     "Type7": "Hadiah",
-    "Type8": "Pemindahan Bank",
+    "Type8": "Pemindahan Dari Bank",
     "Type9": "Pendapatan Lain",
     "Type10": "Pendapatan Dompet",
     "Type11": "Pendapatan Ewallet"

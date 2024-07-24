@@ -21,60 +21,30 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {css, walletCss} from '../objects/commonCss';
-import {TabBar, TabView, SceneMap, TabBarProps} from 'react-native-tab-view';
-import {DataTable} from 'react-native-paper';
+import {css, walletStyle} from '../objects/commonCss';
 import BankIncome from './BankIncome';
 import BankSpend from './BankSpend';
 import i18n from '../language/language';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {darkWallet} from '../objects/darkCss';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
+import LinearGradient from 'react-native-linear-gradient';
+import BankHistory from './BankHistory';
+import {PieChart, LineChart} from 'react-native-gifted-charts';
 
-interface BankIncomeType {
-  bankIncomeID: number;
-  bankID: number;
-  userID: number;
-  amount: number;
-  type: string;
-  date: string;
+interface ChartData {
+  value: number;
+  label: string;
 }
 
-interface BankSpendType {
-  bankSpendID: number;
-  bankID: number;
-  userID: number;
-  amount: number;
-  type: string;
+interface IncomeData {
   date: string;
+  totalSpend: number;
 }
 
 const BankDetail = () => {
   const navigation = useNavigation();
-  const layout = useWindowDimensions();
-
-  const [index, setIndex] = React.useState(0);
-  const [routes] = React.useState([
-    {key: 'first', title: i18n.t('Wallet.Income-History')},
-    {key: 'second', title: i18n.t('Wallet.Spend-History')},
-  ]);
-
-  type Route = {
-    key: string;
-    title: string;
-  };
-
-  const renderTabBar = (props: TabBarProps<Route>) => (
-    <TabBar
-      {...props}
-      indicatorStyle={{backgroundColor: isDark ? '#fff' : '#000'}}
-      inactiveColor="#999999"
-      style={{backgroundColor: isDark ? '#202020' : '#fff'}}
-      activeColor={isDark ? '#fff' : '#000'}
-    />
-  );
 
   const [isDark, setIsDark] = useState(false);
   const [locale, setLocale] = React.useState(i18n.locale);
@@ -83,8 +53,14 @@ const BankDetail = () => {
   const [Balance, setBalance] = useState(null);
   const [loading, setLoading] = useState(false);
   const [bankID, setBankID] = useState('');
-  const [incomeItems, setIncomeItems] = useState<BankIncomeType[]>([]);
-  const [spendItems, setSpendItems] = useState<BankSpendType[]>([]);
+  const [maxIncomeType, setMaxIncomeType] = useState('');
+  const [maxIncomeAmount, setMaxIncomeAmount] = useState(0);
+  const [maxIncomeRatio, setMaxIncomeRatio] = useState(0);
+  const [incomeData, setIncomeData] = useState<ChartData[]>([]);
+  const [maxSpendType, setMaxSpendType] = useState('');
+  const [maxSpendAmount, setMaxSpendAmount] = useState(0);
+  const [maxSpendRatio, setMaxSpendRatio] = useState(0);
+  const [spendData, setSpendData] = useState<ChartData[]>([]);
 
   const ErrorToast = (message: any) => {
     Toast.show({
@@ -149,11 +125,9 @@ const BankDetail = () => {
       if (json.success) {
         SuccessToast(i18n.t('Bank.Delete-Bank-Success'));
         navigation.goBack();
-      } else {
-        ErrorToast(i18n.t('Bank.Delete-Bank-Failed'));
       }
     } catch (error) {
-      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
+      ErrorToast('No Data');
     } finally {
       setLoading(false);
     }
@@ -172,39 +146,116 @@ const BankDetail = () => {
       if (json.success) {
         setBankName(json.data.bankName);
         setBalance(json.data.amount.toFixed(2));
-      } else {
-        ErrorToast(i18n.t('SettingPage.Failed-Fetch-Data'));
       }
     } catch (error) {
-      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
+      ErrorToast('No Data');
     }
   };
 
-  const fetchIncome = async (bankId: string) => {
+  const fetchIncomeCategory = async (bankId: any) => {
     try {
       const response = await RNFetchBlob.config({trusty: true}).fetch(
         'GET',
-        `${UrlAccess.Url}BankIncome/GetIncome?bankId=${bankId}`,
+        `${UrlAccess.Url}BankIncome/GetUserWeeklyIncomeTypeRatio?bankId=${bankId}`,
         {'Content-Type': 'application/json'},
       );
       const json = await response.json();
-      setIncomeItems(json.data);
+      if (json.success) {
+        setMaxIncomeType(json.maxType);
+        setMaxIncomeAmount(json.maxTypeAmount);
+        setMaxIncomeRatio(json.ratio);
+      }
     } catch (error) {
-      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
+      ErrorToast('No Data');
     }
   };
 
-  const fetchSpend = async (bankId: string) => {
+  const fetchSpendCategory = async (bankId: any) => {
     try {
       const response = await RNFetchBlob.config({trusty: true}).fetch(
         'GET',
-        `${UrlAccess.Url}BankSpend/GetSpend?bankId=${bankId}`,
+        `${UrlAccess.Url}BankSpend/GetUserWeeklySpendTypeRatio?bankId=${bankId}`,
         {'Content-Type': 'application/json'},
       );
       const json = await response.json();
-      setSpendItems(json.data);
+      if (json.success) {
+        setMaxSpendType(json.maxType);
+        setMaxSpendAmount(json.maxTypeAmount);
+        setMaxSpendRatio(json.ratio);
+      }
     } catch (error) {
-      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
+      ErrorToast('No Data');
+    }
+  };
+
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${month}-${day}`;
+  };
+
+  const Income = async (bankId: any) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}BankIncome/WeeklyIncome?bankId=${bankId}`,
+        {'Content-Type': 'application/json'},
+      );
+      const result = await response.json();
+      if (result.success) {
+        const resultData: ChartData[] = result.data.map((item: IncomeData) => {
+          return {
+            value: item.totalSpend,
+            label: formatDate(item.date),
+          };
+        });
+        setIncomeData(resultData);
+      }
+    } catch (error) {
+      ErrorToast('No Data');
+    }
+  };
+
+  const Spend = async (UserID: any) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}BankSpend/WeeklySpend?bankId=${UserID}`,
+        {'Content-Type': 'application/json'},
+      );
+      const result = await response.json();
+      if (result.success) {
+        const resultData: ChartData[] = result.data.map((item: IncomeData) => {
+          return {
+            value: item.totalSpend,
+            label: formatDate(item.date),
+          };
+        });
+        setSpendData(resultData);
+      }
+    } catch (error) {
+      ErrorToast('No Data');
+    }
+  };
+
+  const [percent, setPercent] = useState('');
+
+  const fetchTotalBalance = async (userId: string, bankId: string) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}Bank/GetPercent?userID=${userId}&bankID=${bankId}`,
+        {'Content-Type': 'application/json'},
+      );
+
+      const result = await response.json();
+
+      if (result.success) {
+        setPercent(result.total.specifiedBankPercentage.toFixed(0));
+      }
+    } catch (error) {
+      ErrorToast('No Data');
     }
   };
 
@@ -225,12 +276,15 @@ const BankDetail = () => {
       if (storedBankID) {
         setBankID(storedBankID);
         await fetchData(storedBankID);
-        await fetchIncome(storedBankID);
-        await fetchSpend(storedBankID);
+        await fetchIncomeCategory(storedBankID);
+        await fetchSpendCategory(storedBankID);
+        await Income(storedBankID);
+        await Spend(storedBankID);
       }
 
-      if (storedUserID) {
+      if (storedUserID && storedBankID) {
         setUserId(storedUserID);
+        await fetchTotalBalance(storedUserID, storedBankID);
       }
     } catch (error) {
       ErrorToast(i18n.t('SettingPage.Error-Initializing'));
@@ -274,131 +328,6 @@ const BankDetail = () => {
     '15': i18n.t('SpendType.Type15'),
   };
 
-  const FirstRoute = () => {
-    return (
-      <View style={isDark ? darkWallet.TabBackground : walletCss.TabBackground}>
-        <ScrollView>
-          <DataTable>
-            <DataTable.Header>
-              <DataTable.Title textStyle={{color: isDark ? '#fff' : '#000'}}>
-                {i18n.t('Wallet.Type')}
-              </DataTable.Title>
-              <DataTable.Title
-                style={walletCss.cell}
-                textStyle={{color: isDark ? '#fff' : '#000'}}>
-                {i18n.t('Wallet.Income')} (RM)
-              </DataTable.Title>
-              <DataTable.Title
-                style={walletCss.cell}
-                textStyle={{color: isDark ? '#fff' : '#000'}}>
-                {i18n.t('Wallet.Date')}
-              </DataTable.Title>
-            </DataTable.Header>
-
-            {incomeItems && incomeItems.length > 0 ? (
-              incomeItems.map((item, index) => (
-                <DataTable.Row
-                  key={item.bankIncomeID}
-                  style={
-                    index % 2 === 0
-                      ? walletCss.evenRowIncome
-                      : isDark
-                      ? darkWallet.oddRow
-                      : walletCss.oddRow
-                  }>
-                  <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
-                    {typeMap[item.type] || item.type}
-                  </DataTable.Cell>
-                  <DataTable.Cell
-                    style={walletCss.cell}
-                    textStyle={{color: isDark ? '#fff' : '#000'}}>
-                    {item.amount.toFixed(2)}
-                  </DataTable.Cell>
-                  <DataTable.Cell
-                    style={walletCss.cell}
-                    textStyle={{color: isDark ? '#fff' : '#000'}}>
-                    {item.date}
-                  </DataTable.Cell>
-                </DataTable.Row>
-              ))
-            ) : (
-              <DataTable.Row>
-                <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
-                  No data available
-                </DataTable.Cell>
-              </DataTable.Row>
-            )}
-          </DataTable>
-        </ScrollView>
-      </View>
-    );
-  };
-
-  const SecondRoute = () => {
-    return (
-      <View style={isDark ? darkWallet.TabBackground : walletCss.TabBackground}>
-        <ScrollView>
-          <DataTable>
-            <DataTable.Header>
-              <DataTable.Title textStyle={{color: isDark ? '#fff' : '#000'}}>
-                {i18n.t('Wallet.Type')}
-              </DataTable.Title>
-              <DataTable.Title
-                style={walletCss.cell}
-                textStyle={{color: isDark ? '#fff' : '#000'}}>
-                {i18n.t('Wallet.Income')} (RM)
-              </DataTable.Title>
-              <DataTable.Title
-                style={walletCss.cell}
-                textStyle={{color: isDark ? '#fff' : '#000'}}>
-                {i18n.t('Wallet.Date')}
-              </DataTable.Title>
-            </DataTable.Header>
-
-            {spendItems && spendItems.length > 0 ? (
-              spendItems.map((item, index) => (
-                <DataTable.Row
-                  key={item.bankSpendID}
-                  style={
-                    index % 2 === 0
-                      ? walletCss.evenRowSpend
-                      : isDark
-                      ? darkWallet.oddRow
-                      : walletCss.oddRow
-                  }>
-                  <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
-                    {typeMapSpend[item.type] || item.type}
-                  </DataTable.Cell>
-                  <DataTable.Cell
-                    style={walletCss.cell}
-                    textStyle={{color: isDark ? '#fff' : '#000'}}>
-                    {item.amount.toFixed(2)}
-                  </DataTable.Cell>
-                  <DataTable.Cell
-                    style={walletCss.cell}
-                    textStyle={{color: isDark ? '#fff' : '#000'}}>
-                    {item.date}
-                  </DataTable.Cell>
-                </DataTable.Row>
-              ))
-            ) : (
-              <DataTable.Row>
-                <DataTable.Cell textStyle={{color: isDark ? '#fff' : '#000'}}>
-                  No data available
-                </DataTable.Cell>
-              </DataTable.Row>
-            )}
-          </DataTable>
-        </ScrollView>
-      </View>
-    );
-  };
-
-  const renderScene = SceneMap({
-    first: FirstRoute,
-    second: SecondRoute,
-  });
-
   if (loading) {
     return (
       <View
@@ -413,6 +342,20 @@ const BankDetail = () => {
     );
   }
 
+  const IncomeCategoryPercent = maxIncomeRatio * 100;
+  const remainIncomeCategory = 100 - IncomeCategoryPercent;
+  const IncomeCategoryPie = [
+    {value: IncomeCategoryPercent, color: '#3490DE'},
+    {value: remainIncomeCategory, color: '#fff'},
+  ];
+
+  const SpendCategoryPercent = maxSpendRatio * 100;
+  const remainSpendCategory = 100 - SpendCategoryPercent;
+  const SpendCategoryPie = [
+    {value: SpendCategoryPercent, color: '#FF2D00'},
+    {value: remainSpendCategory, color: '#fff'},
+  ];
+
   return (
     <MainContainer>
       <KeyboardAvoidingView
@@ -420,83 +363,281 @@ const BankDetail = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <StatusBar
           animated={true}
-          backgroundColor={isDark ? '#000' : '#3490DE'}
+          backgroundColor={isDark ? '#000' : '#f4f4f4'}
           barStyle={'dark-content'}
         />
         <View
           style={[
             css.mainView,
-            {backgroundColor: isDark ? '#000' : '#3490DE'},
+            {backgroundColor: isDark ? '#000' : '#f4f4f4'},
           ]}>
           <TouchableOpacity
             style={{paddingLeft: 20}}
             onPress={() => {
               navigation.goBack(), AsyncStorage.removeItem('BankID');
             }}>
-            <Ionicons name="arrow-back" size={30} color={'#fff'} />
+            <Ionicons
+              name="arrow-back"
+              size={30}
+              color={isDark ? '#fff' : '#000'}
+            />
           </TouchableOpacity>
           <View style={[css.HeaderView, {marginRight: 0}]}>
-            <Text style={[css.PageName, {color: '#fff'}]}>
+            <Text style={[css.PageName, {color: isDark ? '#fff' : '#000'}]}>
               {bankName.substring(0, 20)}
             </Text>
           </View>
           <TouchableOpacity
             style={{paddingLeft: 20, marginRight: 20}}
             onPress={() => handleDelete()}>
-            <MaterialCommunityIcons name="delete" size={30} color={'#fff'} />
+            <MaterialCommunityIcons name="delete" size={30} color={'#ff0000'} />
           </TouchableOpacity>
         </View>
-        <View style={walletCss.container}>
-          <View style={isDark ? darkWallet.header : walletCss.header}>
-            <Text style={walletCss.balanceText}>
-              {i18n.t('Wallet.Balance')}
-            </Text>
-            <Text style={walletCss.balance}>RM {Balance}</Text>
+        <View
+          style={[
+            walletStyle.upperContainer,
+            {backgroundColor: isDark ? '#202020' : '#f4f4f4'},
+          ]}>
+          <View style={walletStyle.leftContent}>
             <View
-              style={
-                isDark
-                  ? darkWallet.positionContainer
-                  : walletCss.positionContainer
-              }>
-              <TouchableOpacity
-                style={walletCss.button}
-                onPress={() => navigation.navigate(BankIncome as never)}>
+              style={[
+                walletStyle.grayView,
+                walletStyle.view,
+                walletStyle.rotate45,
+                {backgroundColor: isDark ? '#313131' : '#E8E8E8'},
+              ]}></View>
+            <View
+              style={[
+                walletStyle.grayView,
+                walletStyle.view,
+                walletStyle.rotateMinus45,
+                {backgroundColor: isDark ? '#313131' : '#E8E8E8'},
+              ]}></View>
+            <LinearGradient
+              style={walletStyle.view}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 0}}
+              colors={['#1C4E78', '#3490DE']}>
+              <Text style={walletStyle.balanceText}>RM {Balance}</Text>
+              <Text style={walletStyle.title}>{i18n.t('Wallet.Balance')}</Text>
+              <Text style={walletStyle.asset}>
+                {percent}% {i18n.t('Wallet.Assets')}
+              </Text>
+            </LinearGradient>
+          </View>
+          <View style={walletStyle.rightContent}>
+            <TouchableOpacity
+              style={walletStyle.buttonView}
+              onPress={() => navigation.navigate(BankIncome as never)}>
+              <View
+                style={[
+                  walletStyle.circle,
+                  {backgroundColor: isDark ? '#313131' : '#fff'},
+                ]}>
                 <Image
-                  source={
-                    isDark
-                      ? require('../assets/whiteincome.png')
-                      : require('../assets/income.png')
-                  }
-                  style={walletCss.icon}></Image>
-                <Text style={isDark ? darkWallet.text : walletCss.text}>
-                  {i18n.t('Wallet.Income')}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={walletCss.button}
-                onPress={() => navigation.navigate(BankSpend as never)}>
+                  source={require('../assets/income.png')}
+                  style={walletStyle.icon}
+                />
+              </View>
+              <Text style={walletStyle.buttonText}>
+                {i18n.t('Wallet.Income')}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={walletStyle.buttonView}
+              onPress={() => navigation.navigate(BankSpend as never)}>
+              <View
+                style={[
+                  walletStyle.circle,
+                  {backgroundColor: isDark ? '#313131' : '#fff'},
+                ]}>
                 <Image
-                  source={
-                    isDark
-                      ? require('../assets/whitespend.png')
-                      : require('../assets/spend.png')
-                  }
-                  style={walletCss.icon}></Image>
-                <Text style={isDark ? darkWallet.text : walletCss.text}>
-                  {i18n.t('Wallet.Spend')}
+                  source={require('../assets/spending.png')}
+                  style={walletStyle.icon}
+                />
+              </View>
+              <Text style={walletStyle.buttonText}>
+                {i18n.t('Wallet.Spend')}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={walletStyle.buttonView}
+              onPress={() => navigation.navigate(BankHistory as never)}>
+              <View
+                style={[
+                  walletStyle.circle,
+                  {backgroundColor: isDark ? '#313131' : '#fff'},
+                ]}>
+                <Image
+                  source={require('../assets/history.png')}
+                  style={walletStyle.icon}
+                />
+              </View>
+              <Text style={walletStyle.buttonText}>
+                {i18n.t('Wallet.History')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View
+          style={[
+            walletStyle.lowerContainer,
+            {backgroundColor: isDark ? '#202020' : '#f4f4f4'},
+          ]}>
+          <ScrollView>
+            <Text
+              style={[
+                walletStyle.lowerTitle,
+                {color: isDark ? '#fff' : '#000'},
+              ]}>
+              {i18n.t('Wallet.Detail')}
+            </Text>
+            <View
+              style={[
+                walletStyle.lowerContent,
+                {backgroundColor: isDark ? '#313131' : '#fff'},
+              ]}>
+              <View style={{flex: 2}}>
+                <Text style={walletStyle.lowerText}>
+                  {i18n.t('Wallet.Highest-Income')}
                 </Text>
-              </TouchableOpacity>
+                <Text
+                  style={[
+                    walletStyle.lowerSubtext,
+                    {color: isDark ? '#fff' : '#000'},
+                  ]}>
+                  {typeMap[maxIncomeType] || maxIncomeType}
+                </Text>
+                <Text style={walletStyle.lowerSubtext2}>
+                  {IncomeCategoryPercent.toFixed(0)}%{' '}
+                  {i18n.t('Wallet.Income-Comes')}{' '}
+                  {typeMap[maxIncomeType] || maxIncomeType}.
+                </Text>
+              </View>
+              <View style={{flex: 1}}>
+                <PieChart
+                  donut
+                  innerRadius={35}
+                  data={IncomeCategoryPie}
+                  innerCircleColor={isDark ? '#313131' : '#fff'}
+                  centerLabelComponent={() => {
+                    return (
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          color: isDark ? '#fff' : '#000',
+                          fontWeight: 'bold',
+                        }}>
+                        {IncomeCategoryPercent.toFixed(0)}%
+                      </Text>
+                    );
+                  }}
+                  radius={45}
+                />
+              </View>
             </View>
-          </View>
-          <View style={isDark ? darkWallet.body : walletCss.body}>
-            <TabView
-              navigationState={{index, routes}}
-              renderScene={renderScene}
-              onIndexChange={setIndex}
-              initialLayout={{width: layout.width}}
-              renderTabBar={renderTabBar}
-            />
-          </View>
+            <View
+              style={[
+                walletStyle.lowerContent,
+                {backgroundColor: isDark ? '#313131' : '#fff'},
+              ]}>
+              <View style={{flex: 2}}>
+                <Text style={walletStyle.lowerText}>
+                  {i18n.t('Wallet.Highest-Spend')}
+                </Text>
+                <Text
+                  style={[
+                    walletStyle.lowerSubtext,
+                    {color: isDark ? '#fff' : '#000'},
+                  ]}>
+                  {typeMapSpend[maxSpendType] || maxSpendType}
+                </Text>
+                <Text style={walletStyle.lowerSubtext2}>
+                  {SpendCategoryPercent.toFixed(0)}%{' '}
+                  {i18n.t('Wallet.Spend-Comes')}{' '}
+                  {typeMapSpend[maxSpendType] || maxSpendType}.
+                </Text>
+              </View>
+              <View style={{flex: 1}}>
+                <PieChart
+                  donut
+                  innerRadius={35}
+                  data={SpendCategoryPie}
+                  innerCircleColor={isDark ? '#313131' : '#fff'}
+                  centerLabelComponent={() => {
+                    return (
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          color: isDark ? '#fff' : '#000',
+                          fontWeight: 'bold',
+                        }}>
+                        {SpendCategoryPercent.toFixed(0)}%
+                      </Text>
+                    );
+                  }}
+                  radius={45}
+                />
+              </View>
+            </View>
+            <Text
+              style={[
+                walletStyle.lowerTitle,
+                {marginTop: 20, color: isDark ? '#fff' : '#000'},
+              ]}>
+              {i18n.t('Wallet.Weekly-Income')}
+            </Text>
+            <View
+              style={[
+                walletStyle.lowerContent2,
+                {backgroundColor: isDark ? '#313131' : '#fff'},
+              ]}>
+              <LineChart
+                areaChart
+                hideDataPoints
+                hideRules
+                isAnimated
+                animationDuration={1200}
+                startFillColor="#3490DE"
+                endFillColor="#8BC4F5"
+                startOpacity={1}
+                endOpacity={0.1}
+                data={incomeData}
+                color="#3490DE"
+                yAxisTextStyle={{color: isDark ? '#fff' : '#000'}}
+                xAxisLabelTextStyle={{color: isDark ? '#fff' : '#000'}}
+                curved
+              />
+            </View>
+            <Text
+              style={[
+                walletStyle.lowerTitle,
+                {marginTop: 20, color: isDark ? '#fff' : '#000'},
+              ]}>
+              {i18n.t('Wallet.Weekly-Spend')}
+            </Text>
+            <View
+              style={[
+                walletStyle.lowerContent2,
+                {backgroundColor: isDark ? '#313131' : '#fff'},
+              ]}>
+              <LineChart
+                areaChart
+                hideDataPoints
+                hideRules
+                isAnimated
+                animationDuration={1200}
+                startFillColor="#FF2D00"
+                startOpacity={1}
+                endOpacity={0.1}
+                data={spendData}
+                color="#FF2D00"
+                yAxisTextStyle={{color: isDark ? '#fff' : '#000'}}
+                xAxisLabelTextStyle={{color: isDark ? '#fff' : '#000'}}
+                curved
+              />
+            </View>
+          </ScrollView>
         </View>
       </KeyboardAvoidingView>
     </MainContainer>

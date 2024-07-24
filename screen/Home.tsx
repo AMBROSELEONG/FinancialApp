@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {css, homeCss} from '../objects/commonCss';
-import {HoverEffect, ScrollView} from 'react-native-gesture-handler';
+import {ScrollView} from 'react-native-gesture-handler';
 import {LineChart} from 'react-native-gifted-charts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -356,7 +356,7 @@ const Home = () => {
       </View>
     );
   }
-  
+
   return (
     <MainContainer>
       <KeyboardAvoidingView
@@ -385,7 +385,9 @@ const Home = () => {
             </View>
           </View>
           <View style={{position: 'relative'}}>
-            <Text style={homeCss.welcomeText}>Welcome Back</Text>
+            <Text style={homeCss.welcomeText}>
+              {i18n.t('Home.Welcome-Back')}
+            </Text>
             <Text style={homeCss.userText}>{UserName}</Text>
           </View>
           {isDark ? null : (
@@ -402,7 +404,7 @@ const Home = () => {
           ]}>
           <ScrollView>
             <Text style={[homeCss.title, {color: isDark ? '#fff' : '#000'}]}>
-              Financial Overview
+              {i18n.t('Home.Financial-Overview')}
             </Text>
             <View style={homeCss.overviewContainer}>
               <View
@@ -411,7 +413,7 @@ const Home = () => {
                   {marginRight: 10, backgroundColor: '#538DB3'},
                 ]}>
                 <Text style={[homeCss.overviewText, {color: '#fff'}]}>
-                  Income Today
+                  {i18n.t('Home.Income-Today')}
                 </Text>
                 <Text style={[homeCss.overviewBalance, {color: '#fff'}]}>
                   RM {income.toFixed(2)}
@@ -427,7 +429,7 @@ const Home = () => {
                   {marginLeft: 10, backgroundColor: '#B8D8EA'},
                 ]}>
                 <Text style={[homeCss.overviewText, {color: '#000'}]}>
-                  Spend Today
+                  {i18n.t('Home.Spend-Today')}
                 </Text>
                 <Text style={[homeCss.overviewBalance, {color: '#000'}]}>
                   RM {spend.toFixed(2)}
@@ -439,7 +441,7 @@ const Home = () => {
               </View>
             </View>
             <Text style={[homeCss.title, {color: isDark ? '#fff' : '#000'}]}>
-              Balance Overview
+              {i18n.t('Home.Balance-Overview')}
             </Text>
             <View
               style={[
@@ -457,7 +459,9 @@ const Home = () => {
                     style={homeCss.imageHome}
                   />
                 </View>
-                <Text style={homeCss.balanceText}>Wallet</Text>
+                <Text style={homeCss.balanceText}>
+                  {i18n.t('Wallet.Wallet')}
+                </Text>
                 <Text
                   style={[homeCss.balance, {color: isDark ? '#fff' : '#000'}]}>
                   {walletBalance}
@@ -474,7 +478,7 @@ const Home = () => {
                     style={homeCss.imageHome}
                   />
                 </View>
-                <Text style={homeCss.balanceText}>Bank</Text>
+                <Text style={homeCss.balanceText}>{i18n.t('Bank.Bank')}</Text>
                 <Text
                   style={[homeCss.balance, {color: isDark ? '#fff' : '#000'}]}>
                   {bankBalance}
@@ -491,7 +495,9 @@ const Home = () => {
                     style={homeCss.imageHome}
                   />
                 </View>
-                <Text style={homeCss.balanceText}>Ewallet</Text>
+                <Text style={homeCss.balanceText}>
+                  {i18n.t('Ewallet.Ewallet')}
+                </Text>
                 <Text
                   style={[homeCss.balance, {color: isDark ? '#fff' : '#000'}]}>
                   {ewalletBalance}
@@ -500,7 +506,7 @@ const Home = () => {
             </View>
             <StackedProgressBar data={data} />
             <Text style={[homeCss.title, {color: isDark ? '#fff' : '#000'}]}>
-              Weekly Income
+              {i18n.t('Home.Weekly-Income')}
             </Text>
             <View
               style={[
@@ -521,13 +527,13 @@ const Home = () => {
                 yAxisColor="#B8D8EA"
                 xAxisColor="#B8D8EA"
                 color="#B8D8EA"
-                yAxisTextStyle={{color: isDark ? 'fff' : '#000'}}
-                xAxisLabelTextStyle={{color: isDark ? 'fff' : '#000'}}
+                yAxisTextStyle={{color: isDark ? '#fff' : '#000'}}
+                xAxisLabelTextStyle={{color: isDark ? '#fff' : '#000'}}
                 curved
               />
             </View>
             <Text style={[homeCss.title, {color: isDark ? '#fff' : '#000'}]}>
-              Weekly Spend
+              {i18n.t('Home.Weekly-Spend')}
             </Text>
             <View
               style={[
@@ -548,8 +554,8 @@ const Home = () => {
                 yAxisColor="#B8D8EA"
                 xAxisColor="#B8D8EA"
                 color="#B8D8EA"
-                yAxisTextStyle={{color: isDark ? 'fff' : '#000'}}
-                xAxisLabelTextStyle={{color: isDark ? 'fff' : '#000'}}
+                yAxisTextStyle={{color: isDark ? '#fff' : '#000'}}
+                xAxisLabelTextStyle={{color: isDark ? '#fff' : '#000'}}
                 curved
               />
             </View>

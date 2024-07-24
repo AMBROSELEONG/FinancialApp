@@ -420,7 +420,7 @@ export const homeCss = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     marginBottom: 20,
-    width: '100%'
+    width: '100%',
   },
   progressItem: {
     height: '100%',
@@ -429,7 +429,7 @@ export const homeCss = StyleSheet.create({
     flex: 1,
     padding: 10,
     borderRadius: 10,
-    marginBottom: 20
+    marginBottom: 20,
   },
 });
 
@@ -917,4 +917,138 @@ export const bankCss = StyleSheet.create({
     width: (Dimensions.get('screen').width / 100) * 10,
     height: (Dimensions.get('screen').width / 100) * 10,
   },
+});
+
+export const walletStyle = StyleSheet.create({
+  upperContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingBottom: 30
+  },
+  leftContent: {
+    flex: 2,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  rightContent: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    paddingHorizontal: 25,
+    paddingTop: 20
+  },
+  lowerContainer: {
+    flex: 2,
+    padding: 30,
+    paddingTop: 20,
+  },
+  view: {
+    width: (Dimensions.get('screen').width / 100) * 60,
+    height: (Dimensions.get('screen').width / 100) * 35,
+    position: 'absolute',
+    borderTopRightRadius: 20,
+    borderBottomRightRadius: 20,
+    padding: 20,
+  },
+  grayView: {
+    backgroundColor: '#E8E8E8',
+  },
+  blueView: {
+    backgroundColor: 'blue',
+  },
+  rotate45: {
+    transform: [{translateX: -25}, {rotate: '10deg'}, {translateX: 25}],
+  },
+  rotateMinus45: {
+    transform: [{translateX: -25}, {rotate: '-10deg'}, {translateX: 25}],
+  },
+  balanceText: {
+    fontSize: 30,
+    color: '#fff',
+    fontWeight: 'bold',
+    textAlign: 'right',
+  },
+  title: {
+    fontSize: 16,
+    color: '#fff',
+    textAlign: 'right',
+    marginTop: 20,
+  },
+  asset: {
+    fontSize: 14,
+    color: '#CCCCCC',
+    textAlign: 'right',
+  },
+  buttonView: {
+    marginVertical: 5,
+    alignSelf: 'center',
+  },
+  circle: {
+    width: (Dimensions.get('screen').width / 100) * 16,
+    height: (Dimensions.get('screen').width / 100) * 16,
+    backgroundColor: '#fff',
+    borderRadius: Dimensions.get('screen').width / 2,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 10,
+    justifyContent: 'center',
+    alignSelf: 'center'
+  },
+  icon: {
+    width: (Dimensions.get('screen').width / 100) * 8,
+    height: (Dimensions.get('screen').width / 100) * 8,
+    alignSelf: 'center',
+  },
+  buttonText: {
+    alignSelf: 'flex-end',
+    fontSize: 16,
+    color: '#000',
+    alignSelf: 'center',
+  },
+  lowerTitle: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  changeButton: {
+    width: (Dimensions.get('screen').width / 100) * 20,
+    height: (Dimensions.get('screen').width / 100) * 6,
+    borderRadius: 10,
+    borderColor: '#E8E8E8',
+    borderWidth: 2,
+  },
+  lowerContent: {
+    height: (Dimensions.get('screen').width / 100) * 30,
+    backgroundColor: '#fff',
+    padding: 10,
+    marginTop: 20,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  lowerText: {
+    fontSize: 14,
+    color: '#3490DE',
+  },
+  lowerSubtext: {
+    fontSize: 20,
+    color: '#000',
+    fontWeight: 'bold',
+  },
+  lowerSubtext2: {
+    fontSize: 14,
+    color: '#999999',
+  },
+  lowerContent2: {
+    height: (Dimensions.get('screen').width / 100) * 60,
+    backgroundColor: '#fff',
+    padding: 10,
+    marginTop: 20,
+  }
 });

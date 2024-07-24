@@ -16,12 +16,15 @@ export type StackParamList = {
     UserEdit: undefined;
     WalletIncome: undefined;
     WalletSpend: undefined;
+    WalletHistory: undefined;
     EWalletIncome: undefined;
     EWalletSpend: undefined;
     BankDetail: undefined;
     BankIncome: undefined;
     BankSpend: undefined;
     ThemeChange: undefined;
+    EwalletHistory: undefined;
+    BankHistory: undefined;
     Verify: { length: number; value: string[]; disabled: boolean; onChange: (value: string[]) => void };
     ResetVerify: { length: number; value: string[]; disabled: boolean; onChange: (value: string[]) => void };
     UserEditVerify: { length: number; value: string[]; disabled: boolean; onChange: (value: string[]) => void };
