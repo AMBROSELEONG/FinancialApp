@@ -166,6 +166,7 @@ const BankHistory = () => {
     '10': i18n.t('IncomeType.Type10'),
     '11': i18n.t('IncomeType.Type11'),
     '9': i18n.t('IncomeType.Type9'),
+    '12': i18n.t('IncomeType.Type12'),
   };
 
   const typeMapSpend: Record<string, string> = {
@@ -184,6 +185,7 @@ const BankHistory = () => {
     '13': i18n.t('SpendType.Type13'),
     '14': i18n.t('SpendType.Type14'),
     '15': i18n.t('SpendType.Type15'),
+    '16': i18n.t('SpendType.Type16'),
   };
 
   const FirstRoute = () => {

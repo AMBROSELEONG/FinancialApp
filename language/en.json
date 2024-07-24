@@ -19,6 +19,7 @@
     "Language": "Language",
     "Dark-Mode": "Dark Mode",
     "Finger-Print": "Enable Finger Print",
+    "Currency": "Currency Conversion",
     "Failed-Load-Username": "Failed to load username",
     "Failed-Fetch-Data": "Failed to Fetch User Data",
     "Error-Fetch": "Error fetching user data",
@@ -284,7 +285,8 @@
     "Type8": "Transfer From Bank",
     "Type9": "Other Income",
     "Type10": "Wallet Income",
-    "Type11": "Ewallet Income"
+    "Type11": "Ewallet Income",
+    "Type12": "Transfer From Another Bank"
   },
   "SpendType": {
     "Type1": "Housing",
@@ -301,7 +303,8 @@
     "Type12": "Save In Bank",
     "Type13": "Other Expenses",
     "Type14": "Wallet Transfer",
-    "Type15": "Ewallet Transfer"
+    "Type15": "Ewallet Transfer",
+    "Type16": "Transfer to Another Bank"
   },
   "BankDetail": {
     "Total": "Total Bank Balance",

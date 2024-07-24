@@ -208,6 +208,7 @@ const EWalletSpend = () => {
     let isValid = true;
     const amount = parseFloat(Total);
     const balance = parseFloat(Balance);
+    
     if (!amount) {
       setTotalError(i18n.t('Bank.Total-Empty'));
       isValid = false;

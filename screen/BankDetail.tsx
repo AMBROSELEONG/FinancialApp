@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import MainContainer from '../components/MainContainer';
 import {
   useNavigation,
-  DrawerActions,
   useFocusEffect,
 } from '@react-navigation/native';
 import {
@@ -13,7 +12,6 @@ import {
   TouchableOpacity,
   Platform,
   Image,
-  useWindowDimensions,
   ScrollView,
   ActivityIndicator,
   BackHandler,
@@ -326,6 +324,7 @@ const BankDetail = () => {
     '13': i18n.t('SpendType.Type13'),
     '14': i18n.t('SpendType.Type14'),
     '15': i18n.t('SpendType.Type15'),
+    '16': i18n.t('SpendType.Type16'),
   };
 
   if (loading) {

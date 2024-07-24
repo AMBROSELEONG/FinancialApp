@@ -96,7 +96,7 @@ const BankIncome = () => {
   const [isDark, setIsDark] = useState(false);
   const [loading, setLoading] = useState(false);
   const [userID, setUserId] = useState('');
-  const [Balance, setBalance] = useState(null);
+  const [Balance, setBalance] = useState('');
   const [bankID, setBankID] = useState('');
 
   const fetchData = async (bankId: string) => {
@@ -162,12 +162,16 @@ const BankIncome = () => {
   const validateNormal = async () => {
     let isValid = true;
     const amount = parseFloat(Total);
+    const balance = parseFloat(Balance);
 
     if (!amount) {
       setTotalError(i18n.t('Bank.Total-Empty'));
       isValid = false;
     } else if (isNaN(amount) || amount <= 0) {
       setTotalError(i18n.t('Bank.Total-Invalid'));
+      isValid = false;
+    } else if (amount >= balance) {
+      setTotalError(i18n.t('WalletSpend.Total-Exceeds-Balance'));
       isValid = false;
     } else {
       setTotalError('');

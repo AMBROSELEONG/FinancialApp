@@ -1,11 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import MainContainer from '../components/MainContainer';
-import {
-  useNavigation,
-  DrawerActions,
-  useFocusEffect,
-  CommonActions,
-} from '@react-navigation/native';
+import {useNavigation, DrawerActions} from '@react-navigation/native';
 import {
   KeyboardAvoidingView,
   StatusBar,
@@ -16,11 +11,11 @@ import {
   Image,
   Switch,
   ActivityIndicator,
-  Dimensions,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {css, settingCss} from '../objects/commonCss';
 import Language from './Language';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -33,7 +28,6 @@ import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {useTheme} from '../objects/ThemeProvider';
 import {darkCss, darkSetting} from '../objects/darkCss';
-import CustomDrawer from './CustomDrawer';
 import ThemeChange from './ThemeChange';
 const STORAGE_KEY = '@app_language';
 
@@ -458,6 +452,31 @@ const Setting = () => {
               ) : (
                 <View></View>
               )}
+
+              <TouchableOpacity
+                style={settingCss.FunctionContainer}
+                onPress={() => navigation.navigate(Language as never)}>
+                <View style={{flexDirection: 'row'}}>
+                  <MaterialIcons
+                    name="currency-exchange"
+                    size={30}
+                    color={isDark ? '#fff' : '#000'}
+                    style={[settingCss.EditIcon, {borderWidth: 0}]}
+                  />
+                  <View style={settingCss.TextContainer}>
+                    <Text style={isDark ? darkSetting.text : settingCss.text}>
+                      {i18n.t('SettingPage.Currency')}
+                    </Text>
+                  </View>
+                </View>
+                <View style={settingCss.ClickIcon}>
+                  <FontAwesome5
+                    name="angle-right"
+                    size={30}
+                    color={isDark ? '#fff' : '#000'}
+                  />
+                </View>
+              </TouchableOpacity>
             </View>
           </View>
         </View>

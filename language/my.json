@@ -19,6 +19,7 @@
     "Language": "Bahasa",
     "Dark-Mode": "Mod Gelap",
     "Finger-Print": "Dayakan Cap Jari",
+    "Currency": "Penukaran Mata Wang",
     "Failed-Load-Username": "Gagal memuatkan nama pengguna",
     "Failed-Fetch-Data": "Gagal mendapatkan data pengguna",
     "Error-Fetch": "Ralat mendapatkan data pengguna",
@@ -284,7 +285,8 @@
     "Type8": "Pemindahan Dari Bank",
     "Type9": "Pendapatan Lain",
     "Type10": "Pendapatan Dompet",
-    "Type11": "Pendapatan Ewallet"
+    "Type11": "Pendapatan Ewallet",
+    "Type12": "Pindahan dari Bank Lain"
   },
   "SpendType": {
     "Type1": "Perumahan",
@@ -301,7 +303,8 @@
     "Type12": "Simpan di Bank",
     "Type13": "Perbelanjaan Lain",
     "Type14": "Pemindahan Dompet",
-    "Type15": "Pemindahan Ewallet"
+    "Type15": "Pemindahan Ewallet",
+    "Type16": "Pindahan ke Bank Lain"
   },
   "BankDetail": {
     "Total": "Jumlah Baki Bank",

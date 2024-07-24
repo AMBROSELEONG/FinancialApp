@@ -19,6 +19,7 @@
     "Language": "语言",
     "Dark-Mode": "夜间模式",
     "Finger-Print": "启用指纹",
+    "Currency": "货币转换",
     "Failed-Load-Username": "加载用户名失败",
     "Failed-Fetch-Data": "获取用户数据失败",
     "Error-Fetch": "获取用户数据错误",
@@ -284,7 +285,8 @@
     "Type8": "银行转入",
     "Type9": "其他收入",
     "Type10": "钱包收入",
-    "Type11": "电子钱包收入"
+    "Type11": "电子钱包收入",
+    "Type12": "从其他银行转入"
   },
   "SpendType": {
     "Type1": "住房",
@@ -301,7 +303,8 @@
     "Type12": "存入银行",
     "Type13": "其他支出",
     "Type14": "钱包转入",
-    "Type15": "电子钱包转入"
+    "Type15": "电子钱包转入",
+    "Type16": "转入其它银行"
   },
   "BankDetail": {
     "Total": "银行总余额",
