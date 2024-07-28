@@ -21,6 +21,7 @@ import i18n from '../language/language';
 import Toast from 'react-native-toast-message';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
+import BankDetail from './BankDetail';
 
 type Bank = {
   bankID: number;
@@ -250,7 +251,7 @@ const BankSpend = () => {
             .then(json => {
               if (json && json.success) {
                 SuccessToast(i18n.t('WalletSpend.Success'));
-                initialize();
+                navigation.navigate(BankDetail as never)
               } else {
                 ErrorToast(i18n.t('WalletSpend.Fail'));
               }
@@ -324,7 +325,7 @@ const BankSpend = () => {
             .then(json => {
               if (json && json.success) {
                 SuccessToast(i18n.t('WalletSpend.Success'));
-                initialize();
+                navigation.navigate(BankDetail as never)
               } else {
                 ErrorToast(i18n.t('WalletSpend.Fail'));
               }

@@ -1,9 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import MainContainer from '../components/MainContainer';
-import {
-  useNavigation,
-  useFocusEffect,
-} from '@react-navigation/native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {
   KeyboardAvoidingView,
   StatusBar,
@@ -124,8 +121,6 @@ const BankDetail = () => {
         SuccessToast(i18n.t('Bank.Delete-Bank-Success'));
         navigation.goBack();
       }
-    } catch (error) {
-      ErrorToast('No Data');
     } finally {
       setLoading(false);
     }
@@ -145,9 +140,7 @@ const BankDetail = () => {
         setBankName(json.data.bankName);
         setBalance(json.data.amount.toFixed(2));
       }
-    } catch (error) {
-      ErrorToast('No Data');
-    }
+    } catch (error) {}
   };
 
   const fetchIncomeCategory = async (bankId: any) => {
@@ -163,9 +156,7 @@ const BankDetail = () => {
         setMaxIncomeAmount(json.maxTypeAmount);
         setMaxIncomeRatio(json.ratio);
       }
-    } catch (error) {
-      ErrorToast('No Data');
-    }
+    } catch (error) {}
   };
 
   const fetchSpendCategory = async (bankId: any) => {
@@ -181,9 +172,7 @@ const BankDetail = () => {
         setMaxSpendAmount(json.maxTypeAmount);
         setMaxSpendRatio(json.ratio);
       }
-    } catch (error) {
-      ErrorToast('No Data');
-    }
+    } catch (error) {}
   };
 
   const formatDate = (dateString: string): string => {
@@ -210,9 +199,7 @@ const BankDetail = () => {
         });
         setIncomeData(resultData);
       }
-    } catch (error) {
-      ErrorToast('No Data');
-    }
+    } catch (error) {}
   };
 
   const Spend = async (UserID: any) => {
@@ -232,9 +219,7 @@ const BankDetail = () => {
         });
         setSpendData(resultData);
       }
-    } catch (error) {
-      ErrorToast('No Data');
-    }
+    } catch (error) {}
   };
 
   const [percent, setPercent] = useState('');
@@ -252,9 +237,7 @@ const BankDetail = () => {
       if (result.success) {
         setPercent(result.total.specifiedBankPercentage.toFixed(0));
       }
-    } catch (error) {
-      ErrorToast('No Data');
-    }
+    } catch (error) {}
   };
 
   const initialize = async () => {
@@ -438,7 +421,7 @@ const BankDetail = () => {
                   style={walletStyle.icon}
                 />
               </View>
-              <Text style={walletStyle.buttonText}>
+              <Text style={[walletStyle.buttonText,{color: isDark? '#fff' : '#000'}]}>
                 {i18n.t('Wallet.Income')}
               </Text>
             </TouchableOpacity>
@@ -455,7 +438,7 @@ const BankDetail = () => {
                   style={walletStyle.icon}
                 />
               </View>
-              <Text style={walletStyle.buttonText}>
+              <Text style={[walletStyle.buttonText,{color: isDark? '#fff' : '#000'}]}>
                 {i18n.t('Wallet.Spend')}
               </Text>
             </TouchableOpacity>
@@ -472,7 +455,7 @@ const BankDetail = () => {
                   style={walletStyle.icon}
                 />
               </View>
-              <Text style={walletStyle.buttonText}>
+              <Text style={[walletStyle.buttonText,{color: isDark? '#fff' : '#000'}]}>
                 {i18n.t('Wallet.History')}
               </Text>
             </TouchableOpacity>

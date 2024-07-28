@@ -924,7 +924,7 @@ export const walletStyle = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingBottom: Dimensions.get('screen').height / 100 * 10,
+    paddingBottom: (Dimensions.get('screen').height / 100) * 10,
   },
   leftContent: {
     flex: 2,
@@ -936,7 +936,7 @@ export const walletStyle = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     paddingHorizontal: 25,
-    paddingTop: 20
+    paddingTop: 20,
   },
   lowerContainer: {
     flex: 2,
@@ -998,7 +998,7 @@ export const walletStyle = StyleSheet.create({
     shadowRadius: 4,
     elevation: 10,
     justifyContent: 'center',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   icon: {
     width: (Dimensions.get('screen').width / 100) * 8,
@@ -1050,5 +1050,151 @@ export const walletStyle = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 10,
     marginTop: 20,
-  }
+  },
+});
+
+export const debtCss = StyleSheet.create({
+  addButton: {
+    width: (Dimensions.get('screen').width / 100) * 15,
+    height: (Dimensions.get('screen').width / 100) * 15,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    elevation: 5,
+    position: 'absolute',
+    bottom: 15,
+    right: 15,
+    zIndex: 1,
+  },
+  addIcon: {
+    alignSelf: 'center',
+    lineHeight: (Dimensions.get('screen').width / 100) * 15,
+  },
+  ModalContainer: {
+    backgroundColor: '#fff',
+    padding: 30,
+    flex: 1,
+  },
+  ButtonClose: {
+    alignSelf: 'flex-end',
+  },
+  ModalTitle: {
+    fontSize: 22,
+    color: '#000',
+    fontWeight: 'bold',
+    alignSelf: 'center',
+  },
+  Input: {
+    width: '95%',
+    alignSelf: 'center',
+    backgroundColor: '#fff',
+  },
+  InputError: {
+    width: '80%',
+    alignSelf: 'center',
+    marginBottom: -20,
+  },
+  label: {
+    color: '#3490DE',
+    marginLeft: '5%',
+    marginTop: (Dimensions.get('screen').height / 100) * 3,
+    marginBottom: 5,
+  },
+  SaveButton: {
+    width: '95%',
+    height: (Dimensions.get('screen').height / 100) * 7,
+    backgroundColor: '#3490DE',
+    alignSelf: 'center',
+    borderRadius: 10,
+    marginTop: (Dimensions.get('screen').height / 100) * 3,
+  },
+  SaveText: {
+    textAlign: 'center',
+    lineHeight: (Dimensions.get('screen').height / 100) * 7,
+    fontSize: 20,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  linear: {
+    flexDirection: 'column',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  Title: {
+    fontSize: 22,
+    color: '#fff',
+    fontWeight: 'bold',
+    alignSelf: 'center',
+  },
+  Amount: {
+    fontSize: 40,
+    color: '#fff',
+    fontWeight: 'bold',
+    alignSelf: 'center',
+  },
+  Number: {
+    fontSize: 18,
+    color: '#DDDDDD',
+    alignSelf: 'center',
+    paddingBottom: (Dimensions.get('screen').height / 100) * 5,
+  },
+  debtList: {
+    paddingHorizontal: 20,
+    marginTop: 20,
+  },
+  LowerTitle: {
+    fontSize: 18,
+    color: '#000',
+    fontWeight: 'bold',
+  },
+  listContainer: {
+    width: '90%',
+    height: (Dimensions.get('screen').height / 100) * 10,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    elevation: 5,
+    alignSelf: 'center',
+    marginVertical: (Dimensions.get('screen').height / 100) * 1,
+    flexDirection: 'row',
+    padding: 10,
+  },
+  Image: {
+    width: (Dimensions.get('screen').height / 100) * 6,
+    height: (Dimensions.get('screen').height / 100) * 6,
+    alignSelf: 'center',
+  },
+  debtName: {
+    color: '#000',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  date: {
+    color: '#999999',
+    fontSize: 16,
+  },
+  debtAmount: {
+    color: '#3490DE',
+    fontSize: 26,
+    fontWeight: 'bold',
+  },
+});
+
+export const debtDetailCss = StyleSheet.create({
+  lowerContent: {
+    flex: 1,
+    height: (Dimensions.get('screen').height / 100) * 10,
+    backgroundColor: '#fff',
+    padding: 10,
+    alignSelf: 'center',
+    justifyContent: 'center'
+  },
+  cumulative: {
+    fontSize: 25,
+    color: '#ff0000',
+    fontWeight: 'bold',
+  },
 });

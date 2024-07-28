@@ -43,6 +43,7 @@ import messaging from '@react-native-firebase/messaging';
 import WalletHistory from './screen/WalletHistory';
 import EwalletHistory from './screen/EwalletHistory';
 import BankHistory from './screen/BankHistory';
+import ExpenseDetails from './screen/ExpensesDetail';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
@@ -143,6 +144,7 @@ function App(): JSX.Element {
                 <Stack.Screen name="EWalletSpend" component={EWalletSpend} />
                 <Stack.Screen name="EwalletHistory" component={EwalletHistory} />
                 <Stack.Screen name="Expenses" component={Expenses} />
+                <Stack.Screen name="ExpenseDetails" component={ExpenseDetails} />
                 <Stack.Screen name="Language" component={Language} />
                 <Stack.Screen name="UserEdit" component={UserEdit} />
                 <Stack.Screen name="ThemeChange" component={ThemeChange} />

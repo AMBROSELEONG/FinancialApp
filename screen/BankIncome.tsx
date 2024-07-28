@@ -21,6 +21,7 @@ import i18n from '../language/language';
 import Toast from 'react-native-toast-message';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
+import BankDetail from './BankDetail';
 
 const BankIncome = () => {
   const navigation = useNavigation();
@@ -170,9 +171,6 @@ const BankIncome = () => {
     } else if (isNaN(amount) || amount <= 0) {
       setTotalError(i18n.t('Bank.Total-Invalid'));
       isValid = false;
-    } else if (amount >= balance) {
-      setTotalError(i18n.t('WalletSpend.Total-Exceeds-Balance'));
-      isValid = false;
     } else {
       setTotalError('');
     }
@@ -206,7 +204,7 @@ const BankIncome = () => {
             .then(json => {
               if (json && json.success) {
                 SuccessToast(i18n.t('WalletIncome.Success'));
-                initialize();
+                navigation.navigate(BankDetail as never)
               } else {
                 ErrorToast(i18n.t('WalletIncome.Fail'));
               }

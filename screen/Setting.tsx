@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import MainContainer from '../components/MainContainer';
-import {useNavigation, DrawerActions} from '@react-navigation/native';
+import {useNavigation, DrawerActions, useFocusEffect} from '@react-navigation/native';
 import {
   KeyboardAvoidingView,
   StatusBar,
@@ -58,6 +58,12 @@ const Setting = () => {
       visibilityTime: 3000,
     });
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      initialize();
+    }, []),
+  );
 
   const fetchData = async (userId: any) => {
     try {
@@ -452,31 +458,6 @@ const Setting = () => {
               ) : (
                 <View></View>
               )}
-
-              <TouchableOpacity
-                style={settingCss.FunctionContainer}
-                onPress={() => navigation.navigate(Language as never)}>
-                <View style={{flexDirection: 'row'}}>
-                  <MaterialIcons
-                    name="currency-exchange"
-                    size={30}
-                    color={isDark ? '#fff' : '#000'}
-                    style={[settingCss.EditIcon, {borderWidth: 0}]}
-                  />
-                  <View style={settingCss.TextContainer}>
-                    <Text style={isDark ? darkSetting.text : settingCss.text}>
-                      {i18n.t('SettingPage.Currency')}
-                    </Text>
-                  </View>
-                </View>
-                <View style={settingCss.ClickIcon}>
-                  <FontAwesome5
-                    name="angle-right"
-                    size={30}
-                    color={isDark ? '#fff' : '#000'}
-                  />
-                </View>
-              </TouchableOpacity>
             </View>
           </View>
         </View>

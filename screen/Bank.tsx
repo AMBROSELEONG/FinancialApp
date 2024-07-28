@@ -144,7 +144,6 @@ const Bank = () => {
         setNotData(true);
       }
     } catch (error) {
-      ErrorToast('error' + error);
     }
   };
 
@@ -166,7 +165,6 @@ const Bank = () => {
         setPercent(result.total.bankPercentage.toFixed(0));
       }
     } catch (error) {
-      ErrorToast(error);
     }
   };
 

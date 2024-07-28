@@ -135,7 +135,7 @@ function CustomBottomTabNavigator() {
           ),
         }}
       />
-      {/* <Tab.Screen
+      <Tab.Screen
         name="Expenses"
         component={Expenses}
         options={{
@@ -151,7 +151,7 @@ function CustomBottomTabNavigator() {
             />
           ),
         }}
-      /> */}
+      />
     </Tab.Navigator>
   );
 }

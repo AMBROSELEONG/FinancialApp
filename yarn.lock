@@ -6680,6 +6680,11 @@ react-native-linear-gradient@*, react-native-linear-gradient@^2.8.3:
   resolved "https://registry.npmjs.org/react-native-linear-gradient/-/react-native-linear-gradient-2.8.3.tgz"
   integrity sha512-KflAXZcEg54PXkLyflaSZQ3PJp4uC4whM7nT/Uot9m0e/qxFV3p6uor1983D1YOBJbJN7rrWdqIjq0T42jOJyA==
 
+react-native-network-info@^5.2.1:
+  version "5.2.1"
+  resolved "https://registry.npmjs.org/react-native-network-info/-/react-native-network-info-5.2.1.tgz"
+  integrity sha512-iam74xXtrSqqZurCl1/bSjZ9jXcsJY84g7brx1/4uVGCY26c6m+4CArHNSHOsz5ATg2NQT+81sjNy0KlCPyK4g==
+
 react-native-pager-view@*, react-native-pager-view@^6.3.1:
   version "6.3.1"
   resolved "https://registry.npmjs.org/react-native-pager-view/-/react-native-pager-view-6.3.1.tgz"
@@ -6754,7 +6759,7 @@ react-native-vector-icons@*, react-native-vector-icons@^10.1.0, "react-native-ve
     prop-types "^15.7.2"
     yargs "^16.1.1"
 
-react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", react-native@>=0.57, react-native@>=0.60.0, react-native@0.74.1:
+react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", react-native@>=0.47, react-native@>=0.57, react-native@>=0.60.0, react-native@0.74.1:
   version "0.74.1"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.74.1.tgz"
   integrity sha512-0H2XpmghwOtfPpM2LKqHIN7gxy+7G/r1hwJHKLV6uoyXGC/gCojRtoo5NqyKrWpFC8cqyT6wTYCLuG7CxEKilg==

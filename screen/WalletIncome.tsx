@@ -22,6 +22,7 @@ import i18n from '../language/language';
 import Toast from 'react-native-toast-message';
 import RNFetchBlob from 'rn-fetch-blob';
 import {UrlAccess} from '../objects/url';
+import Wallet from './Wallet';
 
 type Bank = {
   bankID: number;
@@ -123,8 +124,6 @@ const WalletIncome = () => {
 
       if (json.success) {
         setBalance(json.walletData.balance.toFixed(2));
-      } else {
-        ErrorToast(i18n.t('SettingPage.Failed-Fetch-Data'));
       }
     } catch (error) {
       ErrorToast(i18n.t('SettingPage.Error-Fetch'));
@@ -213,9 +212,6 @@ const WalletIncome = () => {
     } else if (isNaN(amount) || amount <= 0) {
       setTotalError(i18n.t('Bank.Total-Invalid'));
       isValid = false;
-    } else if (amount >= balance) {
-      setTotalError(i18n.t('WalletSpend.Total-Exceeds-Balance'));
-      isValid = false;
     } else {
       setTotalError('');
     }
@@ -249,7 +245,7 @@ const WalletIncome = () => {
             .then(json => {
               if (json && json.success) {
                 SuccessToast(i18n.t('WalletIncome.Success'));
-                initialize();
+                navigation.goBack()
               } else {
                 ErrorToast(i18n.t('WalletIncome.Fail'));
               }
@@ -273,9 +269,6 @@ const WalletIncome = () => {
       isValid = false;
     } else if (isNaN(amount) || amount <= 0) {
       setTotalError(i18n.t('Bank.Total-Invalid'));
-      isValid = false;
-    } else if (amount >= balance) {
-      setTotalError(i18n.t('WalletSpend.Total-Exceeds-Balance'));
       isValid = false;
     } else {
       setTotalError('');
@@ -348,7 +341,7 @@ const WalletIncome = () => {
                   .then(json => {
                     if (json && json.success) {
                       SuccessToast(i18n.t('WalletIncome.Success'));
-                      initialize();
+                      navigation.goBack()
                     } else {
                       ErrorToast(i18n.t('WalletIncome.Fail'));
                     }

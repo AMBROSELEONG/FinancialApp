@@ -93,11 +93,8 @@ const Ewallet = () => {
           'EwalletID',
           json.ewalletData.ewalletID.toString(),
         );
-      } else {
-        ErrorToast(i18n.t('SettingPage.Failed-Fetch-Data'));
       }
     } catch (error) {
-      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
     }
   };
 
@@ -113,11 +110,8 @@ const Ewallet = () => {
         setMaxIncomeType(json.maxType);
         setMaxIncomeAmount(json.maxTypeAmount);
         setMaxIncomeRatio(json.ratio);
-      } else {
-        ErrorToast(i18n.t('SettingPage.Failed-Fetch-Data'));
       }
     } catch (error) {
-      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
     }
   };
 
@@ -133,11 +127,8 @@ const Ewallet = () => {
         setMaxSpendType(json.maxType);
         setMaxSpendAmount(json.maxTypeAmount);
         setMaxSpendRatio(json.ratio);
-      } else {
-        ErrorToast(i18n.t('SettingPage.Failed-Fetch-Data'));
       }
     } catch (error) {
-      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
     }
   };
 
@@ -164,11 +155,8 @@ const Ewallet = () => {
           };
         });
         setIncomeData(resultData);
-      } else {
-        ErrorToast(i18n.t('SettingPage.Failed-Fetch-Data'));
       }
     } catch (error) {
-      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
     }
   };
 
@@ -188,11 +176,8 @@ const Ewallet = () => {
           };
         });
         setSpendData(resultData);
-      } else {
-        ErrorToast(i18n.t('SettingPage.Failed-Fetch-Data'));
       }
     } catch (error) {
-      ErrorToast(i18n.t('SettingPage.Error-Fetch'));
     }
   };
 
@@ -379,7 +364,7 @@ const Ewallet = () => {
                   style={walletStyle.icon}
                 />
               </View>
-              <Text style={walletStyle.buttonText}>
+              <Text style={[walletStyle.buttonText,{color: isDark? '#fff' : '#000'}]}>
                 {i18n.t('Wallet.Income')}
               </Text>
             </TouchableOpacity>
@@ -396,7 +381,7 @@ const Ewallet = () => {
                   style={walletStyle.icon}
                 />
               </View>
-              <Text style={walletStyle.buttonText}>
+              <Text style={[walletStyle.buttonText,{color: isDark? '#fff' : '#000'}]}>
                 {i18n.t('Wallet.Spend')}
               </Text>
             </TouchableOpacity>
@@ -413,7 +398,7 @@ const Ewallet = () => {
                   style={walletStyle.icon}
                 />
               </View>
-              <Text style={walletStyle.buttonText}>
+              <Text style={[walletStyle.buttonText,{color: isDark? '#fff' : '#000'}]}>
                 {i18n.t('Wallet.History')}
               </Text>
             </TouchableOpacity>

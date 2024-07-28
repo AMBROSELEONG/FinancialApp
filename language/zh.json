@@ -80,7 +80,7 @@
     "Wallet": "钱包",
     "Bank": "银行",
     "E-Wallet": "电子钱包",
-    "Expenses": "支出"
+    "Expenses": "债务"
   },
   "Welcome": {
     "Login": "登录",
@@ -199,7 +199,7 @@
     "Highest-Spend": "最高每周支出类型",
     "Spend-Comes": "你的支出来自",
     "Weekly-Income": "每周收入",
-    "Weekly-Spend": "每周支出",  
+    "Weekly-Spend": "每周支出",
     "Income-History": "收入历史",
     "Spend-History": "支出历史",
     "Type": "类型",
@@ -309,5 +309,63 @@
   "BankDetail": {
     "Total": "银行总余额",
     "Bank-List": "银行列表"
+  },
+  "DebtList": {
+    "Type1": "信用卡债务",
+    "Type2": "个人贷款",
+    "Type3": "抵押贷款",
+    "Type4": "学生贷款",
+    "Type5": "汽车贷款",
+    "Type6": "房屋贷款",
+    "Type7": "医疗债务",
+    "Type8": "房屋净值贷款",
+    "Type9": "商业贷款",
+    "Type10": "公用事业债务",
+    "Type11": "税务债务",
+    "Type12": "租赁债务",
+    "Type13": "其他"
+  },
+  "Debt": {
+    "Debt": "债务",
+    "Total-Amount": "总金额",
+    "Number-Debt": "债务数量：",
+    "Debt-List": "债务清单",
+    "Per-Month": "每月",
+    "Add-Debt": "添加债务",
+    "Debt-Name": "债务名称",
+    "Debt-Name-Placeholder": "选择债务",
+    "Amount": "金额",
+    "Amount-Placeholder": "请输入您的每月金额",
+    "Monthly-Repayment": "每月还款日期",
+    "Repayment-Years": "还款年限",
+    "Repayment-Years-Placeholder": "请输入您的还款年限",
+    "AddSuccess": "添加债务成功",
+    "AddFailed": "添加债务失败",
+    "Amount-Empty": "金额不能为空",
+    "Amount-Invalid": "金额无效",
+    "Debt-Empty": "选择债务不能为空",
+    "Repayment-Empty": "还款年限不能为空",
+    "Repayment-Invalid": "还款年限无效",
+    "Date-Future": "日期不能为空或在未来"
+  },
+  "DebtDetail": {
+    "Congratulation": "恭喜！",
+    "Pay-Off": "这笔债务已还清",
+    "Pay-Now": "立即支付",
+    "Next-Payment": "下一个付款日期是",
+    "Want-Pay-Now": "你想现在付款吗？",
+    "No": "不",
+    "Pay": "支付",
+    "Pay-Debt-Success": "支付债务成功",
+    "Pay-Debt-Failed": "支付债务失败",
+    "Years": "年",
+    "Per-Month": "每月",
+    "Debt-Pay-Off-Year": "债务还清年份",
+    "Distance-To-Pay": "离债务还清还有：",
+    "Month-Left": "个月",
+    "Cumulative-Repayment": "累计还款",
+    "Estimated-Total": "预计总债务",
+    "Start": "开始付款日期",
+    "Next-Payment-Date": "下一个付款日期"
   }
 }

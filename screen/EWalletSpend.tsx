@@ -208,7 +208,7 @@ const EWalletSpend = () => {
     let isValid = true;
     const amount = parseFloat(Total);
     const balance = parseFloat(Balance);
-    
+
     if (!amount) {
       setTotalError(i18n.t('Bank.Total-Empty'));
       isValid = false;
@@ -251,7 +251,7 @@ const EWalletSpend = () => {
             .then(json => {
               if (json && json.success) {
                 SuccessToast(i18n.t('WalletSpend.Success'));
-                initialize();
+                navigation.goBack();
               } else {
                 ErrorToast(i18n.t('WalletSpend.Fail'));
               }
@@ -324,7 +324,7 @@ const EWalletSpend = () => {
             .then(json => {
               if (json && json.success) {
                 SuccessToast(i18n.t('WalletSpend.Success'));
-                initialize();
+                navigation.goBack();
               } else {
                 ErrorToast(i18n.t('WalletSpend.Fail'));
               }
