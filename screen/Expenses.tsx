@@ -36,9 +36,9 @@ import ExpenseDetails from './ExpensesDetail';
 type Debt = {
   debtID: number;
   debtName: string;
-  amount: number;
+  debtAmount: number;
   date: string;
-  daysUntilNextDue: number;
+  daysUntilNextDate: number;
   monthLeft: number;
 };
 
@@ -159,7 +159,7 @@ const Expenses = () => {
     try {
       const response = await RNFetchBlob.config({trusty: true}).fetch(
         'GET',
-        `${UrlAccess.Url}Debt/GetDebts?userId=${userId}`,
+        `${UrlAccess.Url}Debt/GetDebt?userId=${userId}`,
         {'Content-Type': 'application/json'},
       );
       const result = await response.json();
@@ -167,7 +167,7 @@ const Expenses = () => {
       if (result.success) {
         setData(result.data);
         setCount(result.count);
-        setAmounts(result.total);
+        setAmounts(result.totalDebtAmount);
       }
     } catch (error) {
       ErrorToast(error);
@@ -267,12 +267,12 @@ const Expenses = () => {
         await RNFetchBlob.config({trusty: true})
           .fetch(
             'POST',
-            `${UrlAccess.Url}Debt/AddDebt`,
+            `${UrlAccess.Url}Debt/CreateDebt`,
             {'Content-Type': 'application/json'},
             JSON.stringify({
               userID: UserId,
               debtName: selectedType,
-              amount: total,
+              debtAmount: total,
               date: formattedDate,
               year: Year,
               email: Email,
@@ -361,7 +361,7 @@ const Expenses = () => {
             backgroundColor:
               debt.monthLeft < 0
                 ? '#75B2E6'
-                : debt.daysUntilNextDue < 7
+                : debt.daysUntilNextDate < 7
                 ? '#F37A7A'
                 : isDark
                 ? '#3A3A3A'
@@ -386,7 +386,7 @@ const Expenses = () => {
                 color:
                   debt.monthLeft < 0
                     ? '#fff'
-                    : debt.daysUntilNextDue < 7
+                    : debt.daysUntilNextDate < 7
                     ? '#fff'
                     : '#999999',
               },
@@ -396,7 +396,7 @@ const Expenses = () => {
           </Text>
         </View>
         <View style={{alignSelf: 'center'}}>
-          <Text style={debtCss.debtAmount}>RM {debt.amount}</Text>
+          <Text style={debtCss.debtAmount}>RM {debt.debtAmount}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -409,7 +409,7 @@ const Expenses = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <StatusBar
           animated={true}
-          backgroundColor="#1C4E78"
+          backgroundColor={isDark ? '#000' : '#1C4E78'}
           barStyle={'dark-content'}
         />
         <LinearGradient

@@ -1,6 +1,5 @@
 import {DefaultTheme, Modal, Title} from 'react-native-paper';
 import {Dimensions, StyleSheet} from 'react-native';
-import {white} from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 
 const whiteTheme = {
   ...DefaultTheme,
@@ -1190,11 +1189,69 @@ export const debtDetailCss = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 10,
     alignSelf: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   cumulative: {
     fontSize: 25,
     color: '#ff0000',
     fontWeight: 'bold',
   },
+});
+
+export const assistantCss = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: '#B8D8EA',
+  },
+  chatContainer: {
+    flex: 1,
+  },
+  inputContainer: {
+    width: '80%',
+    borderRadius: 10,
+    borderWidth: 1,
+    height: (Dimensions.get('screen').height / 100) * 5,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+  },
+  bottomContainer: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    marginBottom: 20,
+    marginTop: 5,
+    paddingHorizontal: '5%',
+    justifyContent: 'space-between',
+  },
+  button: {
+    width: '20%',
+    height: (Dimensions.get('screen').height / 100) * 5,
+    backgroundColor: '#3490DE',
+    borderRadius: 10,
+    justifyContent: 'center',
+  },
+  messageContainer: {
+    padding: 15,
+    margin: 10,
+    backgroundColor: '#DBEEF9',
+    borderRadius: 10,
+  },
+  messageText: {
+    fontSize: 18,
+    color: '#000',
+  },
+  selectButton: {
+    width: '90%',
+    borderRadius: 10,
+    borderWidth: 1,
+    height: (Dimensions.get('screen').height / 100) * 5,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+  },
+  selectButtonText: {
+    color: '#000',
+    textAlign: 'center'
+  }
 });

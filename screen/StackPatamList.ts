@@ -26,6 +26,8 @@ export type StackParamList = {
     EwalletHistory: undefined;
     BankHistory: undefined;
     ExpenseDetails: undefined;
+    Assistant: undefined;
+    PDF: undefined;
     Verify: { length: number; value: string[]; disabled: boolean; onChange: (value: string[]) => void };
     ResetVerify: { length: number; value: string[]; disabled: boolean; onChange: (value: string[]) => void };
     UserEditVerify: { length: number; value: string[]; disabled: boolean; onChange: (value: string[]) => void };

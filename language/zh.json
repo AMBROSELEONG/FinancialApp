@@ -367,5 +367,26 @@
     "Estimated-Total": "预计总债务",
     "Start": "开始付款日期",
     "Next-Payment-Date": "下一个付款日期"
+  },
+  "Assistant": {
+    "Total-Wallet": "钱包总余额",
+    "Total-Ewallet": "电子钱包总余额",
+    "Total-Bank": "银行总余额",
+    "Total-Debt": "每月总债务",
+    "Total-Wallet-Income": "钱包过去 7 天收入",
+    "Total-Ewallet-Income": "电子钱包过去 7 天收入",
+    "Total-Bank-Income": "银行过去 7 天收入",
+    "Total-Wallet-Spend": "钱包过去 7 天支出",
+    "Total-Ewallet-Spend": "电子钱包过去 7 天支出",
+    "Total-Bank-Spend": "银行过去 7 天支出",
+    "Analyze": "以上是我的所有财务数据，分析我的财务状况和财务健康(中文）",
+    "Hello": "您好：请说您好，我是您的财务助理！有什么可以帮您的吗？"
+  },
+  "AssistantPage": {
+    "Assistant": "助手",
+    "Financial-Assistant": "财务助手",
+    "Analyze-My-Finances": "分析我的财务",
+    "Placeholder": "请问有关财务的任何问题",
+    "Question": "请提出一个与财务相关的问题。"
   }
 }

@@ -14,6 +14,7 @@ import {
   Platform,
   ActivityIndicator,
   Image,
+  Alert,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {css, homeCss} from '../objects/commonCss';
@@ -26,6 +27,7 @@ import i18n from '../language/language';
 import Toast from 'react-native-toast-message';
 import {darkCss} from '../objects/darkCss';
 import LinearGradient from 'react-native-linear-gradient';
+import Expenses from './Expenses';
 
 interface SpendData {
   date: string;
@@ -50,6 +52,10 @@ interface DataItem {
 interface StackedProgressBarProps {
   data: DataItem[];
 }
+
+type Debt = {
+  daysUntilNextDate: number;
+};
 
 const StackedProgressBar: React.FC<StackedProgressBarProps> = ({data}) => {
   const total = data.reduce((sum, item) => sum + item.value, 0);
@@ -113,6 +119,45 @@ const Home = () => {
     }, []),
   );
 
+  const fetchDebtData = async (userId: string) => {
+    try {
+      const response = await RNFetchBlob.config({trusty: true}).fetch(
+        'GET',
+        `${UrlAccess.Url}Debt/GetDebt?userId=${userId}`,
+        {'Content-Type': 'application/json'},
+      );
+      const result = await response.json();
+
+      if (result.success) {
+        const debts = result.data;
+        const debtsDueSoon = debts.filter(
+          (debt: Debt) => debt.daysUntilNextDate < 7,
+        );
+
+        // Check if the alert has been shown before
+        const alertShown = await AsyncStorage.getItem('debtAlertShown');
+
+        if (debtsDueSoon.length > 0 && alertShown !== 'true') {
+          Alert.alert(
+            'Debt Notice',
+            'You have a debt that is about to mature, please pay it back immediately!',
+            [
+              {
+                text: 'Ok',
+                onPress: async () => {
+                  await AsyncStorage.setItem('debtAlertShown', 'true');
+                  navigation.navigate(Expenses as never);
+                },
+              },
+            ],
+          );
+        }
+      }
+    } catch (error) {
+      ErrorToast(error);
+    }
+  };
+
   const initialize = async () => {
     setLoading(true);
 
@@ -134,6 +179,7 @@ const Home = () => {
         await fetchIncome(storedUserID);
         await fetchIncomeData(storedUserID);
         await fetchTotalBalance(storedUserID);
+        await fetchDebtData(storedUserID);
       }
 
       if (storedToken) {
@@ -171,7 +217,6 @@ const Home = () => {
 
       if (json.success) {
         setUsername(json.userData.userName);
-        setLoading(false);
       } else {
         ErrorToast(i18n.t('Home.Failed-Fetch'));
       }
@@ -192,7 +237,6 @@ const Home = () => {
 
       if (json.success) {
         setSpend(json.data);
-        setLoading(false);
       } else {
         ErrorToast(i18n.t('Home.Failed-Fetch'));
       }
@@ -236,7 +280,6 @@ const Home = () => {
 
       if (json.success) {
         setIncome(json.data);
-        setLoading(false);
       } else {
         ErrorToast(i18n.t('Home.Failed-Fetch'));
       }

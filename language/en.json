@@ -367,5 +367,26 @@
     "Estimated-Total": "Estimated Total Debt",
     "Start": "Start Payment Date",
     "Next-Payment-Date": " Next Payment Date"
+  },
+  "Assistant": {
+    "Total-Wallet": "Total Balance Wallet",
+    "Total-Ewallet": "Total Balance Ewallet",
+    "Total-Bank": "Total Balance Bank",
+    "Total-Debt": "Total Debt per month",
+    "Total-Wallet-Income": "Total Wallet Last 7 days Income",
+    "Total-Ewallet-Income": "Total Ewallet Last 7 days Income",
+    "Total-Bank-Income": "Total Bank Last 7 days Income",
+    "Total-Wallet-Spend": "Total Wallet Last 7 days Expense",
+    "Total-Ewallet-Spend": "Total Ewallet Last 7 days Expense",
+    "Total-Bank-Spend": "Total Bank Last 7 days Expense",
+    "Analyze": "The above is all my financial data, analyze my financial situation and my financial health(In English)",
+    "Hello": "Please say hello, I am your financial assistant! How can I help you?"
+  },
+  "AssistantPage": {
+    "Assistant": "Assistant",
+    "Financial-Assistant": "Financial Assistant",
+    "Analyze-My-Finances": "Analyze My Finances",
+    "Placeholder": "Please Ask Anything about financial",
+    "Question": "Please ask a question related to finance."
   }
 }

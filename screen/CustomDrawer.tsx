@@ -5,6 +5,7 @@ import {
   createDrawerNavigator,
 } from '@react-navigation/drawer';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {
   useNavigation,
   CommonActions,
@@ -25,6 +26,7 @@ import CustomBottomTabNavigator from './BottomNavigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18n from '../language/language';
 import {darkCustom} from '../objects/darkCss';
+import Assistant from './Assistant';
 
 const Drawer = createDrawerNavigator();
 
@@ -45,6 +47,7 @@ function CustomDrawerContent(props: any) {
     AsyncStorage.removeItem('UserName');
     AsyncStorage.removeItem('Email');
     AsyncStorage.removeItem('Password');
+    AsyncStorage.removeItem('debtAlertShown');
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
@@ -131,6 +134,7 @@ export function CustomDrawer() {
         AsyncStorage.removeItem('UserName');
         AsyncStorage.removeItem('Email');
         AsyncStorage.removeItem('Password');
+        AsyncStorage.removeItem('debtAlertShown');
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -233,6 +237,30 @@ export function CustomDrawer() {
             <Ionicons
               name="settings"
               size={35}
+              color={isDark ? '#fff' : focused ? '#fff' : '#000'}
+              style={{marginLeft: 5, marginRight: 5}}
+            />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name={i18n.t('AssistantPage.Assistant')}
+        component={Assistant}
+        options={{
+          headerTitle: 'Assistant',
+          headerRight: () => (
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'flex-start',
+              }}></View>
+          ),
+          drawerIcon: ({focused, size}) => (
+            <FontAwesome5
+              name="robot"
+              size={30}
               color={isDark ? '#fff' : focused ? '#fff' : '#000'}
               style={{marginLeft: 5, marginRight: 5}}
             />

@@ -44,6 +44,8 @@ import WalletHistory from './screen/WalletHistory';
 import EwalletHistory from './screen/EwalletHistory';
 import BankHistory from './screen/BankHistory';
 import ExpenseDetails from './screen/ExpensesDetail';
+import Assistant from './screen/Assistant';
+import PDF from './screen/Pdf';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
@@ -83,6 +85,10 @@ function App(): JSX.Element {
   messaging().setBackgroundMessageHandler(async remoteMessage => {
     console.log('Message handled in the background!', remoteMessage);
   });
+
+  useEffect(() => {
+    AsyncStorage.removeItem('debtAlertShown');
+  }, []);
 
   return (
     <PaperProvider theme={isDark ? whiteTheme : darkTheme}>
@@ -142,9 +148,17 @@ function App(): JSX.Element {
                 <Stack.Screen name="Ewallet" component={Ewallet} />
                 <Stack.Screen name="EWalletIncome" component={EWalletIncome} />
                 <Stack.Screen name="EWalletSpend" component={EWalletSpend} />
-                <Stack.Screen name="EwalletHistory" component={EwalletHistory} />
+                <Stack.Screen name="Assistant" component={Assistant} />
+                <Stack.Screen name="PDF" component={PDF} />
+                <Stack.Screen
+                  name="EwalletHistory"
+                  component={EwalletHistory}
+                />
                 <Stack.Screen name="Expenses" component={Expenses} />
-                <Stack.Screen name="ExpenseDetails" component={ExpenseDetails} />
+                <Stack.Screen
+                  name="ExpenseDetails"
+                  component={ExpenseDetails}
+                />
                 <Stack.Screen name="Language" component={Language} />
                 <Stack.Screen name="UserEdit" component={UserEdit} />
                 <Stack.Screen name="ThemeChange" component={ThemeChange} />

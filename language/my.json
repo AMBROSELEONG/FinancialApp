@@ -367,5 +367,26 @@
     "Estimated-Total": "Anggaran Jumlah Hutang",
     "Start": "Tarikh Mula Pembayaran",
     "Next-Payment-Date": "Tarikh Pembayaran Seterusnya"
+  },
+  "Assistant": {
+    "Total-Wallet": "Jumlah Baki Dompet",
+    "Total-Ewallet": "Jumlah Baki E-dompet",
+    "Total-Bank": "Jumlah Baki Bank",
+    "Total-Debt": "Jumlah Hutang setiap bulan",
+    "Total-Wallet-Income": "Jumlah Pendapatan 7 hari lepas Dompet",
+    "Total-Ewallet-Income": "Jumlah Pendapatan 7 hari lepas E-dompet",
+    "Total-Bank-Income": "Jumlah Pendapatan 7 hari lepas Bank",
+    "Total-Wallet-Spend": "Jumlah Perbelanjaan 7 hari lepas Dompet",
+    "Total-Ewallet-Spend": "Jumlah Perbelanjaan 7 hari lepas E-dompet",
+    "Total-Bank-Spend": "Jumlah Perbelanjaan 7 hari lepas Bank",
+    "Analyze": "Di atas adalah semua data kewangan saya, analisa keadaan kewangan dan kesihatan kewangan saya (in Malay)",
+    "Hello": "Katakan hello, saya pembantu kewangan awak! Adakah terdapat apa-apa yang boleh saya bantu?"
+  },
+  "AssistantPage": {
+    "Assistant": "Pembantu",
+    "Financial-Assistant": "Pembantu Kewangan",
+    "Analyze-My-Finances": "Analisa Kewangan Saya",
+    "Placeholder": "Sila tanya apa-apa tentang kewangan",
+    "Question": "Sila tanya soalan berkaitan kewangan."
   }
 }
